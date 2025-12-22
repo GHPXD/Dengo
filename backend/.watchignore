@@ -1,0 +1,42 @@
+# Arquivos ignorados pelo Uvicorn --reload (WatchFiles)
+# Evita reloads desnecessários quando esses arquivos mudam
+
+# Dados e modelos
+models/
+*.joblib
+*.pkl
+*.h5
+
+# Logs
+logs/
+*.log
+
+# Cache
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Ambiente virtual
+venv/
+.venv/
+
+# ETL e treinamento (não precisa reload)
+etl_training_pipeline.py
+train_ai.py
+run_training.ps1
+
+# Configuração
+.env
+.env.local
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Documentação
+README.md
+*.md

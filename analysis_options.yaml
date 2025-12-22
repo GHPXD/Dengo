@@ -1,0 +1,44 @@
+# Configuração de análise estática para Flutter (Linter).
+# 
+# Essencial para manter qualidade de código no TCC.
+# Aplica regras rigorosas para evitar bugs e manter consistência.
+
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # ESTILO E CONVENÇÕES
+    - always_declare_return_types
+    - always_put_required_named_parameters_first
+    - avoid_print
+    - avoid_unnecessary_containers
+    - prefer_const_constructors
+    - prefer_const_constructors_in_immutables
+    - prefer_const_declarations
+    - prefer_const_literals_to_create_immutables
+    - prefer_final_fields
+    - prefer_single_quotes
+    - sort_child_properties_last
+    - use_key_in_widget_constructors
+    
+    # ERROS E BOAS PRÁTICAS
+    - avoid_dynamic_calls
+    - avoid_empty_else
+    - avoid_returning_null_for_future
+    - cancel_subscriptions
+    - close_sinks
+    - no_duplicate_case_values
+    - valid_regexps
+    
+    # DOCUMENTAÇÃO
+    # - package_api_docs # Removido no Dart 3.7+
+    - public_member_api_docs # Requer doc comments em APIs públicas
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  
+  errors:
+    # Tratar alguns avisos como erros para maior rigor
+    invalid_annotation_target: ignore
