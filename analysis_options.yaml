@@ -1,6 +1,6 @@
 # Configuração de análise estática para Flutter (Linter).
 # 
-# Essencial para manter qualidade de código no TCC.
+# Garante qualidade de código, consistência e manutenibilidade.
 # Aplica regras rigorosas para evitar bugs e manter consistência.
 
 include: package:flutter_lints/flutter.yaml

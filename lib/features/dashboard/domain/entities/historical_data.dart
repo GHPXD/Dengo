@@ -17,6 +17,7 @@ class HistoricalData extends Equatable {
   /// Umidade média do dia (%)
   final double avgHumidity;
 
+  /// Cria instância de [HistoricalData] com valores históricos
   const HistoricalData({
     required this.date,
     required this.cases,

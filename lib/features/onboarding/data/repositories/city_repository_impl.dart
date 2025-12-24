@@ -18,10 +18,14 @@ import '../models/city_model.dart';
 ///
 /// Esta classe é o "tradutor" entre camada Data e Domain.
 class CityRepositoryImpl implements CityRepository {
+  /// Remote data source for fetching cities from API.
   final CityRemoteDataSource remoteDataSource;
+  /// Local data source for caching cities.
   final CityLocalDataSource localDataSource;
+  /// Network info to check connectivity.
   final NetworkInfo networkInfo;
 
+  /// Creates a [CityRepositoryImpl] with required data sources.
   CityRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
@@ -81,12 +85,21 @@ class CityRepositoryImpl implements CityRepository {
   @override
   Future<Either<Failure, City>> getSavedCity() async {
     try {
-      final cityModel = await localDataSource.getSavedCity();
+      final cityModel = await localDataSource.getLastCity();
+      
+      if (cityModel == null) {
+        return const Left(
+          CacheFailure(
+            message: 'Nenhuma cidade selecionada ainda.',
+          ),
+        );
+      }
+      
       return Right(cityModel.toEntity());
     } on Exception catch (e, stackTrace) {
       return Left(
         CacheFailure(
-          message: 'Nenhuma cidade selecionada ainda.',
+          message: 'Erro ao recuperar cidade: ${e.toString()}',
           stackTrace: stackTrace,
         ),
       );
@@ -98,7 +111,7 @@ class CityRepositoryImpl implements CityRepository {
     try {
       // Converte Entity para Model
       final cityModel = CityModel.fromEntity(city);
-      await localDataSource.saveCity(cityModel);
+      await localDataSource.cacheCity(cityModel);
       return const Right(null);
     } on Exception catch (e, stackTrace) {
       return Left(

@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,7 +22,7 @@ part 'app_providers.g.dart';
 /// Singleton que fornece acesso à instância configurada do Dio
 /// para todos os repositories.
 @riverpod
-ApiClient apiClient(ApiClientRef ref) {
+ApiClient apiClient(Ref ref) {
   return ApiClient();
 }
 
@@ -29,7 +30,7 @@ ApiClient apiClient(ApiClientRef ref) {
 ///
 /// Verifica status de conexão com internet.
 @riverpod
-NetworkInfo networkInfo(NetworkInfoRef ref) {
+NetworkInfo networkInfo(Ref ref) {
   return NetworkInfo(Connectivity());
 }
 
@@ -39,6 +40,6 @@ NetworkInfo networkInfo(NetworkInfoRef ref) {
 
 /// Provider para SharedPreferences (configurações simples).
 @Riverpod(keepAlive: true)
-Future<SharedPreferences> sharedPreferences(SharedPreferencesRef ref) async {
+Future<SharedPreferences> sharedPreferences(Ref ref) async {
   return await SharedPreferences.getInstance();
 }

@@ -41,6 +41,11 @@ class AppColors {
   static const Color dangerLight = Color(0xFFFEE2E2);
   static const Color dangerDark = Color(0xFFDC2626);
 
+  /// Azul - Informação (dicas, avisos informativos)
+  static const Color info = Color(0xFF3B82F6);
+  static const Color infoLight = Color(0xFFDBEAFE);
+  static const Color infoDark = Color(0xFF2563EB);
+
   // ══════════════════════════════════════════════════════════════════════════
   // CORES NEUTRAS (Background, Surface, Text)
   // ══════════════════════════════════════════════════════════════════════════

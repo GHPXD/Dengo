@@ -11,8 +11,8 @@ import 'app_colors.dart';
 /// - Componentes com bordas arredondadas e sombras suaves
 /// - Responsividade e acessibilidade
 ///
-/// Este tema será fundamental na apresentação do TCC,
-/// demonstrando cuidado com UX e design profissional.
+/// Design cuidadoso que transmite confiabilidade e profissionalismo,
+/// adequado para um sistema de saúde pública.
 class AppTheme {
   AppTheme._(); // Construtor privado
 
@@ -28,7 +28,7 @@ class AppTheme {
       // ────────────────────────────────────────────────────────────────────────
       // ESQUEMA DE CORES
       // ────────────────────────────────────────────────────────────────────────
-      colorScheme: ColorScheme.light(
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
         error: AppColors.danger,
@@ -101,7 +101,7 @@ class AppTheme {
       // ────────────────────────────────────────────────────────────────────────
       cardTheme: CardThemeData(
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.08),
+        shadowColor: Colors.black.withValues(alpha: 0.08),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         color: Colors.white,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -120,7 +120,7 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
-        iconTheme: IconThemeData(color: AppColors.textPrimary),
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
 
       // ────────────────────────────────────────────────────────────────────────
@@ -147,7 +147,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          side: BorderSide(color: AppColors.primary, width: 1.5),
+          side: const BorderSide(color: AppColors.primary, width: 1.5),
           textStyle: GoogleFonts.montserrat(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -175,11 +175,11 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.primary, width: 2),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.danger, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.danger, width: 1.5),
         ),
         labelStyle: GoogleFonts.montserrat(color: AppColors.textSecondary),
         hintStyle: GoogleFonts.montserrat(color: AppColors.textTertiary),
@@ -188,7 +188,7 @@ class AppTheme {
       // ────────────────────────────────────────────────────────────────────────
       // DIVIDER
       // ────────────────────────────────────────────────────────────────────────
-      dividerTheme: DividerThemeData(
+      dividerTheme: const DividerThemeData(
         color: AppColors.divider,
         thickness: 1,
         space: 32,
@@ -207,10 +207,156 @@ class AppTheme {
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // TEMA DARK (Futuro, caso deseje implementar)
+  // TEMA DARK
   // ══════════════════════════════════════════════════════════════════════════
 
-  // static ThemeData get darkTheme {
-  //   // TODO: Implementar tema escuro para acessibilidade
-  // }
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+
+      // ────────────────────────────────────────────────────────────────────────
+      // ESQUEMA DE CORES DARK
+      // ────────────────────────────────────────────────────────────────────────
+      colorScheme: const ColorScheme.dark(
+        primary: AppColors.primary,
+        secondary: AppColors.secondary,
+        error: AppColors.danger,
+        surface: Color(0xFF1F2937),
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onSurface: Color(0xFFE5E7EB),
+        onError: Colors.white,
+      ),
+
+      scaffoldBackgroundColor: const Color(0xFF111827),
+
+      // ────────────────────────────────────────────────────────────────────────
+      // TIPOGRAFIA DARK (mesma estrutura, cores ajustadas)
+      // ────────────────────────────────────────────────────────────────────────
+      textTheme: GoogleFonts.montserratTextTheme().copyWith(
+        headlineLarge: GoogleFonts.montserrat(
+          fontSize: 32,
+          fontWeight: FontWeight.w700,
+          color: const Color(0xFFF9FAFB),
+        ),
+        headlineMedium: GoogleFonts.montserrat(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFFF9FAFB),
+        ),
+        titleLarge: GoogleFonts.montserrat(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFFF3F4F6),
+        ),
+        titleMedium: GoogleFonts.montserrat(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFFF3F4F6),
+        ),
+        bodyLarge: GoogleFonts.montserrat(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: const Color(0xFFE5E7EB),
+        ),
+        bodyMedium: GoogleFonts.montserrat(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: const Color(0xFFD1D5DB),
+        ),
+        bodySmall: GoogleFonts.montserrat(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          color: const Color(0xFF9CA3AF),
+        ),
+      ),
+
+      // ────────────────────────────────────────────────────────────────────────
+      // APP BAR DARK
+      // ────────────────────────────────────────────────────────────────────────
+      appBarTheme: AppBarTheme(
+        backgroundColor: const Color(0xFF1F2937),
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: GoogleFonts.montserrat(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFFF9FAFB),
+        ),
+        iconTheme: const IconThemeData(color: Color(0xFFF9FAFB)),
+      ),
+
+      // ────────────────────────────────────────────────────────────────────────
+      // CARDS DARK
+      // ────────────────────────────────────────────────────────────────────────
+      cardTheme: CardThemeData(
+        color: const Color(0xFF1F2937),
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shadowColor: Colors.black.withOpacity(0.5),
+      ),
+
+      // ────────────────────────────────────────────────────────────────────────
+      // BOTÕES DARK
+      // ────────────────────────────────────────────────────────────────────────
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          textStyle: GoogleFonts.montserrat(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          textStyle: GoogleFonts.montserrat(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      // ────────────────────────────────────────────────────────────────────────
+      // INPUT FIELDS DARK
+      // ────────────────────────────────────────────────────────────────────────
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFF374151),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFF4B5563)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFF4B5563)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        hintStyle: GoogleFonts.montserrat(
+          color: const Color(0xFF6B7280),
+          fontSize: 14,
+        ),
+      ),
+
+      // ────────────────────────────────────────────────────────────────────────
+      // FLOATING ACTION BUTTON DARK
+      // ────────────────────────────────────────────────────────────────────────
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        elevation: 4,
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
 }

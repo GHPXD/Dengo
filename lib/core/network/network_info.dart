@@ -5,10 +5,12 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 /// Útil para exibir mensagens offline ou usar cache local
 /// quando não há internet disponível.
 ///
-/// No contexto do TCC, demonstra preocupação com UX offline-first.
+/// Demonstra preocupação com UX offline-first e disponibilidade de dados.
 class NetworkInfo {
+  /// Instância do plugin de conectividade
   final Connectivity connectivity;
 
+  /// Cria utilitário de informações de rede
   NetworkInfo(this.connectivity);
 
   /// Verifica se o dispositivo está conectado à internet.

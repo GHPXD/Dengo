@@ -201,16 +201,41 @@ class PredictionService:
 
             # Predição
             prediction = self.model.predict(input_scaled)[0]
-            casos_estimados = max(0, int(prediction))  # Não pode ser negativo
+            casos_estimados_raw = max(0, int(prediction))  # Não pode ser negativo
 
-            logger.info(f"🎯 Predição ML: {casos_estimados} casos estimados")
+            # SAFEGUARD: Se modelo tem R² negativo, aplica caps e ajustes
+            # Baseado nas métricas reais do modelo (MAE ~700, R² -0.25)
+            # Isso evita previsões absurdas como 3000+ casos em uma semana
+            
+            # Cap máximo baseado em histórico real de Curitiba (pico ~200 casos/semana)
+            MAX_CASOS_SEMANAL = 300
+            MIN_CASOS_SEMANAL = 0
+            
+            # Aplica blend com heurística se casos_semana_anterior disponível
+            if casos_semana_anterior > 0:
+                # Blend: 70% modelo + 30% persistência (semana anterior)
+                # Isso suaviza previsões extremas
+                casos_estimados = int(
+                    0.7 * min(casos_estimados_raw, MAX_CASOS_SEMANAL) +
+                    0.3 * casos_semana_anterior
+                )
+            else:
+                casos_estimados = min(casos_estimados_raw, MAX_CASOS_SEMANAL)
+            
+            casos_estimados = max(MIN_CASOS_SEMANAL, casos_estimados)
+
+            logger.info(
+                f"🎯 Predição ML: {casos_estimados} casos "
+                f"(raw: {casos_estimados_raw}, capped: {casos_estimados_raw > MAX_CASOS_SEMANAL})"
+            )
 
             # Classifica nível de risco
             nivel_risco = self._classify_risk_level(casos_estimados)
 
-            # Calcula confiança (baseado no R² do modelo)
-            # Quanto maior o R², maior a confiança
-            confianca = 0.85 if self.is_loaded else 0.5
+            # Calcula confiança baseada nas métricas reais do modelo
+            # R² = -0.25 indica modelo com baixa confiança
+            # Confiança ajustada: 0.50 (baixa, pois R² < 0)
+            confianca = 0.50 if self.is_loaded else 0.30
 
             return {
                 "casos_estimados": casos_estimados,
@@ -219,7 +244,8 @@ class PredictionService:
                 "tendencia": self._get_trend(
                     casos_estimados, casos_semana_anterior
                 ),
-                "fonte": "ML (GradientBoostingRegressor)",
+                "fonte": "ML (XGBoost) com safeguards",
+                "observacao": "Modelo com R² negativo. Previsão ajustada com heurísticas." if self.is_loaded else None,
             }
 
         except Exception as e:

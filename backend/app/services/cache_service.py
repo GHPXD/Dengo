@@ -243,6 +243,80 @@ class CacheService:
             logger.error(f"❌ Error getting TTL: {e}")
             return None
 
+    # ════════════════════════════════════════════════════════════════════════
+    # MÉTODOS GENÉRICOS (para InfoDengue e outros serviços)
+    # ════════════════════════════════════════════════════════════════════════
+
+    async def get(self, key: str) -> Optional[Any]:
+        """
+        Busca valor genérico no cache.
+
+        Args:
+            key: Chave do cache (ex: "infodengue:historical:4113700:5")
+
+        Returns:
+            Any: Dados deserializados (dict, list, etc.) ou None
+        """
+        if not self.is_connected or not self.redis_client:
+            logger.debug("⚠️  Redis offline - pulando cache GET")
+            return None
+
+        try:
+            cached_data = await self.redis_client.get(key)
+
+            if cached_data:
+                logger.info(f"✓ Cache HIT: {key}")
+                return json.loads(cached_data)
+            else:
+                logger.debug(f"⚠ Cache MISS: {key}")
+                return None
+
+        except redis.RedisError as e:
+            logger.error(f"❌ Redis GET error ({key}): {e}")
+            return None
+        except json.JSONDecodeError as e:
+            logger.error(f"❌ JSON decode error ({key}): {e}")
+            return None
+        except Exception as e:
+            logger.error(f"❌ Unexpected error in cache GET ({key}): {e}")
+            return None
+
+    async def set(self, key: str, value: Any, ttl: int = 3600) -> bool:
+        """
+        Salva valor genérico no cache.
+
+        Args:
+            key: Chave do cache
+            value: Valor a ser salvo (dict, list, etc. - serializável em JSON)
+            ttl: Time To Live em segundos (padrão: 3600s = 1 hora)
+
+        Returns:
+            bool: True se salvou com sucesso, False caso contrário
+        """
+        if not self.is_connected or not self.redis_client:
+            logger.debug("⚠️  Redis offline - pulando cache SET")
+            return False
+
+        try:
+            json_data = json.dumps(value, ensure_ascii=False)
+
+            await self.redis_client.setex(
+                name=key, time=ttl, value=json_data
+            )
+
+            logger.success(f"✓ Cache SET: {key} (TTL: {ttl}s)")
+            return True
+
+        except redis.RedisError as e:
+            logger.error(f"❌ Redis SET error ({key}): {e}")
+            return False
+        except (TypeError, ValueError) as e:
+            logger.error(f"❌ JSON serialization error ({key}): {e}")
+            return False
+        except Exception as e:
+            logger.error(f"❌ Unexpected error in cache SET ({key}): {e}")
+            return False
+
 
 # ════════════════════════════════════════════════════════════════════════════
 # SINGLETON INSTANCE (será injetado no main.py)

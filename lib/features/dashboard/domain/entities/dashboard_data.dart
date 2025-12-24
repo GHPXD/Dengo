@@ -23,6 +23,7 @@ class DashboardData extends Equatable {
   /// Código IBGE da cidade
   final String cityIbgeCode;
 
+  /// Cria instância de [DashboardData] com dados completos
   const DashboardData({
     required this.historicalData,
     required this.prediction,

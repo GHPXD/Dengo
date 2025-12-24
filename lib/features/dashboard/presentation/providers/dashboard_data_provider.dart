@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/config/app_providers.dart';
@@ -17,7 +18,7 @@ part 'dashboard_data_provider.g.dart';
 ///
 /// Injeta dependências: ApiClient e NetworkInfo.
 @riverpod
-DashboardRepository dashboardRepository(DashboardRepositoryRef ref) {
+DashboardRepository dashboardRepository(Ref ref) {
   return DashboardRepositoryImpl(
     remoteDataSource: DashboardRemoteDataSourceImpl(
       apiClient: ref.watch(apiClientProvider),
@@ -39,7 +40,7 @@ DashboardRepository dashboardRepository(DashboardRepositoryRef ref) {
 /// ROBUSTEZ: Se cidade estiver null, tenta carregar do SharedPreferences
 /// antes de lançar erro.
 ///
-/// Retorna AsyncValue<entities.DashboardData>:
+/// Retorna `AsyncValue<entities.DashboardData>`:
 /// - AsyncLoading: Carregando dados
 /// - AsyncData: Dados carregados com sucesso
 /// - AsyncError: Erro ao carregar
@@ -50,12 +51,11 @@ class DashboardDataState extends _$DashboardDataState {
     // Escuta mudanças na cidade selecionada
     var city = ref.watch(selectedCityProvider);
 
-    print(
-        '📊 DashboardDataState.build() - Cidade inicial: ${city?.name ?? "NULL"}');
+    // 📊 DashboardDataState.build() - Cidade inicial: ${city?.name ?? "NULL"}
 
     // ROBUSTEZ: Se cidade for null, tenta carregar do SharedPreferences
     if (city == null) {
-      print('⚠️ Cidade null, tentando carregar do SharedPreferences...');
+      // ⚠️ Cidade null, tentando carregar do SharedPreferences...
 
       // Tenta carregar cidade salva
       await ref.read(selectedCityProvider.notifier).loadSavedCity();
@@ -63,16 +63,16 @@ class DashboardDataState extends _$DashboardDataState {
       // Re-lê após tentativa de carregamento
       city = ref.read(selectedCityProvider);
 
-      print('🔄 Após loadSavedCity(): ${city?.name ?? "AINDA NULL"}');
+      // 🔄 Após loadSavedCity(): ${city?.name ?? "AINDA NULL"}
 
       // Se mesmo assim for null, lança erro
       if (city == null) {
-        print('❌ Erro: Nenhuma cidade disponível');
+        // ❌ Erro: Nenhuma cidade disponível
         throw Exception('Nenhuma cidade selecionada');
       }
     }
 
-    print('🌐 Buscando dados para: ${city.name} (IBGE: ${city.ibgeCode})');
+    // 🌐 Buscando dados para: ${city.name} (IBGE: ${city.ibgeCode})
 
     // Busca dados da API Python usando código IBGE (não ID interno)
     final repository = ref.watch(dashboardRepositoryProvider);
@@ -80,11 +80,11 @@ class DashboardDataState extends _$DashboardDataState {
 
     return result.fold(
       (failure) {
-        print('❌ Erro ao buscar dados: ${failure.message}');
+        // ❌ Erro ao buscar dados: ${failure.message}
         throw Exception(failure.message);
       },
       (data) {
-        print('✅ Dados carregados com sucesso!');
+        // ✅ Dados carregados com sucesso!
         return data;
       },
     );

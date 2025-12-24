@@ -13,12 +13,15 @@ import '../providers/city_search_provider.dart';
 /// - Se SIM: Navega direto para Dashboard
 /// - Se NÃO: Navega para Onboarding
 class SplashScreen extends ConsumerStatefulWidget {
+  /// Creates a [SplashScreen] widget.
   const SplashScreen({super.key});
 
+  /// Creates the mutable state for this widget.
   @override
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
+/// State class for [SplashScreen].
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
@@ -62,7 +65,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -77,6 +80,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               // App Name
               Text(
                 'Dengo',
+                // ignore: avoid_dynamic_calls
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -88,8 +92,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               // Tagline
               Text(
                 'Previsão Inteligente • Saúde Pública',
+                // ignore: avoid_dynamic_calls
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
               ),
 

@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/config/app_providers.dart';
@@ -15,25 +16,24 @@ part 'onboarding_providers.g.dart';
 
 /// Provider para Remote DataSource de cidades.
 @riverpod
-CityRemoteDataSource cityRemoteDataSource(CityRemoteDataSourceRef ref) {
+CityRemoteDataSource cityRemoteDataSource(Ref ref) {
   final apiClient = ref.watch(apiClientProvider);
   return CityRemoteDataSourceImpl(apiClient.dio);
 }
 
 /// Provider para Local DataSource de cidades.
+/// 
+/// Usa Hive para persistência local, sem dependência de SharedPreferences.
 @riverpod
-Future<CityLocalDataSource> cityLocalDataSource(
-  CityLocalDataSourceRef ref,
-) async {
-  final sharedPrefs = await ref.watch(sharedPreferencesProvider.future);
-  return CityLocalDataSourceImpl(sharedPrefs);
+CityLocalDataSource cityLocalDataSource(Ref ref) {
+  return CityLocalDataSourceImpl();
 }
 
 /// Provider para CityRepository (implementação concreta).
 @riverpod
-Future<CityRepository> cityRepository(CityRepositoryRef ref) async {
+CityRepository cityRepository(Ref ref) {
   final remoteDataSource = ref.watch(cityRemoteDataSourceProvider);
-  final localDataSource = await ref.watch(cityLocalDataSourceProvider.future);
+  final localDataSource = ref.watch(cityLocalDataSourceProvider);
   final networkInfo = ref.watch(networkInfoProvider);
 
   return CityRepositoryImpl(
@@ -49,23 +49,21 @@ Future<CityRepository> cityRepository(CityRepositoryRef ref) async {
 
 /// Provider para SearchCities UseCase.
 @riverpod
-Future<SearchCities> searchCitiesUseCase(SearchCitiesUseCaseRef ref) async {
-  final repository = await ref.watch(cityRepositoryProvider.future);
+SearchCities searchCitiesUseCase(Ref ref) {
+  final repository = ref.watch(cityRepositoryProvider);
   return SearchCities(repository);
 }
 
 /// Provider para SaveSelectedCity UseCase.
 @riverpod
-Future<SaveSelectedCity> saveSelectedCityUseCase(
-  SaveSelectedCityUseCaseRef ref,
-) async {
-  final repository = await ref.watch(cityRepositoryProvider.future);
+SaveSelectedCity saveSelectedCityUseCase(Ref ref) {
+  final repository = ref.watch(cityRepositoryProvider);
   return SaveSelectedCity(repository);
 }
 
 /// Provider para GetSavedCity UseCase.
 @riverpod
-Future<GetSavedCity> getSavedCityUseCase(GetSavedCityUseCaseRef ref) async {
-  final repository = await ref.watch(cityRepositoryProvider.future);
+GetSavedCity getSavedCityUseCase(Ref ref) {
+  final repository = ref.watch(cityRepositoryProvider);
   return GetSavedCity(repository);
 }

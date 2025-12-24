@@ -8,7 +8,7 @@ import '../entities/city.dart';
 /// Define as operações disponíveis para gerenciar cidades,
 /// sem implementação concreta. A implementação fica na camada Data.
 ///
-/// Usa Either<Failure, Success> para tratamento de erros funcional,
+/// Usa `Either<Failure, Success>` para tratamento de erros funcional,
 /// evitando exceções não tratadas.
 abstract class CityRepository {
   /// Busca cidades por nome ou parte do nome.
@@ -16,8 +16,8 @@ abstract class CityRepository {
   /// [query]: Texto de busca (ex: "São Paulo")
   ///
   /// Retorna:
-  /// - Left(Failure): Em caso de erro (rede, parse, etc)
-  /// - Right(List<City>): Lista de cidades encontradas
+  /// - `Left(Failure)`: Em caso de erro (rede, parse, etc)
+  /// - `Right(List<City>)`: Lista de cidades encontradas
   Future<Either<Failure, List<City>>> searchCities(String query);
 
   /// Busca cidade por código IBGE.

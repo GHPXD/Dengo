@@ -27,10 +27,11 @@ class HistoricalDataModel with _$HistoricalDataModel {
     @JsonKey(name: 'umidade_media') required double umidadeMedia,
   }) = _HistoricalDataModel;
 
+  /// Cria [HistoricalDataModel] a partir do JSON da API
   factory HistoricalDataModel.fromJson(Map<String, dynamic> json) =>
       _$HistoricalDataModelFromJson(json);
 
-  /// Converte Model para Entity (Domain Layer)
+  /// Converte model (Data) para entity (Domain)
   HistoricalData toEntity() {
     return HistoricalData(
       date: DateTime.parse(data),

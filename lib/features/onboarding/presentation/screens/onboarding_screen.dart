@@ -11,12 +11,15 @@ import '../widgets/city_search_results.dart';
 /// Primeira tela que o usuário vê ao abrir o app pela primeira vez.
 /// Permite buscar e selecionar a cidade para receber previsões de dengue.
 class OnboardingScreen extends ConsumerStatefulWidget {
+  /// Creates an [OnboardingScreen] widget.
   const OnboardingScreen({super.key});
 
+  /// Creates the mutable state for this widget.
   @override
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
+/// State class for [OnboardingScreen].
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
@@ -30,9 +33,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
 
             // Search bar
-            SliverToBoxAdapter(
+            const SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppConstants.defaultHorizontalPadding,
                 ),
                 child: CitySearchBar(),
@@ -53,9 +56,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget _buildHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppConstants.spacingXl),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: AppColors.primaryGradient,
-        borderRadius: const BorderRadius.only(
+        borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(AppConstants.radiusXl),
           bottomRight: Radius.circular(AppConstants.radiusXl),
         ),
@@ -66,7 +69,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Container(
             padding: const EdgeInsets.all(AppConstants.spacingLg),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -82,6 +85,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Text(
             'Bem-vindo ao\nDengo',
             textAlign: TextAlign.center,
+            // ignore: avoid_dynamic_calls
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   color: Colors.white,
                 ),
@@ -93,8 +97,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Text(
             'Selecione sua cidade para receber\nprevisões de casos de dengue',
             textAlign: TextAlign.center,
+            // ignore: avoid_dynamic_calls
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
           ),
         ],

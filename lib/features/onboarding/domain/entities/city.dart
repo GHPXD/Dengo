@@ -29,6 +29,7 @@ class City extends Equatable {
   /// População estimada
   final int population;
 
+  /// Cria instância de [City] com todas propriedades obrigatórias
   const City({
     required this.id,
     required this.name,

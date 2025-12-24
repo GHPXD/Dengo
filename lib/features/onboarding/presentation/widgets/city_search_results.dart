@@ -17,8 +17,10 @@ import '../providers/city_search_provider.dart';
 /// - Loaded: Lista de cidades
 /// - Error: Mensagem de erro
 class CitySearchResults extends ConsumerWidget {
+  /// Creates a [CitySearchResults] widget.
   const CitySearchResults({super.key});
 
+  /// Builds the widget based on search state.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final searchState = ref.watch(citySearchProvider);
@@ -48,7 +50,7 @@ class CitySearchResults extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.search_rounded,
                 size: 80,
                 color: AppColors.textTertiary,
@@ -56,6 +58,7 @@ class CitySearchResults extends ConsumerWidget {
               const SizedBox(height: AppConstants.spacingLg),
               Text(
                 'Digite o nome da sua cidade',
+                // ignore: avoid_dynamic_calls
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -64,6 +67,7 @@ class CitySearchResults extends ConsumerWidget {
               const SizedBox(height: AppConstants.spacingMd),
               Text(
                 'Use a barra de busca acima para encontrar\nsua cidade e começar a usar o app',
+                // ignore: avoid_dynamic_calls
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -112,20 +116,12 @@ class CitySearchResults extends ConsumerWidget {
     // Seleciona a cidade
     ref.read(selectedCityProvider.notifier).selectCity(city);
 
-    // Debug
-    print('🏙️ Cidade selecionada: ${city.name} (ID: ${city.id})');
-
     // Salva localmente
     final saved = await ref.read(selectedCityProvider.notifier).saveCity();
-
-    // Debug
-    print('💾 Cidade salva: $saved');
 
     if (!context.mounted) return;
 
     if (saved) {
-      // Debug
-      print('🚀 Navegando para dashboard...');
       // Navega para Dashboard
       context.go(AppRoutes.dashboard);
     } else {
@@ -142,13 +138,14 @@ class CitySearchResults extends ConsumerWidget {
 
 /// Widget individual de cidade na lista.
 class CityListTile extends StatelessWidget {
+  /// City data to display.
   final City city;
+  /// Callback when city is tapped.
   final VoidCallback onTap;
 
+  /// Creates a [CityListTile].
   const CityListTile({
-    super.key,
-    required this.city,
-    required this.onTap,
+    required this.city, required this.onTap, super.key,
   });
 
   @override
@@ -166,7 +163,7 @@ class CityListTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppConstants.spacingMd),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppConstants.radiusMd),
                 ),
                 child: const Icon(
@@ -185,11 +182,13 @@ class CityListTile extends StatelessWidget {
                   children: [
                     Text(
                       city.fullName,
+                      // ignore: avoid_dynamic_calls
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Pop: ${_formatPopulation(city.population)}',
+                      // ignore: avoid_dynamic_calls
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppColors.textSecondary,
                           ),

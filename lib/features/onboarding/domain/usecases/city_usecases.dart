@@ -9,13 +9,15 @@ import '../repositories/city_repository.dart';
 /// Encapsula a regra de negócio de busca de cidades.
 /// Cada Use Case tem uma única responsabilidade (Single Responsibility Principle).
 ///
-/// No contexto do TCC, demonstra separação clara entre:
+/// Demonstra separação clara entre:
 /// - Regras de negócio (Use Cases)
 /// - Acesso a dados (Repositories)
 /// - Apresentação (Providers/UI)
 class SearchCities {
+  /// Repositório para acesso aos dados de cidades
   final CityRepository repository;
 
+  /// Cria use case de busca de cidades
   SearchCities(this.repository);
 
   /// Executa a busca de cidades.
@@ -28,16 +30,16 @@ class SearchCities {
   Future<Either<Failure, List<City>>> call(String query) async {
     // Validação de entrada
     if (query.trim().isEmpty) {
-      return Left(
-        const ValidationFailure(
+      return const Left(
+        ValidationFailure(
           message: 'Digite o nome da cidade para buscar.',
         ),
       );
     }
 
     if (query.trim().length < 3) {
-      return Left(
-        const ValidationFailure(
+      return const Left(
+        ValidationFailure(
           message: 'Digite pelo menos 3 caracteres para buscar.',
         ),
       );
@@ -50,8 +52,10 @@ class SearchCities {
 
 /// Use Case para salvar a cidade selecionada.
 class SaveSelectedCity {
+  /// Repositório para persistir dados de cidades
   final CityRepository repository;
 
+  /// Cria use case para salvar cidade
   SaveSelectedCity(this.repository);
 
   /// Salva a cidade escolhida pelo usuário.
@@ -64,8 +68,10 @@ class SaveSelectedCity {
 
 /// Use Case para obter a cidade salva.
 class GetSavedCity {
+  /// Repositório para recuperar dados de cidades
   final CityRepository repository;
 
+  /// Cria use case para obter cidade salva
   GetSavedCity(this.repository);
 
   /// Recupera a cidade previamente salva.

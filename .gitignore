@@ -50,3 +50,6 @@ app.*.map.json
 # Hive (databases locais)
 *.hive
 *.lock
+
+# Environment variables (segurança)
+.env

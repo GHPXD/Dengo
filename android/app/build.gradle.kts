@@ -20,8 +20,8 @@ android {
     }
 
     defaultConfig {
-        // Application ID para Dengo TCC
-        applicationId = "br.edu.tcc.dengo"
+        // Application ID para Dengo
+        applicationId = "br.com.dengo.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

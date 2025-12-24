@@ -1,20 +1,20 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
 
 import '../models/city_model.dart';
-import 'dart:convert';
 
 /// Data Source local para armazenar cidade selecionada.
 ///
-/// Usa SharedPreferences para persistir a cidade escolhida pelo usuário.
+/// Usa Hive (NoSQL local database) para persistir a cidade escolhida.
 /// Permite que o app "lembre" da cidade mesmo após fechar.
+/// Mais rápido e eficiente que SharedPreferences para objetos complexos.
 abstract class CityLocalDataSource {
-  /// Salva cidade localmente.
-  Future<void> saveCity(CityModel city);
+  /// Salva cidade localmente no cache Hive.
+  Future<void> cacheCity(CityModel city);
 
-  /// Recupera cidade salva.
+  /// Recupera última cidade salva do cache.
   ///
-  /// Throws: Exception se nenhuma cidade estiver salva.
-  Future<CityModel> getSavedCity();
+  /// Retorna null se nenhuma cidade estiver salva.
+  Future<CityModel?> getLastCity();
 
   /// Verifica se há cidade salva.
   Future<bool> hasSavedCity();
@@ -23,39 +23,42 @@ abstract class CityLocalDataSource {
   Future<void> clearSavedCity();
 }
 
+/// Implementation of [CityLocalDataSource] using Hive.
 class CityLocalDataSourceImpl implements CityLocalDataSource {
-  final SharedPreferences sharedPreferences;
+  /// Nome da box Hive usada para armazenar cidades.
+  static const String boxName = 'cities';
+  
+  /// Chave para armazenar a última cidade selecionada.
+  static const String _lastCityKey = 'last_selected_city';
 
-  /// Chave usada para salvar no SharedPreferences.
-  static const String _savedCityKey = 'saved_city';
-
-  CityLocalDataSourceImpl(this.sharedPreferences);
+  /// Box do Hive que armazena objetos CityModel.
+  Box<CityModel> get _box => Hive.box<CityModel>(boxName);
 
   @override
-  Future<void> saveCity(CityModel city) async {
-    final cityJson = jsonEncode(city.toJson());
-    await sharedPreferences.setString(_savedCityKey, cityJson);
+  Future<void> cacheCity(CityModel city) async {
+    // Salva a cidade com uma chave fixa (última selecionada)
+    await _box.put(_lastCityKey, city);
   }
 
   @override
-  Future<CityModel> getSavedCity() async {
-    final cityJson = sharedPreferences.getString(_savedCityKey);
-
-    if (cityJson == null) {
-      throw Exception('Nenhuma cidade salva');
+  Future<CityModel?> getLastCity() async {
+    final city = _box.get(_lastCityKey);
+    
+    if (city == null) {
+      return null;
     }
-
-    final cityMap = jsonDecode(cityJson) as Map<String, dynamic>;
-    return CityModel.fromJson(cityMap);
+    
+    // Debug: Cidade recuperada do cache Hive
+    return city;
   }
 
   @override
   Future<bool> hasSavedCity() async {
-    return sharedPreferences.containsKey(_savedCityKey);
+    return _box.containsKey(_lastCityKey);
   }
 
   @override
   Future<void> clearSavedCity() async {
-    await sharedPreferences.remove(_savedCityKey);
+    await _box.delete(_lastCityKey);
   }
 }

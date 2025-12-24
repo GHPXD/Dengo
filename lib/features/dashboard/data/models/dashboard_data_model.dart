@@ -44,10 +44,11 @@ class DashboardDataModel with _$DashboardDataModel {
     @JsonKey(name: 'predicao') required PredictionDataModel prediction,
   }) = _DashboardDataModel;
 
+  /// Cria [DashboardDataModel] a partir do JSON da API
   factory DashboardDataModel.fromJson(Map<String, dynamic> json) =>
       _$DashboardDataModelFromJson(json);
 
-  /// Converte Model para Entity (Domain Layer)
+  /// Converte model (Data) para entity (Domain)
   DashboardData toEntity() {
     final historicalEntities =
         historicalData.map((model) => model.toEntity()).toList();
@@ -62,15 +63,17 @@ class DashboardDataModel with _$DashboardDataModel {
   }
 }
 
-/// Informações da cidade retornadas pela API
+/// Informações básicas da cidade na resposta da API
 @freezed
 class CityInfoModel with _$CityInfoModel {
+  /// Cria instância de [CityInfoModel]
   const factory CityInfoModel({
     @JsonKey(name: 'ibge_codigo') required String ibgeCode,
     @JsonKey(name: 'nome') required String nome,
     @JsonKey(name: 'populacao') required int population,
   }) = _CityInfoModel;
 
+  /// Cria [CityInfoModel] a partir do JSON
   factory CityInfoModel.fromJson(Map<String, dynamic> json) =>
       _$CityInfoModelFromJson(json);
 }

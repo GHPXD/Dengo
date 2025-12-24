@@ -10,8 +10,10 @@ import '../providers/city_search_provider.dart';
 /// Implementa debounce de 500ms para evitar requisições excessivas
 /// enquanto o usuário digita.
 class CitySearchBar extends ConsumerStatefulWidget {
+  /// Creates a [CitySearchBar] widget.
   const CitySearchBar({super.key});
 
+  /// Creates the mutable state for this widget.
   @override
   ConsumerState<CitySearchBar> createState() => _CitySearchBarState();
 }

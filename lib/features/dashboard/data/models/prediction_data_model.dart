@@ -28,10 +28,11 @@ class PredictionDataModel with _$PredictionDataModel {
     @JsonKey(name: 'confianca') required double confianca,
   }) = _PredictionDataModel;
 
+  /// Cria [PredictionDataModel] a partir do JSON da API
   factory PredictionDataModel.fromJson(Map<String, dynamic> json) =>
       _$PredictionDataModelFromJson(json);
 
-  /// Converte Model para Entity (Domain Layer)
+  /// Converte model (Data) para entity (Domain)
   PredictionData toEntity() {
     return PredictionData(
       estimatedCases: casosEstimados,

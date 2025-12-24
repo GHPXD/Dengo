@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -6,7 +7,8 @@ import '../../features/onboarding/presentation/screens/splash_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/heatmap/presentation/screens/heatmap_screen.dart';
-import '../../features/education/presentation/screens/education_screen.dart';
+import '../../features/trends/presentation/screens/trends_screen.dart';
+import '../../features/city_detail/presentation/screens/city_detail_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -21,7 +23,7 @@ part 'app_router.g.dart';
 /// As rotas são gerenciadas via Riverpod para facilitar
 /// navegação programática e guarda de rotas.
 @riverpod
-GoRouter appRouter(AppRouterRef ref) {
+GoRouter appRouter(Ref ref) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
@@ -57,21 +59,15 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
 
       GoRoute(
-        path: AppRoutes.education,
-        name: AppRouteNames.education,
-        builder: (context, state) => const EducationScreen(),
+        path: AppRoutes.trends,
+        name: AppRouteNames.trends,
+        builder: (context, state) => const TrendsScreen(),
       ),
 
-      // ════════════════════════════════════════════════════════════════════
-      // PREDICTION DETAILS
-      // ════════════════════════════════════════════════════════════════════
       GoRoute(
-        path: '${AppRoutes.predictionDetails}/:cityId',
-        name: AppRouteNames.predictionDetails,
-        builder: (context, state) {
-          final cityId = state.pathParameters['cityId']!;
-          return PredictionDetailsScreen(cityId: cityId);
-        },
+        path: AppRoutes.cityDetail,
+        name: AppRouteNames.cityDetail,
+        builder: (context, state) => const CityDetailScreen(),
       ),
     ],
 
@@ -84,16 +80,29 @@ GoRouter appRouter(AppRouterRef ref) {
 
 /// Definição de caminhos (paths) das rotas.
 ///
-/// Centralizadas para evitar typos e facilitar refatoração.
+/// Caminhos de rotas do aplicativo.
+///
+/// Centralizada para evitar typos e facilitar refatoração.
 class AppRoutes {
   AppRoutes._();
 
+  /// Rota da tela de splash (inicial)
   static const String splash = '/';
+
+  /// Rota da tela de onboarding
   static const String onboarding = '/onboarding';
+
+  /// Rota da tela de dashboard (principal)
   static const String dashboard = '/dashboard';
+
+  /// Rota da tela de mapa de calor
   static const String heatmap = '/heatmap';
-  static const String education = '/education';
-  static const String predictionDetails = '/prediction';
+
+  /// Rota da tela de tendências/gráficos
+  static const String trends = '/trends';
+
+  /// Rota da tela de detalhes da cidade
+  static const String cityDetail = '/city-detail';
 }
 
 /// Nomes das rotas para navegação type-safe.
@@ -102,40 +111,33 @@ class AppRoutes {
 class AppRouteNames {
   AppRouteNames._();
 
+  /// Nome da rota splash
   static const String splash = 'splash';
+
+  /// Nome da rota onboarding
   static const String onboarding = 'onboarding';
+
+  /// Nome da rota dashboard
   static const String dashboard = 'dashboard';
+
+  /// Nome da rota heatmap
   static const String heatmap = 'heatmap';
-  static const String education = 'education';
-  static const String predictionDetails = 'prediction-details';
+
+  /// Nome da rota trends
+  static const String trends = 'trends';
+
+  /// Nome da rota city detail
+  static const String cityDetail = 'city-detail';
 }
 
-// ══════════════════════════════════════════════════════════════════════════
-// PLACEHOLDER SCREENS (Prediction Details - temporário)
-// ══════════════════════════════════════════════════════════════════════════
-
-class PredictionDetailsScreen extends StatelessWidget {
-  final String cityId;
-
-  const PredictionDetailsScreen({
-    super.key,
-    required this.cityId,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text('Prediction Details for city: $cityId')),
-    );
-  }
-}
-
+/// Tela de erro genérica para erros de navegação
 class ErrorScreen extends StatelessWidget {
+  /// Mensagem de erro a ser exibida
   final String error;
 
+  /// Cria tela de erro
   const ErrorScreen({
-    super.key,
-    required this.error,
+    required this.error, super.key,
   });
 
   @override

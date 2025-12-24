@@ -21,7 +21,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
-from app.api import dashboard_router
+from app.api import cities_router, dashboard_router
 from app.core.config import settings
 from app.core.logger import logger
 from app.services import cache_service, prediction_service
@@ -97,6 +97,20 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Configurar encoding UTF-8 para todas as respostas JSON
+from fastapi.responses import JSONResponse
+from fastapi import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class UTF8JSONMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        if response.headers.get("content-type", "").startswith("application/json"):
+            response.headers["content-type"] = "application/json; charset=utf-8"
+        return response
+
+app.add_middleware(UTF8JSONMiddleware)
+
 # Adiciona Limiter ao app state
 app.state.limiter = limiter
 
@@ -123,6 +137,10 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 app.include_router(
     dashboard_router, prefix=settings.api_prefix, tags=["Dashboard"]
+)
+
+app.include_router(
+    cities_router, prefix=f"{settings.api_prefix}/cities", tags=["Cities"]
 )
 
 

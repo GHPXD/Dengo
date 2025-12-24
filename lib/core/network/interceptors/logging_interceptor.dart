@@ -12,8 +12,10 @@ import 'package:logger/logger.dart';
 /// IMPORTANTE: Em produção (release mode), este interceptor
 /// pode ser desabilitado para performance.
 class LoggingInterceptor extends Interceptor {
+  /// Instância do logger para registrar eventos HTTP
   final Logger logger;
 
+  /// Cria interceptor de logging
   LoggingInterceptor(this.logger);
 
   @override

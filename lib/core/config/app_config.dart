@@ -1,11 +1,11 @@
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-/// Configurações globais do aplicativo DenguePredict.
+/// Configurações globais do aplicativo Dengo.
 ///
 /// Centraliza informações estáticas como nome, versão, URLs de API,
 /// timeouts e outras constantes de configuração.
-/// Facilita manutenção e documentação do projeto para o TCC.
+/// Sistema escalável de previsão de dengue, iniciando pelo Paraná com expansão futura para outros estados.
 class AppConfig {
   AppConfig._(); // Construtor privado para prevenir instanciação
 
@@ -13,8 +13,13 @@ class AppConfig {
   // INFORMAÇÕES DO APLICATIVO
   // ══════════════════════════════════════════════════════════════════════════
 
+  /// Nome do aplicativo exibido ao usuário.
   static const String appName = 'Dengo';
+
+  /// Versão atual do aplicativo (formato semver).
   static const String appVersion = '1.0.0';
+
+  /// Descrição curta do propósito do aplicativo.
   static const String appDescription =
       'Previsão de casos de dengue usando Inteligência Artificial';
 
@@ -46,10 +51,16 @@ class AppConfig {
   }
 
   /// Timeout padrão para requisições HTTP (em milissegundos)
-  static const int apiTimeoutMs = 30000; // 30 segundos
+  static const int apiTimeoutMs = 45000; // 45 segundos (ML pode demorar)
 
   /// Timeout para requisições de conexão
-  static const int connectTimeoutMs = 15000; // 15 segundos
+  static const int connectTimeoutMs = 10000; // 10 segundos
+
+  /// Número de tentativas de retry em caso de erro
+  static const int maxRetryAttempts = 2;
+
+  /// Delay entre tentativas de retry (em milissegundos)
+  static const int retryDelayMs = 1000; // 1 segundo
 
   // ══════════════════════════════════════════════════════════════════════════
   // CONFIGURAÇÕES DE CACHE
@@ -80,17 +91,4 @@ class AppConfig {
 
   /// Zoom máximo permitido
   static const double maxMapZoom = 18.0;
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // NÍVEIS DE RISCO (Thresholds)
-  // ══════════════════════════════════════════════════════════════════════════
-
-  /// Threshold de risco baixo (verde) - casos por 100k habitantes
-  static const double lowRiskThreshold = 100.0;
-
-  /// Threshold de risco médio (amarelo) - casos por 100k habitantes
-  static const double mediumRiskThreshold = 300.0;
-
-  /// Acima deste valor é considerado risco alto (vermelho)
-  static const double highRiskThreshold = 300.0;
 }

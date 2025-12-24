@@ -1,8 +1,6 @@
-import '../../config/app_config.dart';
-
 /// Enum para níveis de risco de dengue.
 ///
-/// Baseado em thresholds epidemiológicos (casos por 100k habitantes).
+/// Centraliza thresholds epidemiológicos (casos por 100k habitantes).
 /// Cada nível possui cor semântica associada para visualização.
 enum RiskLevel {
   /// Risco baixo (< 100 casos/100k hab) - situação controlada
@@ -12,7 +10,21 @@ enum RiskLevel {
   medium,
 
   /// Risco alto (> 300 casos/100k hab) - situação crítica/surto
-  high,
+  high;
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // THRESHOLDS EPIDEMIOLÓGICOS (Fonte Única de Verdade)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// Threshold de risco baixo (verde) - casos por 100k habitantes
+  static const double lowThreshold = 100.0;
+
+  /// Threshold de risco médio (amarelo) - casos por 100k habitantes
+  static const double mediumThreshold = 300.0;
+
+  /// Threshold de risco alto (vermelho) - casos por 100k habitantes
+  /// Valores acima deste são considerados situação crítica/surto
+  static const double highThreshold = 300.0;
 }
 
 /// Extensões para facilitar uso do enum RiskLevel.
@@ -26,6 +38,18 @@ extension RiskLevelExtensions on RiskLevel {
         return 'Risco Médio';
       case RiskLevel.high:
         return 'Risco Alto';
+    }
+  }
+
+  /// Retorna nome simples do enum (baixo, médio, alto).
+  String get displayName {
+    switch (this) {
+      case RiskLevel.low:
+        return 'baixo';
+      case RiskLevel.medium:
+        return 'médio';
+      case RiskLevel.high:
+        return 'alto';
     }
   }
 
@@ -58,9 +82,9 @@ extension RiskLevelExtensions on RiskLevel {
   ///
   /// [incidenceRate]: Casos por 100.000 habitantes
   static RiskLevel fromIncidenceRate(double incidenceRate) {
-    if (incidenceRate < AppConfig.lowRiskThreshold) {
+    if (incidenceRate < RiskLevel.lowThreshold) {
       return RiskLevel.low;
-    } else if (incidenceRate < AppConfig.mediumRiskThreshold) {
+    } else if (incidenceRate < RiskLevel.mediumThreshold) {
       return RiskLevel.medium;
     } else {
       return RiskLevel.high;
@@ -70,17 +94,23 @@ extension RiskLevelExtensions on RiskLevel {
 
 /// Helper class para acessar cores (workaround para constantes)
 class AppColorsClass {
+  /// Nome semântico da cor
   final String name;
+
+  /// Valor hexadecimal ARGB da cor
   final int value;
 
+  /// Cria cor de sucesso (verde)
   const AppColorsClass.success()
       : name = 'success',
         value = 0xFF10B981;
 
+  /// Cria cor de alerta (amarelo/laranja)
   const AppColorsClass.warning()
       : name = 'warning',
         value = 0xFFF59E0B;
 
+  /// Cria cor de perigo (vermelho)
   const AppColorsClass.danger()
       : name = 'danger',
         value = 0xFFEF4444;

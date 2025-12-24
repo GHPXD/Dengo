@@ -23,6 +23,7 @@ class PredictionData extends Equatable {
   /// - <0.7: Baixa confiança
   final double confidence;
 
+  /// Cria instância de [PredictionData] com valores de predição
   const PredictionData({
     required this.estimatedCases,
     required this.riskLevel,

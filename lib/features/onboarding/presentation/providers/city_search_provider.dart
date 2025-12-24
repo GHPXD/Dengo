@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/entities/city.dart';
@@ -11,9 +10,13 @@ part 'city_search_provider.g.dart';
 /// Estado da busca de cidades.
 @freezed
 class CitySearchState with _$CitySearchState {
+  /// Initial state before any search.
   const factory CitySearchState.initial() = _Initial;
+  /// Loading state while searching.
   const factory CitySearchState.loading() = _Loading;
+  /// Loaded state with search results.
   const factory CitySearchState.loaded(List<City> cities) = _Loaded;
+  /// Error state with error message.
   const factory CitySearchState.error(String message) = _Error;
 }
 
@@ -37,7 +40,7 @@ class CitySearch extends _$CitySearch {
 
     state = const CitySearchState.loading();
 
-    final searchUseCase = await ref.read(searchCitiesUseCaseProvider.future);
+    final searchUseCase = ref.read(searchCitiesUseCaseProvider);
     final result = await searchUseCase(query);
 
     result.fold(
@@ -71,7 +74,7 @@ class SelectedCity extends _$SelectedCity {
   Future<bool> saveCity() async {
     if (state == null) return false;
 
-    final saveUseCase = await ref.read(saveSelectedCityUseCaseProvider.future);
+    final saveUseCase = ref.read(saveSelectedCityUseCaseProvider);
     final result = await saveUseCase(state!);
 
     return result.fold(
@@ -82,19 +85,14 @@ class SelectedCity extends _$SelectedCity {
 
   /// Carrega cidade salva (se existir).
   Future<void> loadSavedCity() async {
-    print('🔍 Tentando carregar cidade salva...');
-
-    final getSavedUseCase = await ref.read(getSavedCityUseCaseProvider.future);
+    final getSavedUseCase = ref.read(getSavedCityUseCaseProvider);
     final result = await getSavedUseCase();
 
     result.fold(
       (failure) {
-        print('⚠️ Nenhuma cidade salva: ${failure.message}');
         state = null;
       },
       (city) {
-        print(
-            '✅ Cidade carregada do cache: ${city.name} (IBGE: ${city.ibgeCode})');
         state = city;
       },
     );

@@ -2,6 +2,7 @@
 ///
 /// Verifica que os principais componentes da aplicação
 /// renderizam corretamente.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

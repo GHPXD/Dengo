@@ -64,7 +64,7 @@ class Settings(BaseSettings):
     # CORS
     # ════════════════════════════════════════════════════════════════════════
     cors_origins: List[str] = Field(
-        default=["http://localhost:3000", "http://localhost:8080"],
+        default=["*"],  # Permite qualquer origem para desenvolvimento/testes
         alias="CORS_ORIGINS",
     )
     cors_allow_credentials: bool = Field(default=True, alias="CORS_ALLOW_CREDENTIALS")

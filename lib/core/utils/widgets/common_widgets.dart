@@ -8,10 +8,16 @@ import '../../theme/app_colors.dart';
 /// Exibe um CircularProgressIndicator com a cor primária do app
 /// e uma mensagem opcional.
 class AppLoadingIndicator extends StatelessWidget {
+  /// Mensagem exibida abaixo do indicador de progresso
   final String? message;
+
+  /// Cor customizada do indicador (padrão: AppColors.primary)
   final Color? color;
+
+  /// Tamanho do indicador em pixels
   final double size;
 
+  /// Cria um indicador de carregamento personalizado
   const AppLoadingIndicator({
     super.key,
     this.message,
@@ -37,6 +43,7 @@ class AppLoadingIndicator extends StatelessWidget {
             const SizedBox(height: AppConstants.spacingMd),
             Text(
               message!,
+              // ignore: avoid_dynamic_calls
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -53,13 +60,18 @@ class AppLoadingIndicator extends StatelessWidget {
 ///
 /// Exibe mensagem de erro com opção de retry.
 class AppErrorWidget extends StatelessWidget {
+  /// Mensagem de erro a ser exibida
   final String message;
+
+  /// Callback chamado ao pressionar botão "Tentar Novamente"
   final VoidCallback? onRetry;
+
+  /// Ícone exibido no topo do widget de erro
   final IconData icon;
 
+  /// Cria um widget de erro
   const AppErrorWidget({
-    super.key,
-    required this.message,
+    required this.message, super.key,
     this.onRetry,
     this.icon = Icons.error_outline,
   });
@@ -80,6 +92,7 @@ class AppErrorWidget extends StatelessWidget {
             const SizedBox(height: AppConstants.spacingMd),
             Text(
               message,
+              // ignore: avoid_dynamic_calls
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -104,13 +117,18 @@ class AppErrorWidget extends StatelessWidget {
 ///
 /// Exibe quando não há dados para mostrar, mas não é um erro.
 class AppEmptyState extends StatelessWidget {
+  /// Mensagem explicativa sobre o estado vazio
   final String message;
+
+  /// Ícone representando estado vazio
   final IconData icon;
+
+  /// Widget de ação customizada (ex: botão)
   final Widget? action;
 
+  /// Cria um widget de estado vazio
   const AppEmptyState({
-    super.key,
-    required this.message,
+    required this.message, super.key,
     this.icon = Icons.inbox_outlined,
     this.action,
   });
@@ -131,6 +149,7 @@ class AppEmptyState extends StatelessWidget {
             const SizedBox(height: AppConstants.spacingMd),
             Text(
               message,
+              // ignore: avoid_dynamic_calls
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: AppColors.textSecondary,
                   ),

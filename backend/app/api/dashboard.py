@@ -29,7 +29,7 @@ from slowapi.util import get_remote_address
 
 from app.core.logger import logger
 from app.schemas.dashboard import DashboardResponseSchema
-from app.services import cache_service, prediction_service, weather_service
+from app.services import cache_service, infodengue_service, prediction_service, weather_service, cities_service
 from app.services.weather_service import CITY_COORDINATES
 
 router = APIRouter()
@@ -85,18 +85,25 @@ async def get_dashboard(
     # STEP 2: BUSCA COORDENADAS DA CIDADE
     # ════════════════════════════════════════════════════════════════════════
 
-    if city_id not in CITY_COORDINATES:
-        logger.error(f"❌ Cidade não encontrada: {city_id}")
-        raise HTTPException(
-            status_code=404,
-            detail=f"Cidade com código IBGE {city_id} não encontrada. "
-            "Apenas capitais brasileiras são suportadas no momento.",
-        )
-
-    city_data = CITY_COORDINATES[city_id]
-    city_name = city_data["name"]
-    lat = city_data["lat"]
-    lon = city_data["lon"]
+    # Tenta buscar das capitais hardcoded primeiro (fallback)
+    if city_id in CITY_COORDINATES:
+        city_data = CITY_COORDINATES[city_id]
+        city_name = city_data["name"]
+        lat = city_data["lat"]
+        lon = city_data["lon"]
+    else:
+        # Busca no CitiesService (399 cidades do Paraná + outras)
+        city = cities_service.get_city_by_ibge(city_id)
+        if not city:
+            logger.error(f"❌ Cidade não encontrada: {city_id}")
+            raise HTTPException(
+                status_code=404,
+                detail=f"Cidade com código IBGE {city_id} não encontrada.",
+            )
+        
+        city_name = city["nome"]
+        lat = city["latitude"]
+        lon = city["longitude"]
 
     logger.info(f"📍 Cidade: {city_name} (lat={lat}, lon={lon})")
 
@@ -125,14 +132,24 @@ async def get_dashboard(
     )
 
     # ════════════════════════════════════════════════════════════════════════
-    # STEP 5: GERA DADOS HISTÓRICOS (SIMULADOS - SUBSTITUIR POR INFODENGUE)
+    # STEP 5: BUSCA DADOS HISTÓRICOS REAIS (InfoDengue API)
     # ════════════════════════════════════════════════════════════════════════
 
-    # TODO: Substituir por InfoDengue API real
-    # Por enquanto, gera dados históricos baseados na predição
-    dados_historicos = _generate_historical_data(
-        prediction["casos_estimados"], weather_data
-    )
+    try:
+        # Busca últimas 5 semanas de dados reais do Ministério da Saúde
+        dados_historicos = await infodengue_service.get_historical_data(
+            ibge_code=city_id, weeks=5
+        )
+        logger.success(
+            f"✓ InfoDengue: {len(dados_historicos)} semanas de dados reais"
+        )
+    except Exception as e:
+        logger.error(f"❌ Erro ao buscar InfoDengue: {e}")
+        # Fallback: gera dados estimados
+        logger.warning("⚠️ Usando dados de fallback")
+        dados_historicos = _generate_historical_data_fallback(
+            prediction["casos_estimados"], weather_data
+        )
 
     # ════════════════════════════════════════════════════════════════════════
     # STEP 6: MONTA RESPOSTA FINAL
@@ -169,19 +186,18 @@ async def get_dashboard(
 # ════════════════════════════════════════════════════════════════════════════
 
 
-def _generate_historical_data(casos_base: int, weather_data: dict) -> List[dict]:
+def _generate_historical_data_fallback(casos_base: int, weather_data: dict) -> List[dict]:
     """
-    Gera dados históricos simulados dos últimos 5 dias.
+    Gera dados históricos de fallback quando InfoDengue falha.
 
-    TODO: Substituir por dados reais do InfoDengue API
-    Endpoint: https://info.dengue.mat.br/api/alertcity?geocode={ibge_code}
+    Usado apenas como backup quando API oficial está indisponível.
 
     Args:
         casos_base: Número de casos estimados (base para variação)
         weather_data: Dados climáticos atuais
 
     Returns:
-        list[dict]: Lista com 5 dias de dados históricos
+        list[dict]: Lista com 5 dias de dados estimados
     """
     import random
 

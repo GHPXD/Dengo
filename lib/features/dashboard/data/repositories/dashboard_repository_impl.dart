@@ -11,12 +11,15 @@ import '../datasources/dashboard_remote_datasource.dart';
 /// Esta camada:
 /// - Converte Models (Data Layer) → Entities (Domain Layer)
 /// - Gerencia cache local (Hive) para modo offline
-/// - Trata erros e retorna Either<Failure, Success>
+/// - Trata erros e retorna `Either<Failure, Success>`
 class DashboardRepositoryImpl implements DashboardRepository {
+  /// Remote data source for fetching dashboard data from API
   final DashboardRemoteDataSource remoteDataSource;
+  
+  /// Network info service to check connectivity
   final NetworkInfo networkInfo;
-  // TODO: Adicionar LocalDataSource quando implementar cache Hive
 
+  /// Creates a [DashboardRepositoryImpl] with required dependencies
   DashboardRepositoryImpl({
     required this.remoteDataSource,
     required this.networkInfo,
@@ -25,7 +28,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
   @override
   Future<Either<Failure, DashboardData>> getDashboardData(String cityId) async {
     if (!await networkInfo.isConnected) {
-      // TODO: Tentar buscar do cache local (Hive)
       return const Left(NetworkFailure());
     }
 
@@ -33,7 +35,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
       final model = await remoteDataSource.getDashboardData(cityId);
       final entity = model.toEntity();
 
-      // TODO: Salvar no cache local (Hive) para acesso offline
       return Right(entity);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
@@ -53,7 +54,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
       final model = await remoteDataSource.getDashboardData(cityId);
       final entity = model.toEntity();
 
-      // TODO: Atualizar cache local (Hive)
       return Right(entity);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));

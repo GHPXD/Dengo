@@ -24,9 +24,14 @@ abstract class DashboardRemoteDataSource {
   Future<DashboardDataModel> getDashboardData(String cityId);
 }
 
+/// Implementation of [DashboardRemoteDataSource] using Dio HTTP client.
+///
+/// Communicates with the Python backend API to fetch dashboard data.
 class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
+  /// HTTP client for API communication
   final ApiClient apiClient;
 
+  /// Creates a [DashboardRemoteDataSourceImpl] with the given [apiClient]
   DashboardRemoteDataSourceImpl({required this.apiClient});
 
   @override
