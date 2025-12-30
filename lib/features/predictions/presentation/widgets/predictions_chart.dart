@@ -8,11 +8,13 @@ import '../../domain/entities/prediction_response.dart';
 /// - Linha verde sólida: Casos históricos confirmados (últimas 12 semanas)
 /// - Linha azul tracejada: Predições da IA (próximas 1-4 semanas)
 class PredictionsChart extends StatelessWidget {
+  /// Dados contendo histórico e predições.
   final PredictionResponse data;
 
+  /// Construtor padrão.
   const PredictionsChart({
-    super.key,
     required this.data,
+    super.key,
   });
 
   @override
@@ -44,7 +46,8 @@ class PredictionsChart extends StatelessWidget {
         horizontalInterval: data.maxCases / 5,
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: Colors.grey.withOpacity(0.2),
+            // Correção: withValues em vez de withOpacity
+            color: Colors.grey.withValues(alpha: 0.2),
             strokeWidth: 1,
           );
         },
@@ -59,7 +62,9 @@ class PredictionsChart extends StatelessWidget {
       lineTouchData: LineTouchData(
         enabled: true,
         touchTooltipData: LineTouchTooltipData(
-          getTooltipColor: (touchedSpot) => Colors.blueGrey.withOpacity(0.8),
+          // Correção: withValues em vez de withOpacity
+          getTooltipColor: (touchedSpot) =>
+              Colors.blueGrey.withValues(alpha: 0.8),
           getTooltipItems: (touchedSpots) {
             return touchedSpots.map((spot) {
               final isHistorical = spot.barIndex == 0;
@@ -104,7 +109,8 @@ class PredictionsChart extends StatelessWidget {
       ),
       belowBarData: BarAreaData(
         show: true,
-        color: Colors.green.withOpacity(0.1),
+        // Correção: withValues em vez de withOpacity
+        color: Colors.green.withValues(alpha: 0.1),
       ),
     );
   }
@@ -141,7 +147,8 @@ class PredictionsChart extends StatelessWidget {
       ),
       belowBarData: BarAreaData(
         show: true,
-        color: Colors.blue.withOpacity(0.1),
+        // Correção: withValues em vez de withOpacity
+        color: Colors.blue.withValues(alpha: 0.1),
       ),
     );
   }

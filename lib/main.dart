@@ -31,6 +31,7 @@ void main() async {
 ///
 /// Aplica o tema customizado e integra GoRouter para navegação declarativa.
 class DengoApp extends ConsumerWidget {
+  /// Construtor padrão do widget raiz.
   const DengoApp({super.key});
 
   /// Builds the root widget of the app
@@ -41,14 +42,14 @@ class DengoApp extends ConsumerWidget {
     return MaterialApp.router(
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
-      
+
       // ────────────────────────────────────────────────────────────────────────
       // TEMAS (Light e Dark)
       // ────────────────────────────────────────────────────────────────────────
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system, // Respeita preferência do sistema
-      
+
       routerConfig: router,
     );
   }

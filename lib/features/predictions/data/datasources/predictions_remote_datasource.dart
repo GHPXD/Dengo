@@ -8,9 +8,11 @@ import '../models/prediction_response_model.dart';
 ///
 /// Responsável pela comunicação HTTP com o backend FastAPI.
 class PredictionsRemoteDataSource {
+  /// Cliente HTTP utilizado para realizar as requisições.
   final ApiClient apiClient;
   final Logger _logger = Logger();
 
+  /// Construtor que recebe a instância do [ApiClient].
   PredictionsRemoteDataSource({required this.apiClient});
 
   /// Busca predições de dengue para um município.
@@ -34,9 +36,12 @@ class PredictionsRemoteDataSource {
         },
       );
 
-      _logger.i('✅ Predições recebidas: ${response.data['city']}');
+      // Cast seguro para evitar 'avoid_dynamic_calls'
+      final data = response.data as Map<String, dynamic>;
 
-      return PredictionResponseModel.fromJson(response.data as Map<String, dynamic>);
+      _logger.i('✅ Predições recebidas: ${data['city']}');
+
+      return PredictionResponseModel.fromJson(data);
     } on DioException catch (e) {
       _logger.e('❌ Erro ao buscar predições: ${e.message}', error: e);
       rethrow;

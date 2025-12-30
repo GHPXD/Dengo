@@ -6,6 +6,7 @@ import '../datasources/heatmap_remote_datasource.dart';
 class HeatmapRepositoryImpl implements HeatmapRepository {
   final HeatmapRemoteDataSource _remoteDataSource;
 
+  /// Construtor que recebe o [HeatmapRemoteDataSource] via injeção.
   HeatmapRepositoryImpl({
     required HeatmapRemoteDataSource remoteDataSource,
   }) : _remoteDataSource = remoteDataSource;

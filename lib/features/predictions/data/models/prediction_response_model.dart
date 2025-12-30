@@ -6,6 +6,7 @@ import 'week_prediction_model.dart';
 ///
 /// Responsável por serialização/deserialização JSON da API.
 class PredictionResponseModel extends PredictionResponse {
+  /// Construtor padrão do Model.
   const PredictionResponseModel({
     required super.city,
     required super.geocode,
@@ -22,6 +23,9 @@ class PredictionResponseModel extends PredictionResponse {
 
   /// Cria model a partir de JSON da API
   factory PredictionResponseModel.fromJson(Map<String, dynamic> json) {
+    // Cast seguro para evitar 'avoid_dynamic_calls'
+    final metadata = json['model_metadata'] as Map<String, dynamic>;
+
     return PredictionResponseModel(
       city: json['city'] as String,
       geocode: json['geocode'] as String,
@@ -35,9 +39,9 @@ class PredictionResponseModel extends PredictionResponse {
       trend: _parseTrend(json['trend'] as String),
       trendPercentage: (json['trend_percentage'] as num).toDouble(),
       generatedAt: DateTime.parse(json['generated_at'] as String),
-      modelName: json['model_metadata']['model_name'] as String,
-      modelAccuracy: (json['model_metadata']['accuracy'] as num).toDouble(),
-      modelMae: (json['model_metadata']['mae'] as num).toDouble(),
+      modelName: metadata['model_name'] as String,
+      modelAccuracy: (metadata['accuracy'] as num).toDouble(),
+      modelMae: (metadata['mae'] as num).toDouble(),
     );
   }
 

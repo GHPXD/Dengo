@@ -20,6 +20,7 @@ part 'historical_data_model.g.dart';
 class HistoricalDataModel with _$HistoricalDataModel {
   const HistoricalDataModel._();
 
+  /// Cria uma instância de [HistoricalDataModel].
   const factory HistoricalDataModel({
     @JsonKey(name: 'data') required String data,
     @JsonKey(name: 'casos') required int casos,

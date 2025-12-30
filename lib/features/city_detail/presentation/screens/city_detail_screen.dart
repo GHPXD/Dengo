@@ -2,103 +2,91 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:dengue_predict/core/widgets/app_bottom_nav.dart';
-
 import '../../../dashboard/presentation/providers/dashboard_data_provider.dart';
 import '../../../onboarding/presentation/providers/city_search_provider.dart';
 
+// --- IMPORTS DAS ENTIDADES (Essenciais para Tipagem Forte) ---
+import '../../../onboarding/domain/entities/city.dart';
+import '../../../dashboard/domain/entities/dashboard_data.dart';
+import '../../../dashboard/domain/entities/historical_data.dart';
+
+// --- Constantes de Design ---
+class _AppStyles {
+  static const primary = Color(0xFF2E8B8B);
+  static const primaryDark = Color(0xFF1E7B7B);
+  static const textDark = Color(0xFF2E5C6E);
+  static const textGrey = Color(0xFF4A5568);
+  static const textLightGrey = Color(0xFF9CA3AF);
+  static const bgGrey = Color(0xFFFAFAFA);
+
+  static const alertHigh = Color(0xFFFF6B6B);
+  static const alertMedium = Color(0xFFFF8A80);
+  static const warning = Color(0xFFFBBF24);
+  static const success = Color(0xFF10B981);
+  static const infoBg = Color(0xFFFFF4EC);
+
+  static const cardShadow = BoxShadow(
+    color: Color.fromRGBO(0, 0, 0, 0.05),
+    blurRadius: 10,
+    offset: Offset(0, 4),
+  );
+}
+
 /// Perfil da Cidade - City Detail
-///
-/// Mergulho profundo nos dados de uma cidade específica:
-/// - População vs Casos
-/// - Comparação com média estadual
-/// - Previsão específica
 class CityDetailScreen extends ConsumerWidget {
+  /// Construtor padrão da tela de detalhes da cidade.
   const CityDetailScreen({super.key});
 
-  /// Constrói a tela de detalhes da cidade com todas as estatísticas e previsões
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedCity = ref.watch(selectedCityProvider);
-    final dashboardDataAsync = ref.watch(dashboardDataStateProvider);
+    // Tipagem explícita para evitar dynamic
+    final City? selectedCity = ref.watch(selectedCityProvider);
+    final AsyncValue<DashboardData> dashboardDataAsync =
+        ref.watch(dashboardDataStateProvider);
 
-    // Se não houver cidade selecionada, mostra erro
     if (selectedCity == null) {
-      return Scaffold(
-        backgroundColor: Colors.grey[50],
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.location_off, size: 64, color: Colors.grey[400]),
-              const SizedBox(height: 16),
-              Text(
-                'Nenhuma cidade selecionada',
-                style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-              ),
-            ],
-          ),
-        ),
-      );
+      return const _EmptyStateWidget();
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: _AppStyles.bgGrey,
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context, selectedCity),
+            _CityHeader(city: selectedCity),
             Expanded(
               child: dashboardDataAsync.when(
                 loading: () => const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF2E8B8B),
-                  ),
+                  child: CircularProgressIndicator(color: _AppStyles.primary),
                 ),
-                error: (error, stack) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline,
-                          size: 64, color: Colors.red[300]),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Erro ao carregar dados',
-                        style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        error.toString(),
-                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
+                error: (error, stack) =>
+                    _ErrorStateWidget(error: error.toString()),
                 data: (dashboardData) => ListView(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   children: [
                     // Estatísticas Principais
-                    _buildMainStats(selectedCity, dashboardData),
+                    _MainStatsCard(data: dashboardData),
 
                     const SizedBox(height: 24),
 
                     // População vs Casos
-                    _buildPopulationVsCases(selectedCity, dashboardData),
+                    _PopulationVsCasesCard(data: dashboardData),
 
                     const SizedBox(height: 24),
 
                     // Comparação com Estado
-                    _buildStateComparison(selectedCity, dashboardData),
+                    _StateComparisonCard(
+                        city: selectedCity, data: dashboardData),
 
                     const SizedBox(height: 24),
 
                     // Previsão Específica
-                    _buildCityForecast(selectedCity, dashboardData),
+                    _CityForecastCard(data: dashboardData),
 
                     const SizedBox(height: 24),
 
                     // Histórico Recente
-                    _buildRecentHistory(dashboardData),
+                    _RecentHistoryCard(history: dashboardData.historicalData),
 
                     const SizedBox(height: 24),
                   ],
@@ -108,18 +96,29 @@ class CityDetailScreen extends ConsumerWidget {
           ],
         ),
       ),
-      bottomNavigationBar: AppBottomNav(currentIndex: 4),
+      bottomNavigationBar: const AppBottomNav(currentIndex: 4),
     );
   }
+}
 
-  Widget _buildHeader(BuildContext context, selectedCity) {
+// ==========================================
+// WIDGETS EXTRAÍDOS E TIPADOS
+// ==========================================
+
+class _CityHeader extends StatelessWidget {
+  final City city;
+
+  const _CityHeader({required this.city});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF2E8B8B), Color(0xFF1E7B7B)],
+          colors: [_AppStyles.primary, _AppStyles.primaryDark],
         ),
       ),
       child: Column(
@@ -129,15 +128,15 @@ class CityDetailScreen extends ConsumerWidget {
             children: [
               GestureDetector(
                 onTap: () => Navigator.pop(context),
-                child: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
+                child:
+                    const Icon(Icons.arrow_back, color: Colors.white, size: 24),
               ),
               const SizedBox(width: 16),
               const Icon(Icons.location_city, color: Colors.white, size: 28),
               const SizedBox(width: 12),
               Expanded(
-                /// @nodoc
                 child: Text(
-                  selectedCity.name,
+                  city.name,
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -148,9 +147,8 @@ class CityDetailScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 12),
-          /// @nodoc
           Text(
-            '${selectedCity.state}, Brasil',
+            '${city.state}, Brasil',
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withValues(alpha: 0.8),
@@ -160,13 +158,22 @@ class CityDetailScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildMainStats(selectedCity, dashboardData) {
-    /// @nodoc
-    final cases = dashboardData.currentWeek.cases;
-    /// @nodoc
-    final population = dashboardData.cityPopulation;
-    final incidence = (cases / population * 100000).toStringAsFixed(1);
+class _MainStatsCard extends StatelessWidget {
+  final DashboardData data;
+
+  const _MainStatsCard({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final cases = data.currentWeek.cases;
+    final population = data.cityPopulation;
+
+    // Evita divisão por zero
+    final incidence = population > 0
+        ? (cases / population * 100000).toStringAsFixed(1)
+        : '0.0';
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
@@ -174,13 +181,7 @@ class CityDetailScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: const [_AppStyles.cardShadow],
       ),
       child: Column(
         children: [
@@ -191,7 +192,7 @@ class CityDetailScreen extends ConsumerWidget {
                   'Casos Ativos',
                   cases.toString(),
                   Icons.coronavirus_outlined,
-                  const Color(0xFFFF8A80),
+                  _AppStyles.alertMedium,
                 ),
               ),
               Container(
@@ -204,7 +205,7 @@ class CityDetailScreen extends ConsumerWidget {
                   'População',
                   _formatPopulation(population),
                   Icons.people_outline,
-                  const Color(0xFF2E8B8B),
+                  _AppStyles.primary,
                 ),
               ),
             ],
@@ -213,12 +214,13 @@ class CityDetailScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF4EC),
+              color: _AppStyles.infoBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                const Icon(Icons.trending_up, color: Color(0xFFFF8A80), size: 20),
+                const Icon(Icons.trending_up,
+                    color: _AppStyles.alertMedium, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -226,7 +228,7 @@ class CityDetailScreen extends ConsumerWidget {
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF4A5568),
+                      color: _AppStyles.textGrey,
                     ),
                   ),
                 ),
@@ -247,13 +249,6 @@ class CityDetailScreen extends ConsumerWidget {
     return population.toString();
   }
 
-  String _formatNumber(int number) {
-    return number.toString().replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]}.',
-        );
-  }
-
   Widget _buildStatItem(
       String label, String value, IconData icon, Color color) {
     return Column(
@@ -265,28 +260,38 @@ class CityDetailScreen extends ConsumerWidget {
           style: const TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF2E5C6E),
+            color: _AppStyles.textDark,
           ),
         ),
         Text(
           label,
           style: const TextStyle(
             fontSize: 12,
-            color: Color(0xFF9CA3AF),
+            color: _AppStyles.textLightGrey,
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildPopulationVsCases(selectedCity, dashboardData) {
-    /// @nodoc
-    final population = dashboardData.cityPopulation;
-    /// @nodoc
-    final cases = dashboardData.currentWeek.cases;
-    final casesPercentage = (cases / population * 100).toStringAsFixed(2);
+class _PopulationVsCasesCard extends StatelessWidget {
+  final DashboardData data;
+
+  const _PopulationVsCasesCard({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final population = data.cityPopulation;
+    final cases = data.currentWeek.cases;
+
+    final casesPercentage = population > 0
+        ? (cases / population * 100).toStringAsFixed(2)
+        : '0.00';
+
     final recovering = (cases * 0.77).round(); // Estimativa 77%
-    final recoveringPercentage = ((recovering / cases) * 100).round();
+    final recoveringPercentage =
+        cases > 0 ? ((recovering / cases) * 100).round() : 0;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
@@ -294,13 +299,7 @@ class CityDetailScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: const [_AppStyles.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,36 +309,34 @@ class CityDetailScreen extends ConsumerWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF2E5C6E),
+              color: _AppStyles.textDark,
             ),
           ),
           const SizedBox(height: 16),
-
-          // Barra de progresso visual
           Column(
             children: [
-              _buildProgressBar(
-                'População Total',
-                population,
-                population,
-                const Color(0xFF2E8B8B),
-                '${_formatNumber(population)} habitantes',
+              _ProgressBar(
+                label: 'População Total',
+                value: population,
+                total: population,
+                color: _AppStyles.primary,
+                displayText: '${_formatNumber(population)} habitantes',
               ),
               const SizedBox(height: 16),
-              _buildProgressBar(
-                'Casos Confirmados',
-                cases,
-                population,
-                const Color(0xFFFF8A80),
-                '$cases casos ($casesPercentage%)',
+              _ProgressBar(
+                label: 'Casos Confirmados',
+                value: cases,
+                total: population,
+                color: _AppStyles.alertMedium,
+                displayText: '$cases casos ($casesPercentage%)',
               ),
               const SizedBox(height: 16),
-              _buildProgressBar(
-                'Casos em Recuperação',
-                recovering,
-                population,
-                const Color(0xFFFBBF24),
-                '$recovering casos ($recoveringPercentage%)',
+              _ProgressBar(
+                label: 'Casos em Recuperação',
+                value: recovering,
+                total: population,
+                color: _AppStyles.warning,
+                displayText: '$recovering casos ($recoveringPercentage%)',
               ),
             ],
           ),
@@ -348,14 +345,36 @@ class CityDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProgressBar(
-    String label,
-    int value,
-    int total,
-    Color color,
-    String displayText,
-  ) {
-    final percentage = (value / total * 100).clamp(0, 100).toDouble();
+  String _formatNumber(int number) {
+    return number.toString().replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]}.',
+        );
+  }
+}
+
+class _ProgressBar extends StatelessWidget {
+  final String label;
+  final int value;
+  final int total;
+  final Color color;
+  final String displayText;
+
+  const _ProgressBar({
+    required this.label,
+    required this.value,
+    required this.total,
+    required this.color,
+    required this.displayText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Evita divisão por zero
+    final percentage = total > 0
+        ? (value / total * 100).clamp(0, 100).toDouble()
+        : 0.0;
+
     final visualPercentage =
         label == 'População Total' ? 100.0 : percentage * 20;
 
@@ -370,7 +389,7 @@ class CityDetailScreen extends ConsumerWidget {
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF4A5568),
+                color: _AppStyles.textGrey,
               ),
             ),
             Text(
@@ -392,7 +411,8 @@ class CityDetailScreen extends ConsumerWidget {
           ),
           child: FractionallySizedBox(
             alignment: Alignment.centerLeft,
-            widthFactor: visualPercentage / 100,
+            widthFactor:
+                (visualPercentage / 100).clamp(0.01, 1.0), // Garante mínimo visível
             child: Container(
               decoration: BoxDecoration(
                 color: color,
@@ -404,34 +424,40 @@ class CityDetailScreen extends ConsumerWidget {
       ],
     );
   }
+}
 
-  Widget _buildStateComparison(selectedCity, dashboardData) {
-    /// @nodoc
-    final cityIncidence = (dashboardData.currentWeek.cases /
-        dashboardData.cityPopulation *
-        100000);
-    
-    // DADOS REAIS DA API: Usar dashboardData em vez de hardcoded
-    // Taxa de crescimento da cidade
-    final cityGrowth = dashboardData.prediction.estimatedCases >
-            dashboardData.currentWeek.cases
-        ? ((dashboardData.prediction.estimatedCases -
-                dashboardData.currentWeek.cases) /
-            dashboardData.currentWeek.cases *
+class _StateComparisonCard extends StatelessWidget {
+  final City city;
+  final DashboardData data;
+
+  const _StateComparisonCard({required this.city, required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final population = data.cityPopulation;
+    final cityIncidence =
+        population > 0 ? (data.currentWeek.cases / population * 100000) : 0.0;
+
+    final cityGrowth = data.prediction.estimatedCases >
+                data.currentWeek.cases &&
+            data.currentWeek.cases > 0
+        ? ((data.prediction.estimatedCases - data.currentWeek.cases) /
+            data.currentWeek.cases *
             100)
         : 0.0;
-    
-    // Média estadual: Usar valores reais da API /statistics/state
-    // Por enquanto usando valores calculados do backend (24.4% crescimento, 24155.0 incidência)
-    const stateIncidence = 24155.0; // Incidência média PR (casos/100k habitantes)
-    const stateGrowth = 24.4; // Taxa de crescimento PR (%)
-    
-    final incidenceDiff =
-        ((cityIncidence - stateIncidence) / stateIncidence * 100)
-            .toStringAsFixed(0);
 
-    final growthDiff =
-        ((cityGrowth - stateGrowth) / stateGrowth * 100).toStringAsFixed(0);
+    // Valores de referência (Mantendo a lógica original)
+    const stateIncidence = 24155.0;
+    const stateGrowth = 24.4;
+
+    final incidenceDiff = stateIncidence > 0
+        ? ((cityIncidence - stateIncidence) / stateIncidence * 100)
+            .toStringAsFixed(0)
+        : '0';
+
+    final growthDiff = stateGrowth > 0
+        ? ((cityGrowth - stateGrowth) / stateGrowth * 100).toStringAsFixed(0)
+        : '0';
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
@@ -439,75 +465,78 @@ class CityDetailScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: const [_AppStyles.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.compare_arrows, color: Color(0xFF2E8B8B), size: 20),
+              const Icon(Icons.compare_arrows,
+                  color: _AppStyles.primary, size: 20),
               const SizedBox(width: 8),
-              /// @nodoc
               Text(
-                'Comparação com ${selectedCity.state}',
+                'Comparação com ${city.state}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2E5C6E),
+                  color: _AppStyles.textDark,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          _buildComparisonItem(
-            'Incidência',
-            '${cityIncidence.toStringAsFixed(1)} / 100k',
-            '${stateIncidence.toStringAsFixed(1)} / 100k',
-            '$incidenceDiff%',
-            cityIncidence > stateIncidence,
-            /// @nodoc
-            selectedCity.name,
+          _ComparisonItem(
+            label: 'Incidência',
+            cityValue: '${cityIncidence.toStringAsFixed(1)} / 100k',
+            stateValue: '${stateIncidence.toStringAsFixed(1)} / 100k',
+            difference: '$incidenceDiff%',
+            isNegative: cityIncidence > stateIncidence,
+            cityName: city.name,
           ),
           const SizedBox(height: 16),
-          _buildComparisonItem(
-            'Taxa de Crescimento',
-            '+${cityGrowth.toStringAsFixed(0)}% (7 dias)',
-            '+${stateGrowth.toStringAsFixed(0)}% (7 dias)',
-            '+$growthDiff%',
-            cityGrowth > stateGrowth,
-            /// @nodoc
-            selectedCity.name,
+          _ComparisonItem(
+            label: 'Taxa de Crescimento',
+            cityValue: '+${cityGrowth.toStringAsFixed(0)}% (7 dias)',
+            stateValue: '+${stateGrowth.toStringAsFixed(0)}% (7 dias)',
+            difference: '+$growthDiff%',
+            isNegative: cityGrowth > stateGrowth,
+            cityName: city.name,
           ),
           const SizedBox(height: 16),
-          _buildComparisonItem(
-            'Taxa de Recuperação',
-            '82%', // Dado real da API: taxa_recuperacao estadual
-            '82%', // Média nacional (MS)
-            '0%',  // Sem diferença (dados reais iguais)
-            false,
-            /// @nodoc
-            selectedCity.name,
+          _ComparisonItem(
+            label: 'Taxa de Recuperação',
+            cityValue: '82%',
+            stateValue: '82%',
+            difference: '0%',
+            isNegative: false,
+            cityName: city.name,
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildComparisonItem(
-    String label,
-    String cityValue,
-    String stateValue,
-    String difference,
-    bool isNegative,
-    String cityName,
-  ) {
+class _ComparisonItem extends StatelessWidget {
+  final String label;
+  final String cityValue;
+  final String stateValue;
+  final String difference;
+  final bool isNegative;
+  final String cityName;
+
+  const _ComparisonItem({
+    required this.label,
+    required this.cityValue,
+    required this.stateValue,
+    required this.difference,
+    required this.isNegative,
+    required this.cityName,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -523,7 +552,7 @@ class CityDetailScreen extends ConsumerWidget {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF4A5568),
+              color: _AppStyles.textGrey,
             ),
           ),
           const SizedBox(height: 12),
@@ -537,7 +566,7 @@ class CityDetailScreen extends ConsumerWidget {
                       cityName,
                       style: const TextStyle(
                         fontSize: 11,
-                        color: Color(0xFF9CA3AF),
+                        color: _AppStyles.textLightGrey,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -546,7 +575,7 @@ class CityDetailScreen extends ConsumerWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF2E8B8B),
+                        color: _AppStyles.primary,
                       ),
                     ),
                   ],
@@ -556,7 +585,9 @@ class CityDetailScreen extends ConsumerWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isNegative ? const Color(0xFFFFEBEE) : const Color(0xFFE8F5E9),
+                  color: isNegative
+                      ? const Color(0xFFFFEBEE)
+                      : const Color(0xFFE8F5E9),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -564,7 +595,8 @@ class CityDetailScreen extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: isNegative ? const Color(0xFFFF6B6B) : const Color(0xFF10B981),
+                    color:
+                        isNegative ? _AppStyles.alertHigh : _AppStyles.success,
                   ),
                 ),
               ),
@@ -577,7 +609,7 @@ class CityDetailScreen extends ConsumerWidget {
                       'Média PR',
                       style: TextStyle(
                         fontSize: 11,
-                        color: Color(0xFF9CA3AF),
+                        color: _AppStyles.textLightGrey,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -586,7 +618,7 @@ class CityDetailScreen extends ConsumerWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF9CA3AF),
+                        color: _AppStyles.textLightGrey,
                       ),
                     ),
                   ],
@@ -598,24 +630,30 @@ class CityDetailScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildCityForecast(selectedCity, dashboardData) {
-    // DADOS REAIS DA API: Usar dashboardData.prediction
-    final predictedCases = dashboardData.prediction.estimatedCases;
-    final currentCases = dashboardData.currentWeek.cases;
+class _CityForecastCard extends StatelessWidget {
+  final DashboardData data;
+
+  const _CityForecastCard({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final predictedCases = data.prediction.estimatedCases;
+    final currentCases = data.currentWeek.cases;
     final casesIncrease = predictedCases - currentCases;
+
     final percentageIncrease = currentCases > 0
         ? ((casesIncrease / currentCases) * 100).toStringAsFixed(0)
         : '0';
-    
-    // Nível de risco vem da API
-    final riskLevel = dashboardData.prediction.riskLevel;
-    final riskLevelText = riskLevel == 'alto' 
-        ? 'Alto' 
-        : riskLevel == 'medio' || riskLevel == 'médio'
+
+    final riskLevel = data.prediction.riskLevel.toString().toLowerCase();
+    final riskLevelText = riskLevel == 'alto'
+        ? 'Alto'
+        : (riskLevel == 'medio' || riskLevel == 'médio')
             ? 'Médio'
             : 'Baixo';
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(20),
@@ -623,12 +661,12 @@ class CityDetailScreen extends ConsumerWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFFF8A80), Color(0xFFFF6B6B)],
+          colors: [_AppStyles.alertMedium, _AppStyles.alertHigh],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF8A80).withValues(alpha: 0.3),
+            color: _AppStyles.alertMedium.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 6),
           ),
@@ -645,7 +683,8 @@ class CityDetailScreen extends ConsumerWidget {
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.auto_graph, color: Colors.white, size: 24),
+                child:
+                    const Icon(Icons.auto_graph, color: Colors.white, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -679,14 +718,14 @@ class CityDetailScreen extends ConsumerWidget {
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.memory, size: 14, color: Color(0xFFFF8A80)),
+                    Icon(Icons.memory, size: 14, color: _AppStyles.alertMedium),
                     SizedBox(width: 4),
                     Text(
                       'IA',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFFFF8A80),
+                        color: _AppStyles.alertMedium,
                       ),
                     ),
                   ],
@@ -706,18 +745,26 @@ class CityDetailScreen extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildForecastStat(
-                        'Casos Previstos', '+$casesIncrease', Icons.trending_up),
+                    _ForecastStat(
+                        label: 'Casos Previstos',
+                        value: '+$casesIncrease',
+                        icon: Icons.trending_up),
                     Container(
                         width: 1,
                         height: 40,
                         color: Colors.white.withValues(alpha: 0.3)),
-                    _buildForecastStat('Aumento', '+$percentageIncrease%', Icons.arrow_upward),
+                    _ForecastStat(
+                        label: 'Aumento',
+                        value: '+$percentageIncrease%',
+                        icon: Icons.arrow_upward),
                     Container(
                         width: 1,
                         height: 40,
                         color: Colors.white.withValues(alpha: 0.3)),
-                    _buildForecastStat('Risco', riskLevelText, Icons.warning_amber),
+                    _ForecastStat(
+                        label: 'Risco',
+                        value: riskLevelText,
+                        icon: Icons.warning_amber),
                   ],
                 ),
               ],
@@ -751,8 +798,21 @@ class CityDetailScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildForecastStat(String label, String value, IconData icon) {
+class _ForecastStat extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+
+  const _ForecastStat({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Expanded(
       child: Column(
         children: [
@@ -778,10 +838,17 @@ class CityDetailScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildRecentHistory(dashboardData) {
-    /// @nodoc
-    final history = dashboardData.historicalData;
+class _RecentHistoryCard extends StatelessWidget {
+  // Tipagem forte aqui
+  final List<HistoricalData> history;
+
+  const _RecentHistoryCard({required this.history});
+
+  @override
+  Widget build(BuildContext context) {
+    // Lógica para pegar as últimas 4 semanas de forma segura
     final recentWeeks =
         history.length >= 4 ? history.sublist(history.length - 4) : history;
 
@@ -791,13 +858,7 @@ class CityDetailScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: const [_AppStyles.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -807,38 +868,56 @@ class CityDetailScreen extends ConsumerWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF2E5C6E),
+              color: _AppStyles.textDark,
             ),
           ),
           const SizedBox(height: 16),
+          // map tipado automaticamente pela lista de HistoricalData
           ...recentWeeks.asMap().entries.map((entry) {
             final index = entry.key;
             final week = entry.value;
             final daysAgo = recentWeeks.length - index - 1;
+
             final label = daysAgo == 0
                 ? 'Última semana'
                 : '$daysAgo ${daysAgo == 1 ? 'semana' : 'semanas'} atrás';
 
-            /// @nodoc
             final prevCases =
                 index > 0 ? recentWeeks[index - 1].cases : week.cases;
-            /// @nodoc
             final newCases = week.cases - prevCases;
+
             final change = prevCases > 0
                 ? ((newCases / prevCases) * 100).toStringAsFixed(1)
                 : '0.0';
 
-            /// @nodoc
-            return _buildHistoryItem(label, week.cases, newCases.abs(),
-                '${newCases >= 0 ? '+' : ''}$change%');
+            return _HistoryItem(
+              date: label,
+              cases: week.cases,
+              newCases: newCases.abs(),
+              change: '${newCases >= 0 ? '+' : ''}$change%',
+            );
           }),
         ],
       ),
     );
   }
+}
 
-  Widget _buildHistoryItem(
-      String date, int cases, int newCases, String change) {
+class _HistoryItem extends StatelessWidget {
+  final String date;
+  final int cases;
+  final int newCases;
+  final String change;
+
+  const _HistoryItem({
+    required this.date,
+    required this.cases,
+    required this.newCases,
+    required this.change,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final isIncrease = change.startsWith('+');
 
     return Padding(
@@ -851,7 +930,7 @@ class CityDetailScreen extends ConsumerWidget {
               date,
               style: const TextStyle(
                 fontSize: 13,
-                color: Color(0xFF4A5568),
+                color: _AppStyles.textGrey,
               ),
             ),
           ),
@@ -861,7 +940,7 @@ class CityDetailScreen extends ConsumerWidget {
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF2E5C6E),
+                color: _AppStyles.textDark,
               ),
             ),
           ),
@@ -869,7 +948,9 @@ class CityDetailScreen extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: isIncrease ? const Color(0xFFFFEBEE) : const Color(0xFFE8F5E9),
+                color: isIncrease
+                    ? const Color(0xFFFFEBEE)
+                    : const Color(0xFFE8F5E9),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
@@ -877,7 +958,7 @@ class CityDetailScreen extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: isIncrease ? const Color(0xFFFF6B6B) : const Color(0xFF10B981),
+                  color: isIncrease ? _AppStyles.alertHigh : _AppStyles.success,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -895,11 +976,69 @@ class CityDetailScreen extends ConsumerWidget {
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF9CA3AF),
+                color: _AppStyles.textLightGrey,
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// --- ESTADOS DE CARREGAMENTO E ERRO ---
+
+class _EmptyStateWidget extends StatelessWidget {
+  const _EmptyStateWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.location_off, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              'Nenhuma cidade selecionada',
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ErrorStateWidget extends StatelessWidget {
+  final String error;
+
+  const _ErrorStateWidget({required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+            const SizedBox(height: 16),
+            Text(
+              'Erro ao carregar dados',
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error,
+              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

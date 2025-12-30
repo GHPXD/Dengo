@@ -20,6 +20,10 @@ class ApiClient {
   final Logger _logger = Logger();
   late final RetryOptions _retryOptions;
 
+  /// Construtor que inicializa o Dio com as configurações padrão do [AppConfig].
+  ///
+  /// Define timeouts, headers padrão (JSON) e a política de retry para
+  /// falhas de rede.
   ApiClient() {
     _dio = Dio(
       BaseOptions(

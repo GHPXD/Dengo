@@ -23,6 +23,7 @@ part 'city_model.g.dart';
 class CityModel with _$CityModel {
   const CityModel._();
 
+  /// Cria uma instância de [CityModel].
   const factory CityModel({
     @HiveField(0) required String id,
     @HiveField(1) @JsonKey(name: 'nome') required String name,
@@ -37,7 +38,7 @@ class CityModel with _$CityModel {
   factory CityModel.fromJson(Map<String, dynamic> json) {
     // Usa ibge_codigo tanto para id quanto para ibgeCode
     final ibgeCodigo = json['ibge_codigo'] as String;
-    
+
     return CityModel(
       id: ibgeCodigo,
       name: json['nome'] as String,

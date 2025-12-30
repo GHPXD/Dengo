@@ -21,6 +21,7 @@ part 'prediction_data_model.g.dart';
 class PredictionDataModel with _$PredictionDataModel {
   const PredictionDataModel._();
 
+  /// Cria uma instância de [PredictionDataModel].
   const factory PredictionDataModel({
     @JsonKey(name: 'casos_estimados') required int casosEstimados,
     @JsonKey(name: 'nivel_risco') required String nivelRisco,

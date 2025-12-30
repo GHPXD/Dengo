@@ -5,6 +5,7 @@ import '../models/heatmap_data_model.dart';
 class HeatmapRemoteDataSource {
   final ApiClient _apiClient;
 
+  /// Construtor que recebe o [ApiClient] via injeção de dependência.
   HeatmapRemoteDataSource({required ApiClient apiClient})
       : _apiClient = apiClient;
 

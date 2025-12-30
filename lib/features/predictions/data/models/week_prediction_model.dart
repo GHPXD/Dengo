@@ -4,6 +4,7 @@ import '../../domain/entities/week_prediction.dart';
 ///
 /// Responsável por serialização/deserialização JSON da API.
 class WeekPredictionModel extends WeekPrediction {
+  /// Construtor padrão do Model.
   const WeekPredictionModel({
     required super.weekNumber,
     required super.date,

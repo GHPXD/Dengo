@@ -4,15 +4,16 @@ import 'package:equatable/equatable.dart';
 ///
 /// Usado para exibir a linha verde no gráfico (casos reais confirmados).
 class HistoricalWeek extends Equatable {
-  /// Número da semana epidemiológica (1-53)
+  /// Número da semana epidemiológica (1-53).
   final int weekNumber;
 
-  /// Data de início da semana (domingo)
+  /// Data de início da semana (domingo).
   final DateTime date;
 
-  /// Casos confirmados de dengue nesta semana
+  /// Casos confirmados de dengue nesta semana.
   final int cases;
 
+  /// Construtor padrão com todos os campos obrigatórios.
   const HistoricalWeek({
     required this.weekNumber,
     required this.date,

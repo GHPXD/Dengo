@@ -25,6 +25,7 @@ class HeatmapCity extends Equatable {
   /// Nível de risco (baixo/médio/alto)
   final RiskLevel riskLevel;
 
+  /// Construtor padrão para a entidade HeatmapCity.
   const HeatmapCity({
     required this.geocode,
     required this.name,

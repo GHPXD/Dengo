@@ -4,13 +4,17 @@ import '../../domain/entities/prediction_response.dart';
 
 /// Widget que exibe indicador de tendência com ícone e percentual.
 class TrendIndicator extends StatelessWidget {
+  /// O tipo de tendência (crescente, estável, decrescente).
   final TrendType trend;
+
+  /// O percentual de variação em relação ao período anterior.
   final double percentage;
 
+  /// Construtor padrão.
   const TrendIndicator({
-    super.key,
     required this.trend,
     required this.percentage,
+    super.key,
   });
 
   @override
@@ -18,10 +22,10 @@ class TrendIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: _getTrendColor().withOpacity(0.1),
+        color: _getTrendColor().withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _getTrendColor().withOpacity(0.3),
+          color: _getTrendColor().withValues(alpha: 0.3),
           width: 1,
         ),
       ),

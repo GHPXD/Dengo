@@ -4,6 +4,7 @@ import '../../domain/entities/historical_week.dart';
 ///
 /// Responsável por serialização/deserialização JSON da API.
 class HistoricalWeekModel extends HistoricalWeek {
+  /// Construtor padrão do Model.
   const HistoricalWeekModel({
     required super.weekNumber,
     required super.date,

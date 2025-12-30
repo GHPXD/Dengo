@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../core/config/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/enums/risk_level.dart';
 import '../../../../core/utils/widgets/common_widgets.dart';
+import '../../../../core/widgets/app_bottom_nav.dart';
+import '../../../onboarding/domain/entities/city.dart';
 import '../../../onboarding/presentation/providers/city_search_provider.dart';
+import '../../domain/entities/dashboard_data.dart';
 import '../providers/dashboard_data_provider.dart';
-import 'package:dengue_predict/core/widgets/app_bottom_nav.dart';
 
 /// Dashboard principal do aplicativo - Design UX/UI Refatorado.
-///
-/// Novo layout focado em:
-/// - Cards visuais grandes (Risco da Cidade e Risco Estadual)
-/// - Informações concisas e fáceis de entender
-/// - Hierarquia visual clara
 class DashboardScreen extends ConsumerWidget {
+  /// Construtor padrão do dashboard.
   const DashboardScreen({super.key});
 
-  /// Builds the dashboard screen UI
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCity = ref.watch(selectedCityProvider);
@@ -34,10 +29,7 @@ class DashboardScreen extends ConsumerWidget {
           },
           child: Column(
             children: [
-              // Header fixo
-              _buildHeader(context, ref, selectedCity),
-
-              // Conteúdo scrollável
+              const _DashboardHeader(),
               Expanded(
                 child: dashboardDataAsync.when(
                   loading: () => const Center(
@@ -53,13 +45,10 @@ class DashboardScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  error: (error, stack) =>
-                      _buildErrorState(context, ref, error),
-                  data: (dashboardData) => _buildDashboardContent(
-                    context,
-                    ref,
-                    selectedCity,
-                    dashboardData,
+                  error: (error, stack) => _ErrorStateWidget(error: error),
+                  data: (dashboardData) => _DashboardContent(
+                    selectedCity: selectedCity,
+                    dashboardData: dashboardData,
                   ),
                 ),
               ),
@@ -67,25 +56,24 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
       ),
-      bottomNavigationBar: AppBottomNav(currentIndex: 0),
+      bottomNavigationBar: const AppBottomNav(currentIndex: 0),
     );
   }
+}
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // BOTTOM NAVIGATION
-  // ══════════════════════════════════════════════════════════════════════════
+// ==========================================
+// WIDGETS EXTRAÍDOS
+// ==========================================
 
+class _DashboardHeader extends StatelessWidget {
+  const _DashboardHeader();
 
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // HEADER
-  // ══════════════════════════════════════════════════════════════════════════
-
-  Widget _buildHeader(
-      BuildContext context, WidgetRef ref, dynamic selectedCity) {
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
       color: Colors.white,
+      width: double.infinity,
       child: const Text(
         'Dengo',
         style: TextStyle(
@@ -96,12 +84,15 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // ERROR STATE
-  // ══════════════════════════════════════════════════════════════════════════
+class _ErrorStateWidget extends ConsumerWidget {
+  final Object error;
 
-  Widget _buildErrorState(BuildContext context, WidgetRef ref, Object error) {
+  const _ErrorStateWidget({required this.error});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final errorMessage = error.toString();
     final isNetworkError =
         errorMessage.contains('conexão') || errorMessage.contains('CORS');
@@ -120,7 +111,6 @@ class DashboardScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               'Erro de Conexão',
-              // ignore: avoid_dynamic_calls
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
@@ -140,39 +130,53 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // DASHBOARD CONTENT
-  // ══════════════════════════════════════════════════════════════════════════
+class _DashboardContent extends StatefulWidget {
+  final City? selectedCity;
+  final DashboardData dashboardData;
 
-  Widget _buildDashboardContent(
-    BuildContext context,
-    WidgetRef ref,
-    dynamic selectedCity,
-    dynamic dashboardData,
-  ) {
-    /// @nodoc
-    final cityName = selectedCity?.name ?? 'Carregando...';
-    /// @nodoc
-    final stateName = selectedCity?.state ?? 'PR';
+  const _DashboardContent({
+    required this.selectedCity,
+    required this.dashboardData,
+  });
 
-    // Calcula nível de risco
-    /// @nodoc
-    final riskLevel = dashboardData.prediction.riskLevel;
+  @override
+  State<_DashboardContent> createState() => _DashboardContentState();
+}
+
+class _DashboardContentState extends State<_DashboardContent> {
+  final PageController _pageController = PageController(viewportFraction: 1.0);
+  final ValueNotifier<int> _currentPage = ValueNotifier<int>(0);
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      if (_pageController.page != null) {
+        _currentPage.value = _pageController.page!.round();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _currentPage.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cityName = widget.selectedCity?.name ?? 'Carregando...';
+    final stateName = widget.selectedCity?.state ?? 'PR';
+
+    final riskLevel = widget.dashboardData.prediction.riskLevel;
     final riskColor = _getRiskColor(riskLevel);
     final riskText = _getRiskText(riskLevel);
 
-    /// @nodoc
-    final newCases = dashboardData.currentWeek.cases;
-    /// @nodoc
-    final trend = dashboardData.prediction.trend;
-
-    final pageController = PageController(viewportFraction: 1.0);
-    final currentPage = ValueNotifier<int>(0);
-
-    pageController.addListener(() {
-      currentPage.value = pageController.page?.round() ?? 0;
-    });
+    final newCases = widget.dashboardData.currentWeek.cases;
+    final trend = widget.dashboardData.prediction.trend;
 
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -181,42 +185,36 @@ class DashboardScreen extends ConsumerWidget {
         SizedBox(
           height: 240,
           child: PageView(
-            controller: pageController,
-            onPageChanged: (index) => currentPage.value = index,
+            controller: _pageController,
             children: [
-              // Card de Risco da Cidade
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _buildRiskCard(
-                  context,
+                child: _RiskCard(
                   title: 'Risco da Cidade Hoje',
                   subtitle: cityName,
-                  riskLevel: riskText,
+                  riskLevelText: riskText,
                   riskColor: riskColor,
-                  trend: _getTrendText(trend),
+                  trendText: _getTrendText(trend),
                 ),
               ),
-
-              // Card de Risco Estadual
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _buildRiskCard(
-                  context,
+                child: _RiskCard(
                   title: 'Risco Estadual Hoje',
                   subtitle: stateName,
-                  riskLevel: riskText,
+                  riskLevelText: riskText,
                   riskColor: riskColor,
-                  trend: 'Tendência de Estabilidade',
+                  trendText: 'Tendência de Estabilidade',
                 ),
               ),
             ],
           ),
         ),
 
-        // Indicadores de página (dots)
+        // Indicadores de página
         const SizedBox(height: 12),
         ValueListenableBuilder<int>(
-          valueListenable: currentPage,
+          valueListenable: _currentPage,
           builder: (context, page, _) => Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
@@ -227,7 +225,9 @@ class DashboardScreen extends ConsumerWidget {
                 height: 8,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: page == index ? const Color(0xFFFF8A80) : const Color(0xFFBDBDBD),
+                  color: page == index
+                      ? const Color(0xFFFF8A80)
+                      : const Color(0xFFBDBDBD),
                 ),
               ),
             ),
@@ -236,24 +236,16 @@ class DashboardScreen extends ConsumerWidget {
 
         const SizedBox(height: 20),
 
-        // Cards pequenos (Novos Casos e Previsão IA)
+        // Cards pequenos
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Row(
             children: [
-              Expanded(
-                child: _buildSmallCardCases(
-                  context,
-                  newCases,
-                ),
-              ),
+              Expanded(child: _SmallCasesCard(cases: newCases)),
               const SizedBox(width: 16),
               Expanded(
-                child: _buildSmallCardPrediction(
-                  context,
-                  _getTrendText(trend),
-                ),
-              ),
+                  child: _SmallPredictionCard(
+                      prediction: _getTrendText(trend))),
             ],
           ),
         ),
@@ -261,9 +253,9 @@ class DashboardScreen extends ConsumerWidget {
         const SizedBox(height: 24),
 
         // Dica do Dia
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: _buildTipCard(context),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          child: _TipCard(),
         ),
 
         const SizedBox(height: 24),
@@ -271,25 +263,66 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // CARD BUILDERS
-  // ══════════════════════════════════════════════════════════════════════════
+  Color _getRiskColor(RiskLevel level) {
+    switch (level) {
+      case RiskLevel.low:
+        return AppColors.success;
+      case RiskLevel.medium:
+        return AppColors.warning;
+      case RiskLevel.high:
+        return AppColors.danger;
+    }
+  }
 
-  Widget _buildRiskCard(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required String riskLevel,
-    required Color riskColor,
-    required String trend,
-  }) {
+  String _getRiskText(RiskLevel level) {
+    switch (level) {
+      case RiskLevel.low:
+        return 'Risco Baixo';
+      case RiskLevel.medium:
+        return 'Risco Moderado';
+      case RiskLevel.high:
+        return 'Risco Alto';
+    }
+  }
+
+  String _getTrendText(String trend) {
+    switch (trend.toLowerCase()) {
+      case 'crescente':
+      case 'growing':
+        return 'Tendência de Alta';
+      case 'estavel':
+      case 'stable':
+        return 'Tendência de Estabilidade';
+      case 'decrescente':
+      case 'declining':
+        return 'Queda Leve';
+      default:
+        return 'Sem Previsão';
+    }
+  }
+}
+
+class _RiskCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String riskLevelText;
+  final Color riskColor;
+  final String trendText;
+
+  const _RiskCard({
+    required this.title,
+    required this.subtitle,
+    required this.riskLevelText,
+    required this.riskColor,
+    required this.trendText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFF2E8B8B),
-            Color(0xFF1E7B7B),
-          ],
+          colors: [Color(0xFF2E8B8B), Color(0xFF1E7B7B)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -304,7 +337,7 @@ class DashboardScreen extends ConsumerWidget {
       ),
       child: Stack(
         children: [
-          // Formas decorativas
+          // Decoração
           Positioned(
             top: -30,
             right: -30,
@@ -329,7 +362,6 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
           ),
-          // Conteúdo
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -377,7 +409,7 @@ class DashboardScreen extends ConsumerWidget {
                             ),
                           ),
                           Text(
-                            riskLevel.replaceAll('Risco ', ''),
+                            riskLevelText.replaceAll('Risco ', ''),
                             style: TextStyle(
                               color: riskColor == AppColors.warning
                                   ? const Color(0xFFFF8A80)
@@ -389,7 +421,7 @@ class DashboardScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            trend,
+                            trendText,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -407,16 +439,20 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildSmallCardCases(BuildContext context, int cases) {
+class _SmallCasesCard extends StatelessWidget {
+  final int cases;
+
+  const _SmallCasesCard({required this.cases});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       height: 160,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFFFFDAD6),
-            Color(0xFFFFF5F3),
-          ],
+          colors: [Color(0xFFFFDAD6), Color(0xFFFFF5F3)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -431,7 +467,6 @@ class DashboardScreen extends ConsumerWidget {
       ),
       child: Stack(
         children: [
-          // Forma decorativa
           Positioned(
             bottom: -20,
             left: -10,
@@ -488,16 +523,20 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildSmallCardPrediction(BuildContext context, String prediction) {
+class _SmallPredictionCard extends StatelessWidget {
+  final String prediction;
+
+  const _SmallPredictionCard({required this.prediction});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       height: 160,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFFD1F4F4),
-            Color(0xFFEFFAFA),
-          ],
+          colors: [Color(0xFFD1F4F4), Color(0xFFEFFAFA)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -555,8 +594,13 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildTipCard(BuildContext context) {
+class _TipCard extends StatelessWidget {
+  const _TipCard();
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFFFF4EC),
@@ -611,48 +655,5 @@ class DashboardScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // HELPER METHODS
-  // ══════════════════════════════════════════════════════════════════════════
-
-  /// Returns the color associated with the given risk level
-  Color _getRiskColor(RiskLevel level) {
-    switch (level) {
-      case RiskLevel.low:
-        return AppColors.success;
-      case RiskLevel.medium:
-        return AppColors.warning;
-      case RiskLevel.high:
-        return AppColors.danger;
-    }
-  }
-
-  String _getRiskText(RiskLevel level) {
-    switch (level) {
-      case RiskLevel.low:
-        return 'Risco Baixo';
-      case RiskLevel.medium:
-        return 'Risco Moderado';
-      case RiskLevel.high:
-        return 'Risco Alto';
-    }
-  }
-
-  String _getTrendText(String trend) {
-    switch (trend) {
-      case 'crescente':
-      case 'growing':
-        return 'Tendência de Alta';
-      case 'estavel':
-      case 'stable':
-        return 'Tendência de Estabilidade';
-      case 'decrescente':
-      case 'declining':
-        return 'Queda Leve';
-      default:
-        return 'Sem Previsão';
-    }
   }
 }

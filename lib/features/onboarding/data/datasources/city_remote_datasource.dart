@@ -35,12 +35,14 @@ class CityRemoteDataSourceImpl implements CityRemoteDataSource {
         },
       );
 
-      // Extrai a lista de resultados
-      /// @nodoc
-      final List<dynamic> results = response.data['results'] as List<dynamic>;
+      // CORREÇÃO: Cast explícito de response.data para Map antes de acessar a chave
+      final data = response.data as Map<String, dynamic>;
+      final List<dynamic> results = data['results'] as List<dynamic>;
 
       // Converte para CityModel
-      return results.map((json) => CityModel.fromJson(json)).toList();
+      return results
+          .map((json) => CityModel.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       // Em caso de erro, relança para o Repository tratar
       rethrow;
@@ -53,8 +55,11 @@ class CityRemoteDataSourceImpl implements CityRemoteDataSource {
       // Chama endpoint real da API: /cities/{ibge_code}
       final response = await dio.get('/cities/$ibgeCode');
 
+      // CORREÇÃO: Cast explícito para garantir tipagem segura
+      final data = response.data as Map<String, dynamic>;
+
       // Converte JSON para CityModel
-      return CityModel.fromJson(response.data);
+      return CityModel.fromJson(data);
     } catch (e) {
       // Em caso de erro, relança para o Repository tratar
       rethrow;

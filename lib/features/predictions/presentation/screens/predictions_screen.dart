@@ -2,25 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/app_bottom_nav.dart';
-
+// Import essencial para tipagem forte
+import '../../domain/entities/prediction_response.dart';
 import '../../domain/entities/week_prediction.dart';
 import '../providers/predictions_provider.dart';
 import '../widgets/predictions_chart.dart';
 import '../widgets/trend_indicator.dart';
 
+// --- Constantes de Design ---
+class _AppStyles {
+  static const primary = Color(0xFF2E8B8B);
+  static const primaryDark = Color(0xFF1E7B7B);
+  static const textDark = Color(0xFF2E5C6E);
+  static const textGrey = Color(0xFF6B7280);
+}
+
 /// Tela de predições de casos de dengue.
-///
-/// Exibe gráfico dual-line com:
-/// - Linha verde: Últimas 12 semanas (casos reais)
-/// - Linha azul: Próximas 1-4 semanas (predições IA)
 class PredictionsScreen extends ConsumerStatefulWidget {
+  /// Código geográfico da cidade (IBGE).
   final String geocode;
+
+  /// Nome da cidade para exibição.
   final String cityName;
 
+  /// Construtor padrão.
   const PredictionsScreen({
-    super.key,
     required this.geocode,
     required this.cityName,
+    super.key,
   });
 
   @override
@@ -33,7 +42,6 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
   @override
   void initState() {
     super.initState();
-    // Busca predições ao carregar a tela
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchPredictions();
     });
@@ -56,82 +64,124 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF2E5C6E)),
+          icon: const Icon(Icons.arrow_back, color: _AppStyles.textDark),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Previsões - Curitiba',
-              style: TextStyle(
+            Text(
+              'Previsões - ${widget.cityName}',
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF2E5C6E),
+                color: _AppStyles.textDark,
               ),
             ),
             const Text(
               'Powered by Machine Learning',
               style: TextStyle(
                 fontSize: 12,
-                color: Color(0xFF6B7280),
+                color: _AppStyles.textGrey,
               ),
             ),
           ],
         ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.all(8),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF2E8B8B).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.auto_awesome,
-                  size: 16,
-                  color: Color(0xFF2E8B8B),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'IA',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF2E8B8B),
-                  ),
-                ),
-              ],
+        actions: const [_IAIndicator()],
+      ),
+      body: _buildBody(state),
+      bottomNavigationBar: const AppBottomNav(currentIndex: 1),
+    );
+  }
+
+  Widget _buildBody(PredictionsState state) {
+    if (state.isLoading) {
+      return const Center(
+          child: CircularProgressIndicator(color: _AppStyles.primary));
+    }
+
+    if (state.errorMessage != null) {
+      return _ErrorWidget(
+        message: state.errorMessage!,
+        onRetry: _fetchPredictions,
+      );
+    }
+
+    if (state.data != null) {
+      return _ContentWidget(
+        data: state.data!,
+        selectedWeeks: _selectedWeeks,
+        onPeriodChanged: (weeks) {
+          setState(() => _selectedWeeks = weeks);
+          _fetchPredictions();
+        },
+      );
+    }
+
+    return const Center(child: Text('Selecione o número de semanas'));
+  }
+}
+
+// ==========================================
+// WIDGETS EXTRAÍDOS (Com Tipagem Forte)
+// ==========================================
+
+class _IAIndicator extends StatelessWidget {
+  const _IAIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: _AppStyles.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Row(
+        children: [
+          Icon(
+            Icons.auto_awesome,
+            size: 16,
+            color: _AppStyles.primary,
+          ),
+          SizedBox(width: 4),
+          Text(
+            'IA',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: _AppStyles.primary,
             ),
           ),
         ],
       ),
-      body: state.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : state.errorMessage != null
-              ? _buildErrorWidget(state.errorMessage!)
-              : state.data != null
-                  ? _buildContent(state.data!)
-                  : const Center(
-                      child: Text('Selecione o número de semanas'),
-                    ),
-      bottomNavigationBar: AppBottomNav(currentIndex: 1),
     );
   }
+}
 
-  Widget _buildContent(data) {
+class _ContentWidget extends StatelessWidget {
+  final PredictionResponse data;
+  final int selectedWeeks;
+  final ValueChanged<int> onPeriodChanged;
+
+  const _ContentWidget({
+    required this.data,
+    required this.selectedWeeks,
+    required this.onPeriodChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Seletor de semanas
-          _buildWeekSelector(),
-
+          _WeekSelector(
+            selectedWeeks: selectedWeeks,
+            onChanged: onPeriodChanged,
+          ),
           const SizedBox(height: 16),
-
-          // Indicador de tendência
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TrendIndicator(
@@ -139,64 +189,84 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
               percentage: data.trendPercentage,
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // Gráfico
           PredictionsChart(data: data),
-
           const SizedBox(height: 16),
-
-          // Legenda
-          _buildLegend(),
-
+          const _ChartLegend(),
           const SizedBox(height: 16),
-
-          // Informações do modelo
-          _buildModelInfo(data),
-
+          _ModelInfoCard(data: data),
           const SizedBox(height: 16),
-
-          // Lista de predições
-          _buildPredictionsList(data),
-
+          _PredictionsList(predictions: data.predictions),
           const SizedBox(height: 32),
         ],
       ),
     );
   }
+}
 
-  Widget _buildWeekSelector() {
+class _WeekSelector extends StatelessWidget {
+  final int selectedWeeks;
+  final ValueChanged<int> onChanged;
+
+  const _WeekSelector({
+    required this.selectedWeeks,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
         children: [
-          _buildPeriodButton('7 Dias', 1),
+          _PeriodButton(
+              label: '7 Dias',
+              weeks: 1,
+              groupValue: selectedWeeks,
+              onTap: onChanged),
           const SizedBox(width: 12),
-          _buildPeriodButton('30 Dias', 4),
+          _PeriodButton(
+              label: '30 Dias',
+              weeks: 4,
+              groupValue: selectedWeeks,
+              onTap: onChanged),
           const SizedBox(width: 12),
-          _buildPeriodButton('90 Dias', 12),
+          _PeriodButton(
+              label: '90 Dias',
+              weeks: 12,
+              groupValue: selectedWeeks,
+              onTap: onChanged),
         ],
       ),
     );
   }
+}
 
-  Widget _buildPeriodButton(String label, int weeks) {
-    final isSelected = _selectedWeeks == weeks;
+class _PeriodButton extends StatelessWidget {
+  final String label;
+  final int weeks;
+  final int groupValue;
+  final ValueChanged<int> onTap;
+
+  const _PeriodButton({
+    required this.label,
+    required this.weeks,
+    required this.groupValue,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = groupValue == weeks;
     return Expanded(
       child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedWeeks = weeks;
-          });
-          _fetchPredictions();
-        },
+        onTap: () => onTap(weeks),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             gradient: isSelected
                 ? const LinearGradient(
-                    colors: [Color(0xFF2E8B8B), Color(0xFF1E7B7B)],
+                    colors: [_AppStyles.primary, _AppStyles.primaryDark],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   )
@@ -204,7 +274,7 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
             color: isSelected ? null : Colors.grey[100],
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? const Color(0xFF2E8B8B) : Colors.grey[300]!,
+              color: isSelected ? _AppStyles.primary : Colors.grey[300]!,
               width: 1.5,
             ),
           ),
@@ -221,22 +291,40 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
       ),
     );
   }
+}
 
-  Widget _buildLegend() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+class _ChartLegend extends StatelessWidget {
+  const _ChartLegend();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildLegendItem(Colors.green, 'Casos Reais', false),
-          const SizedBox(width: 24),
-          _buildLegendItem(Colors.blue, 'Predições IA', true),
+          _LegendItem(color: Colors.green, label: 'Casos Reais', isDashed: false),
+          SizedBox(width: 24),
+          _LegendItem(color: Colors.blue, label: 'Predições IA', isDashed: true),
         ],
       ),
     );
   }
+}
 
-  Widget _buildLegendItem(Color color, String label, bool isDashed) {
+class _LegendItem extends StatelessWidget {
+  final Color color;
+  final String label;
+  final bool isDashed;
+
+  const _LegendItem({
+    required this.color,
+    required this.label,
+    required this.isDashed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Container(
@@ -247,9 +335,7 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
             borderRadius: BorderRadius.circular(2),
           ),
           child: isDashed
-              ? CustomPaint(
-                  painter: _DashedLinePainter(color: color),
-                )
+              ? CustomPaint(painter: _DashedLinePainter(color: color))
               : null,
         ),
         const SizedBox(width: 8),
@@ -257,8 +343,15 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
       ],
     );
   }
+}
 
-  Widget _buildModelInfo(data) {
+class _ModelInfoCard extends StatelessWidget {
+  final PredictionResponse data;
+
+  const _ModelInfoCard({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Padding(
@@ -271,19 +364,27 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            _buildInfoRow('Nome', data.modelName),
-            _buildInfoRow(
-              'Acurácia',
-              '${(data.modelAccuracy * 100).toStringAsFixed(0)}%',
+            _InfoRow(label: 'Nome', value: data.modelName),
+            _InfoRow(
+              label: 'Acurácia',
+              value: '${(data.modelAccuracy * 100).toStringAsFixed(0)}%',
             ),
-            _buildInfoRow('MAE', '~${data.modelMae.toInt()} casos'),
+            _InfoRow(label: 'MAE', value: '~${data.modelMae.toInt()} casos'),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildInfoRow(String label, String value) {
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _InfoRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -298,8 +399,15 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
       ),
     );
   }
+}
 
-  Widget _buildPredictionsList(data) {
+class _PredictionsList extends StatelessWidget {
+  final List<WeekPrediction> predictions;
+
+  const _PredictionsList({required this.predictions});
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -316,13 +424,13 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: data.predictions.length,
+            itemCount: predictions.length,
             separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, index) {
-              final pred = data.predictions[index];
+              final pred = predictions[index];
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.blue.withOpacity(0.2),
+                  backgroundColor: Colors.blue.withValues(alpha: 0.2),
                   child: Text(
                     'S${pred.weekNumber}',
                     style: const TextStyle(
@@ -356,15 +464,23 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
   Color _getConfidenceColor(ConfidenceLevel confidence) {
     switch (confidence) {
       case ConfidenceLevel.high:
-        return Colors.green.withOpacity(0.2);
+        return Colors.green.withValues(alpha: 0.2);
       case ConfidenceLevel.medium:
-        return Colors.orange.withOpacity(0.2);
+        return Colors.orange.withValues(alpha: 0.2);
       case ConfidenceLevel.low:
-        return Colors.red.withOpacity(0.2);
+        return Colors.red.withValues(alpha: 0.2);
     }
   }
+}
 
-  Widget _buildErrorWidget(String message) {
+class _ErrorWidget extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _ErrorWidget({required this.message, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -386,7 +502,7 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
-              onPressed: _fetchPredictions,
+              onPressed: onRetry,
               icon: const Icon(Icons.refresh),
               label: const Text('Tentar Novamente'),
             ),
@@ -397,7 +513,6 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
   }
 }
 
-/// Painter para linha tracejada na legenda
 class _DashedLinePainter extends CustomPainter {
   final Color color;
 

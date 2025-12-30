@@ -37,6 +37,7 @@ part 'dashboard_data_model.g.dart';
 class DashboardDataModel with _$DashboardDataModel {
   const DashboardDataModel._();
 
+  /// Cria uma instância de [DashboardDataModel] com os dados necessários.
   const factory DashboardDataModel({
     @JsonKey(name: 'cidade') required CityInfoModel cityInfo,
     @JsonKey(name: 'dados_historicos')

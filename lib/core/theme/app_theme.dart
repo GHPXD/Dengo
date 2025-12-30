@@ -20,6 +20,7 @@ class AppTheme {
   // TEMA LIGHT (Principal)
   // ══════════════════════════════════════════════════════════════════════════
 
+  /// Retorna o tema claro (Light Mode) configurado para o app.
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -210,6 +211,7 @@ class AppTheme {
   // TEMA DARK
   // ══════════════════════════════════════════════════════════════════════════
 
+  /// Retorna o tema escuro (Dark Mode) configurado para o app.
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
@@ -294,7 +296,8 @@ class AppTheme {
         color: const Color(0xFF1F2937),
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        shadowColor: Colors.black.withOpacity(0.5),
+        // Correção: withValues em vez de withOpacity
+        shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
 
       // ────────────────────────────────────────────────────────────────────────

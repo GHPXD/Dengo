@@ -3,31 +3,42 @@ import 'heatmap_city_model.dart';
 
 /// Model para resposta completa do heatmap (API response).
 class HeatmapDataModel {
+  /// Nome ou sigla do estado (ex: "PR").
   final String estado;
+
+  /// Número total de cidades contidas na resposta.
   final int totalCidades;
+
+  /// Período de análise dos dados (ex: "week", "month").
   final String periodo;
+
+  /// Lista de cidades com dados de risco e coordenadas.
   final List<HeatmapCityModel> cidades;
 
-  HeatmapDataModel({
+  /// Construtor padrão.
+  const HeatmapDataModel({
     required this.estado,
     required this.totalCidades,
     required this.periodo,
     required this.cidades,
   });
 
-  /// Cria model a partir do JSON da API
+  /// Cria model a partir do JSON da API com tratamento de segurança contra nulos.
   factory HeatmapDataModel.fromJson(Map<String, dynamic> json) {
     return HeatmapDataModel(
-      estado: json['estado'] as String,
-      totalCidades: json['total_cidades'] as int,
-      periodo: json['periodo'] as String,
-      cidades: (json['cidades'] as List<dynamic>)
-          .map((city) => HeatmapCityModel.fromJson(city as Map<String, dynamic>))
-          .toList(),
+      estado: json['estado']?.toString() ?? '',
+      totalCidades: (json['total_cidades'] as num?)?.toInt() ?? 0,
+      periodo: json['periodo']?.toString() ?? '',
+      // Tratamento seguro para lista: se for null, retorna lista vazia []
+      cidades: (json['cidades'] as List<dynamic>?)
+              ?.map((city) =>
+                  HeatmapCityModel.fromJson(city as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 
-  /// Converte model para entidade de domínio
+  /// Converte model para entidade de domínio.
   HeatmapData toEntity() {
     return HeatmapData(
       state: estado,
@@ -37,7 +48,7 @@ class HeatmapDataModel {
     );
   }
 
-  /// Converte model para JSON
+  /// Converte model para JSON.
   Map<String, dynamic> toJson() {
     return {
       'estado': estado,

@@ -11,8 +11,10 @@ import '../datasources/predictions_remote_datasource.dart';
 /// Faz a ponte entre a camada de domínio e a camada de dados.
 /// Transforma exceções em Failures (pattern Either).
 class PredictionsRepositoryImpl implements PredictionsRepository {
+  /// Fonte de dados remota para buscar predições da API.
   final PredictionsRemoteDataSource remoteDataSource;
 
+  /// Construtor que recebe o data source remoto via injeção de dependência.
   PredictionsRepositoryImpl({required this.remoteDataSource});
 
   @override
@@ -40,14 +42,14 @@ class PredictionsRepositoryImpl implements PredictionsRepository {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return NetworkFailure(message: 'Timeout na conexão');
+        return const NetworkFailure(message: 'Timeout na conexão');
 
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
         final responseData = error.response?.data;
 
         if (statusCode == 404) {
-          return NotFoundFailure(
+          return const NotFoundFailure(
             message: 'Município não encontrado',
           );
         }
@@ -72,7 +74,7 @@ class PredictionsRepositoryImpl implements PredictionsRepository {
         );
 
       case DioExceptionType.cancel:
-        return NetworkFailure(message: 'Requisição cancelada');
+        return const NetworkFailure(message: 'Requisição cancelada');
 
       default:
         return NetworkFailure(
