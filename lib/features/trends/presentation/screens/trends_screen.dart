@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fl_chart/fl_chart.dart';
+
+import 'package:dengue_predict/core/widgets/app_bottom_nav.dart';
 
 import '../../../../core/config/app_router.dart';
 import '../../../dashboard/presentation/providers/dashboard_data_provider.dart';
@@ -103,7 +106,7 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context),
+      bottomNavigationBar: AppBottomNav(currentIndex: 3),
     );
   }
 
@@ -276,101 +279,153 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
           ),
           const SizedBox(height: 24),
 
-          // Placeholder do gráfico
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
-            ),
-            child: Stack(
-              children: [
-                // Linha do gráfico simulada
-                CustomPaint(
-                  size: const Size(double.infinity, 200),
-                  painter: TrendLinePainter(),
-                ),
-
-                // Labels
-                Positioned(
-                  left: 16,
-                  top: 16,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF2E8B8B),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          const Text(
-                            'Casos Reais',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF4A5568),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFFF8A80),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          const Text(
-                            'Previsão IA',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF4A5568),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Gráfico com dados reais
+          _buildRealChart(dashboardData),
 
           const SizedBox(height: 12),
 
-          // Insights da IA
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF4EC),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.lightbulb_outline,
-                    size: 18, color: Color(0xFFFF8A80)),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'A IA prevê aumento de 23% nos casos na próxima semana',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF4A5568),
-                    ),
-                  ),
+          // Insights da IA (dados reais)
+          _buildAIInsight(dashboardData),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRealChart(dashboardData) {
+    // Dados históricos reais
+    final historicalData = dashboardData.historicalData;
+    
+    if (historicalData.isEmpty) {
+      return Container(
+        height: 200,
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Center(
+          child: Text('Sem dados históricos disponíveis'),
+        ),
+      );
+    }
+    
+    // Cria spots para o gráfico (tipado explicitamente)
+    final List<FlSpot> spots = historicalData.asMap().entries.map<FlSpot>((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.cases.toDouble());
+    }).toList();
+    
+    // Adiciona predição como último ponto
+    final predictionSpot = FlSpot(
+      historicalData.length.toDouble(),
+      dashboardData.prediction.estimatedCases.toDouble(),
+    );
+    
+    final maxY = <FlSpot>[...spots, predictionSpot]
+        .map((s) => s.y)
+        .reduce((a, b) => a > b ? a : b);
+    
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: LineChart(
+          LineChartData(
+            minY: 0,
+            maxY: (maxY * 1.2).ceilToDouble(),
+            lineBarsData: [
+              // Linha histórica (verde)
+              LineChartBarData(
+                spots: spots,
+                isCurved: true,
+                color: const Color(0xFF2E8B8B),
+                barWidth: 3,
+                dotData: const FlDotData(show: false),
+                belowBarData: BarAreaData(
+                  show: true,
+                  color: const Color(0xFF2E8B8B).withOpacity(0.1),
                 ),
-              ],
+              ),
+              // Linha de predição (vermelho)
+              LineChartBarData(
+                spots: [spots.last, predictionSpot],
+                isCurved: false,
+                color: const Color(0xFFFF8A80),
+                barWidth: 3,
+                dashArray: [5, 5],
+                dotData: const FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: true,
+                  color: const Color(0xFFFF8A80).withOpacity(0.1),
+                ),
+              ),
+            ],
+            titlesData: const FlTitlesData(
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+              ),
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              topTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              rightTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+            ),
+            gridData: FlGridData(
+              show: true,
+              drawVerticalLine: false,
+              getDrawingHorizontalLine: (value) {
+                return FlLine(
+                  color: Colors.grey[300]!,
+                  strokeWidth: 1,
+                );
+              },
+            ),
+            borderData: FlBorderData(show: false),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAIInsight(dashboardData) {
+    final currentCases = dashboardData.currentWeek.cases;
+    final predictedCases = dashboardData.prediction.estimatedCases;
+    final percentageChange = currentCases > 0
+        ? ((predictedCases - currentCases) / currentCases * 100).toStringAsFixed(0)
+        : '0';
+    
+    final isIncrease = predictedCases > currentCases;
+    final insightText = isIncrease
+        ? 'A IA prevê aumento de $percentageChange% nos casos na próxima semana'
+        : 'A IA prevê redução de ${percentageChange.replaceAll('-', '')}% nos casos na próxima semana';
+    
+    final insightColor = isIncrease ? const Color(0xFFFFF4EC) : const Color(0xFFE8F5E9);
+    final iconColor = isIncrease ? const Color(0xFFFF8A80) : const Color(0xFF10B981);
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: insightColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.lightbulb_outline, size: 18, color: iconColor),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              insightText,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Color(0xFF4A5568),
+              ),
             ),
           ),
         ],
@@ -379,6 +434,20 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
   }
 
   Widget _buildAlerts(dashboardData) {
+    // Calcula alerta baseado nos dados reais da cidade selecionada
+    final currentCases = dashboardData.currentWeek.cases;
+    final predictedCases = dashboardData.prediction.estimatedCases;
+    final riskIncrease = currentCases > 0
+        ? ((predictedCases - currentCases) / currentCases * 100)
+        : 0.0;
+    
+    // Só mostra alerta se houver aumento significativo (>20%)
+    if (riskIncrease <= 20) {
+      return const SizedBox.shrink();
+    }
+    
+    final severity = riskIncrease > 50 ? 'high' : riskIncrease > 30 ? 'medium' : 'low';
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -390,7 +459,7 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
                   color: Color(0xFFFF6B6B), size: 20),
               SizedBox(width: 8),
               Text(
-                'Alertas de Surto Iminente',
+                'Alerta de Surto',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -402,25 +471,11 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
         ),
         const SizedBox(height: 12),
         _buildAlertCard(
-          city: 'Londrina',
-          riskIncrease: '+85%',
-          predictedCases: 450,
+          city: dashboardData.cityName,
+          riskIncrease: '+${riskIncrease.toStringAsFixed(0)}%',
+          predictedCases: predictedCases,
           daysAhead: 7,
-          severity: 'high',
-        ),
-        _buildAlertCard(
-          city: 'Maringá',
-          riskIncrease: '+45%',
-          predictedCases: 180,
-          daysAhead: 10,
-          severity: 'medium',
-        ),
-        _buildAlertCard(
-          city: 'Cascavel',
-          riskIncrease: '+32%',
-          predictedCases: 120,
-          daysAhead: 14,
-          severity: 'medium',
+          severity: severity,
         ),
       ],
     );
@@ -516,13 +571,26 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
   }
 
   Widget _buildCityPredictions(selectedCity, dashboardData) {
+    // Mostra apenas dados da cidade selecionada (sem hardcoded de outras cidades)
+    final trend = dashboardData.prediction.trend;
+    final trendText = trend == 'crescente' 
+        ? 'crescente' 
+        : trend == 'estavel' || trend == 'estável'
+            ? 'estável'
+            : 'decrescente';
+    final trendColor = trend == 'crescente'
+        ? const Color(0xFFFF8A80)
+        : trend == 'estavel' || trend == 'estável'
+            ? const Color(0xFF10B981)
+            : const Color(0xFF2E8B8B);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
-            'Previsões - Outras Cidades do ${selectedCity.state}',
+            'Previsão - ${selectedCity.name}',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -531,11 +599,12 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        _buildCityPredictionCard('Curitiba', 28, 'estável', const Color(0xFF10B981)),
         _buildCityPredictionCard(
-            'Ponta Grossa', 45, 'crescente', const Color(0xFFFF8A80)),
-        _buildCityPredictionCard(
-            'Foz do Iguaçu', 12, 'decrescente', const Color(0xFF2E8B8B)),
+          selectedCity.name,
+          dashboardData.prediction.estimatedCases,
+          trendText,
+          trendColor,
+        ),
       ],
     );
   }
@@ -609,57 +678,6 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNav(BuildContext context) {
-    return Container(
-      height: 72,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.home_rounded, false, const Color(0xFF9CA3AF), () {
-            Navigator.pop(context);
-          }),
-          _buildNavItem(Icons.local_fire_department_rounded, false,
-              const Color(0xFF9CA3AF), () {}),
-          _buildNavItem(
-              Icons.bar_chart_rounded, true, const Color(0xFFFF8A80), () {}),
-          _buildNavItem(
-            Icons.location_city,
-            false,
-            const Color(0xFF9CA3AF),
-            () {
-              context.push(AppRoutes.cityDetail);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(
-      IconData icon, bool isActive, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Icon(
-          icon,
-          size: 28,
-          color: color,
-        ),
       ),
     );
   }
