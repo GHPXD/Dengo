@@ -22,9 +22,12 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 from app.api import cities_router, dashboard_router
+from app.api.state_statistics import router as state_statistics_router
+from app.api.v1.endpoints.predictions import router as predictions_router
+from app.api.heatmap import router as heatmap_router
 from app.core.config import settings
 from app.core.logger import logger
-from app.services import cache_service, prediction_service
+from app.services import cache_service
 
 
 @asynccontextmanager
@@ -49,9 +52,6 @@ async def lifespan(app: FastAPI):
 
     # Conecta ao Redis
     await cache_service.connect()
-
-    # Carrega modelo ML
-    prediction_service.load_model()
 
     logger.success("✓ API Ready!")
     logger.info("─" * 80)
@@ -143,6 +143,18 @@ app.include_router(
     cities_router, prefix=f"{settings.api_prefix}/cities", tags=["Cities"]
 )
 
+app.include_router(
+    predictions_router, prefix=settings.api_prefix, tags=["Predições IA"]
+)
+
+app.include_router(
+    state_statistics_router, prefix=settings.api_prefix, tags=["Estatísticas"]
+)
+
+app.include_router(
+    heatmap_router, prefix=f"{settings.api_prefix}/heatmap", tags=["Heatmap"]
+)
+
 
 # ════════════════════════════════════════════════════════════════════════════
 # EXCEPTION HANDLERS
@@ -204,10 +216,6 @@ async def health_check():
             redis_status = "error"
     
     health_status["services"]["redis"] = redis_status
-
-    # Verifica ML Model
-    ml_status = "loaded" if prediction_service.is_loaded else "fallback"
-    health_status["services"]["ml_model"] = ml_status
 
     # Define status geral
     # Redis offline não é crítico (graceful degradation)

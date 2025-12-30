@@ -59,6 +59,7 @@ class DashboardDataModel with _$DashboardDataModel {
       currentWeek: historicalEntities.last,
       cityPopulation: cityInfo.population,
       cityIbgeCode: cityInfo.ibgeCode,
+      cityName: cityInfo.nome,
     );
   }
 }

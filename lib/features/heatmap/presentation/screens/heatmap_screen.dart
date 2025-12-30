@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:latlong2/latlong.dart';
+import '../../../../core/widgets/app_bottom_nav.dart';
 import '../../../../core/config/app_router.dart';
+import '../providers/heatmap_provider.dart';
 
 /// Tela de Mapa de Calor Interativo
 ///
@@ -19,11 +22,19 @@ class HeatmapScreen extends ConsumerStatefulWidget {
 }
 
 class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
-  String selectedTimeFilter = 'week'; // 'week' ou 'month'
-  String selectedDataType = 'real'; // 'real' ou 'prediction'
+  final MapController _mapController = MapController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Carrega dados do heatmap ao iniciar
+    Future.microtask(() => ref.read(heatmapProvider.notifier).loadHeatmap());
+  }
 
   @override
   Widget build(BuildContext context) {
+    final heatmapState = ref.watch(heatmapProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -33,11 +44,15 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
             _buildHeader(),
 
             // Filtros
-            _buildFilters(),
+            _buildFilters(heatmapState),
 
-            // Mapa (placeholder por enquanto)
+            // Mapa
             Expanded(
-              child: _buildMap(),
+              child: heatmapState.isLoading
+                  ? _buildLoading()
+                  : heatmapState.error != null
+                      ? _buildError(heatmapState.error!)
+                      : _buildMap(heatmapState),
             ),
 
             // Legenda
@@ -45,7 +60,7 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context),
+      bottomNavigationBar: AppBottomNav(currentIndex: 2),
     );
   }
 
@@ -73,7 +88,7 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
     );
   }
 
-  Widget _buildFilters() {
+  Widget _buildFilters(HeatmapState heatmapState) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -85,41 +100,20 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
               Expanded(
                 child: _buildFilterChip(
                   label: 'Última Semana',
-                  isSelected: selectedTimeFilter == 'week',
-                  onTap: () => setState(() => selectedTimeFilter = 'week'),
+                  isSelected: heatmapState.selectedPeriod == 'week',
+                  onTap: () => ref
+                      .read(heatmapProvider.notifier)
+                      .changePeriod('week'),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildFilterChip(
                   label: 'Último Mês',
-                  isSelected: selectedTimeFilter == 'month',
-                  onTap: () => setState(() => selectedTimeFilter = 'month'),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          // Filtro de Tipo de Dado
-          Row(
-            children: [
-              Expanded(
-                child: _buildFilterChip(
-                  label: 'Casos Reais',
-                  isSelected: selectedDataType == 'real',
-                  onTap: () => setState(() => selectedDataType = 'real'),
-                  icon: Icons.analytics_rounded,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildFilterChip(
-                  label: 'Previsão IA',
-                  isSelected: selectedDataType == 'prediction',
-                  onTap: () => setState(() => selectedDataType = 'prediction'),
-                  icon: Icons.memory,
+                  isSelected: heatmapState.selectedPeriod == 'month',
+                  onTap: () => ref
+                      .read(heatmapProvider.notifier)
+                      .changePeriod('month'),
                 ),
               ),
             ],
@@ -181,7 +175,91 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
     );
   }
 
-  Widget _buildMap() {
+  Widget _buildMap(HeatmapState heatmapState) {
+    if (heatmapState.data == null) {
+      return _buildLoading();
+    }
+
+    final cities = heatmapState.data!.cities;
+
+    // Cria marcadores para cada cidade
+    final markers = cities.map((city) {
+      return Marker(
+        point: city.location,
+        width: 32,
+        height: 32,
+        child: GestureDetector(
+          onTap: () {
+            _showCityInfo(context, city);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color(city.riskLevel.color).withOpacity(0.8),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white,
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                '${city.cases}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      );
+    }).toList();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: FlutterMap(
+        mapController: _mapController,
+        options: MapOptions(
+          // Centro do Paraná (Curitiba)
+          initialCenter: const LatLng(-25.4284, -49.2733),
+          initialZoom: 7.0,
+          minZoom: 6.0,
+          maxZoom: 12.0,
+          interactionOptions: const InteractionOptions(
+            flags: InteractiveFlag.all,
+          ),
+        ),
+        children: [
+          // Camada de tiles (OpenStreetMap)
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: 'com.dengo.app',
+          ),
+
+          // Camada de marcadores
+          MarkerLayer(
+            markers: markers,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoading() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
@@ -189,103 +267,142 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.grey[300]!),
       ),
-      child: Stack(
-        children: [
-          // Placeholder do mapa
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.map_rounded,
-                  size: 80,
-                  color: Colors.grey[400],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Mapa Interativo',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  selectedDataType == 'real'
-                      ? 'Casos Reais - ${selectedTimeFilter == 'week' ? 'Última Semana' : 'Último Mês'}'
-                      : 'Previsão IA - ${selectedTimeFilter == 'week' ? 'Última Semana' : 'Último Mês'}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey[300]!),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.info_outline,
-                          size: 16, color: Color(0xFF2E8B8B)),
-                      SizedBox(width: 8),
-                      Text(
-                        'Integração com Google Maps em breve',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFF4A5568),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Controles do mapa (zoom, etc)
-          Positioned(
-            right: 16,
-            top: 16,
-            child: Column(
-              children: [
-                _buildMapControl(Icons.add, () {}),
-                const SizedBox(height: 8),
-                _buildMapControl(Icons.remove, () {}),
-                const SizedBox(height: 8),
-                _buildMapControl(Icons.my_location, () {}),
-              ],
-            ),
-          ),
-        ],
+      child: const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2E8B8B)),
+        ),
       ),
     );
   }
 
-  Widget _buildMapControl(IconData icon, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+  Widget _buildError(String error) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Erro ao carregar mapa',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[700],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Text(
+                error,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => ref.read(heatmapProvider.notifier).loadHeatmap(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2E8B8B),
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text('Tentar Novamente'),
             ),
           ],
         ),
-        child: Icon(icon, size: 20, color: const Color(0xFF2E8B8B)),
+      ),
+    );
+  }
+
+  void _showCityInfo(BuildContext context, city) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: Color(city.riskLevel.color),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    city.name,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2E5C6E),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildInfoRow('Casos', '${city.cases}'),
+            _buildInfoRow('População', '${city.population}'),
+            _buildInfoRow(
+                'Incidência', '${city.incidence.toStringAsFixed(1)}/100k'),
+            _buildInfoRow('Nível de Risco', city.riskLevel.label),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2E5C6E),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -352,55 +469,6 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNav(BuildContext context) {
-    return Container(
-      height: 72,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.home_rounded, false, const Color(0xFF9CA3AF), () {
-            Navigator.pop(context);
-          }),
-          _buildNavItem(Icons.local_fire_department_rounded, true,
-              const Color(0xFFFF8A80), () {}),
-          _buildNavItem(
-              Icons.bar_chart_rounded, false, const Color(0xFF9CA3AF), () {}),
-          _buildNavItem(
-            Icons.location_city,
-            false,
-            const Color(0xFF9CA3AF),
-            () => context.push(AppRoutes.cityDetail),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(
-      IconData icon, bool isActive, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Icon(
-          icon,
-          size: 28,
-          color: color,
-        ),
       ),
     );
   }

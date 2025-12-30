@@ -1,21 +1,21 @@
-"""Script para testar a API do Dengo"""
+"""Script para testar a API do Dengo - Municípios do Paraná"""
 import httpx
 import json
 
 def test_dashboard():
-    """Testa o endpoint /api/v1/dashboard"""
+    """Testa o endpoint /api/v1/dashboard com municípios do Paraná"""
     
-    print("🧪 Testando API Dengo Dashboard...")
+    print("🧪 Testando API Dengo Dashboard - Paraná (399 municípios)")
     print("=" * 80)
     
-    # Teste 1: São Paulo
-    print("\n1️⃣ Testando: São Paulo (3550308)")
+    # Teste 1: Curitiba (Capital do Paraná)
+    print("\n1️⃣ Testando: Curitiba - PR (4106902)")
     print("-" * 80)
     
     try:
         response = httpx.get(
             "http://127.0.0.1:8000/api/v1/dashboard",
-            params={"city_id": "3550308"},
+            params={"city_id": "4106902"},
             timeout=30.0
         )
         
@@ -43,14 +43,14 @@ def test_dashboard():
     except Exception as e:
         print(f"\n❌ Erro na requisição: {e}")
     
-    # Teste 2: Rio de Janeiro
-    print("\n\n2️⃣ Testando: Rio de Janeiro (3304557)")
+    # Teste 2: Londrina (2ª maior cidade do PR)
+    print("\n\n2️⃣ Testando: Londrina - PR (4113700)")
     print("-" * 80)
     
     try:
         response = httpx.get(
             "http://127.0.0.1:8000/api/v1/dashboard",
-            params={"city_id": "3304557"},
+            params={"city_id": "4113700"},
             timeout=30.0
         )
         
@@ -67,21 +67,21 @@ def test_dashboard():
     except Exception as e:
         print(f"\n❌ Erro na requisição: {e}")
     
-    # Teste 3: Cidade inválida
-    print("\n\n3️⃣ Testando: Cidade Inválida (9999999)")
+    # Teste 3: Geocode fora do Paraná (deve falhar)
+    print("\n\n3️⃣ Testando: São Paulo - Fora do PR (3550308 - deve falhar)")
     print("-" * 80)
     
     try:
         response = httpx.get(
             "http://127.0.0.1:8000/api/v1/dashboard",
-            params={"city_id": "9999999"},
+            params={"city_id": "3550308"},  # São Paulo - não é PR
             timeout=30.0
         )
         
         print(f"Status Code: {response.status_code}")
         
-        if response.status_code == 404:
-            print("✅ Erro 404 esperado para cidade inválida")
+        if response.status_code in [404, 422]:
+            print("✅ Erro esperado para cidade fora do Paraná")
             print(f"Mensagem: {response.json()['detail']}")
         else:
             print(f"⚠️ Status inesperado: {response.status_code}")
@@ -91,6 +91,7 @@ def test_dashboard():
     
     print("\n" + "=" * 80)
     print("✅ Testes concluídos!")
+    print("\nℹ️  Sistema configurado para 399 municípios do Paraná (geocode inicia com 41)")
 
 if __name__ == "__main__":
     test_dashboard()

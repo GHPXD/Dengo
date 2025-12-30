@@ -23,6 +23,9 @@ class DashboardData extends Equatable {
   /// Código IBGE da cidade
   final String cityIbgeCode;
 
+  /// Nome da cidade
+  final String cityName;
+
   /// Cria instância de [DashboardData] com dados completos
   const DashboardData({
     required this.historicalData,
@@ -30,6 +33,7 @@ class DashboardData extends Equatable {
     required this.currentWeek,
     required this.cityPopulation,
     required this.cityIbgeCode,
+    required this.cityName,
   });
 
   /// Total de casos confirmados até a semana atual
@@ -55,5 +59,6 @@ class DashboardData extends Equatable {
         currentWeek,
         cityPopulation,
         cityIbgeCode,
+        cityName,
       ];
 }

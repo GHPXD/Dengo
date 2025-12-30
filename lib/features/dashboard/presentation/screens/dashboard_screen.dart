@@ -8,6 +8,7 @@ import '../../../../core/utils/enums/risk_level.dart';
 import '../../../../core/utils/widgets/common_widgets.dart';
 import '../../../onboarding/presentation/providers/city_search_provider.dart';
 import '../providers/dashboard_data_provider.dart';
+import 'package:dengue_predict/core/widgets/app_bottom_nav.dart';
 
 /// Dashboard principal do aplicativo - Design UX/UI Refatorado.
 ///
@@ -66,7 +67,7 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context),
+      bottomNavigationBar: AppBottomNav(currentIndex: 0),
     );
   }
 
@@ -74,60 +75,7 @@ class DashboardScreen extends ConsumerWidget {
   // BOTTOM NAVIGATION
   // ══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildBottomNav(BuildContext context) {
-    return Container(
-      height: 72,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.home_rounded, true, const Color(0xFFFF8A80), () {}),
-          _buildNavItem(
-            Icons.local_fire_department_rounded,
-            false,
-            const Color(0xFF9CA3AF),
-            () => context.push(AppRoutes.heatmap),
-          ),
-          _buildNavItem(
-            Icons.bar_chart_rounded,
-            false,
-            const Color(0xFF9CA3AF),
-            () => context.push(AppRoutes.trends),
-          ),
-          _buildNavItem(
-            Icons.location_city,
-            false,
-            const Color(0xFF9CA3AF),
-            () => context.push(AppRoutes.cityDetail),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildNavItem(
-      IconData icon, bool isActive, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Icon(
-          icon,
-          size: 28,
-          color: color,
-        ),
-      ),
-    );
-  }
 
   // ══════════════════════════════════════════════════════════════════════════
   // HEADER

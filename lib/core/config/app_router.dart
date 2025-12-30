@@ -9,6 +9,7 @@ import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/heatmap/presentation/screens/heatmap_screen.dart';
 import '../../features/trends/presentation/screens/trends_screen.dart';
 import '../../features/city_detail/presentation/screens/city_detail_screen.dart';
+import '../../features/predictions/presentation/screens/predictions_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -69,6 +70,21 @@ GoRouter appRouter(Ref ref) {
         name: AppRouteNames.cityDetail,
         builder: (context, state) => const CityDetailScreen(),
       ),
+
+      // ════════════════════════════════════════════════════════════════════
+      // PREDIÇÕES IA
+      // ════════════════════════════════════════════════════════════════════
+      GoRoute(
+        path: AppRoutes.predictions,
+        name: AppRouteNames.predictions,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, String>?;
+          return PredictionsScreen(
+            geocode: extra?['geocode'] ?? '4106902', // Curitiba por padrão
+            cityName: extra?['cityName'] ?? 'Curitiba',
+          );
+        },
+      ),
     ],
 
     // Tratamento de erros de rota
@@ -103,6 +119,9 @@ class AppRoutes {
 
   /// Rota da tela de detalhes da cidade
   static const String cityDetail = '/city-detail';
+
+  /// Rota da tela de predições IA
+  static const String predictions = '/predictions';
 }
 
 /// Nomes das rotas para navegação type-safe.
@@ -128,6 +147,9 @@ class AppRouteNames {
 
   /// Nome da rota city detail
   static const String cityDetail = 'city-detail';
+
+  /// Nome da rota predictions
+  static const String predictions = 'predictions';
 }
 
 /// Tela de erro genérica para erros de navegação

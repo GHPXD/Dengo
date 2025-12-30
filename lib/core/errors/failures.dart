@@ -41,6 +41,12 @@ class ValidationFailure extends Failure {
   const ValidationFailure({required super.message, super.stackTrace});
 }
 
+/// Falha de recurso não encontrado (404).
+class NotFoundFailure extends Failure {
+  /// Cria uma falha de recurso não encontrado com mensagem customizada.
+  const NotFoundFailure({required super.message, super.stackTrace});
+}
+
 // ══════════════════════════════════════════════════════════════════════════
 // FALHAS DE REDE E CONECTIVIDADE
 // ══════════════════════════════════════════════════════════════════════════
