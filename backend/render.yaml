@@ -1,0 +1,51 @@
+# ════════════════════════════════════════════════════════════════════════════
+# RENDER BLUEPRINT - DENGO API
+# ════════════════════════════════════════════════════════════════════════════
+# Deploy automático via GitHub
+# Documentação: https://render.com/docs/blueprint-spec
+
+services:
+  # ──────────────────────────────────────────────────────────────────────────
+  # API PRINCIPAL (FastAPI)
+  # ──────────────────────────────────────────────────────────────────────────
+  - type: web
+    name: dengo-api
+    runtime: python
+    region: oregon  # Região mais próxima do Brasil no free tier
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements-render.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      # Ambiente
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: API_VERSION
+        value: "1.0.0"
+      
+      # Redis (será preenchido automaticamente pelo Render)
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: dengo-cache
+          property: connectionString
+      
+      # OpenWeather API (adicionar manualmente no dashboard)
+      - key: OPENWEATHER_API_KEY
+        sync: false  # Configurar manualmente no dashboard
+      
+      # Python
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # REDIS CACHE
+  # ──────────────────────────────────────────────────────────────────────────
+  - type: redis
+    name: dengo-cache
+    plan: free  # 25MB grátis
+    region: oregon
+    ipAllowList: []  # Permite apenas serviços internos do Render

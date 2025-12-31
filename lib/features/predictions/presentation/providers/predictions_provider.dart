@@ -1,17 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/network/api_client.dart';
+import '../../../../core/config/app_providers.dart';
 import '../../data/datasources/predictions_remote_datasource.dart';
 import '../../data/repositories/predictions_repository_impl.dart';
 import '../../domain/entities/prediction_response.dart';
 import '../../domain/repositories/predictions_repository.dart';
 
 // --- INJEÇÃO DE DEPENDÊNCIA (DI) ---
-
-/// Provider do ApiClient.
-/// NOTA: Idealmente, este provider deveria vir de 'core/config/app_providers.dart'
-/// para ser um Singleton global. Mantido aqui para compatibilidade local.
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
 /// Provider do Data Source
 final predictionsRemoteDataSourceProvider = Provider<PredictionsRemoteDataSource>((ref) {

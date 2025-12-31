@@ -1,7 +1,9 @@
 // Domain entities
 export 'domain/entities/heatmap_city.dart';
 export 'domain/entities/heatmap_data.dart';
-export 'domain/entities/risk_level.dart';
+
+// RiskLevel vem de core/utils/enums/risk_level.dart (unificado)
+export '../../../core/utils/enums/risk_level.dart';
 
 // Repositories
 export 'domain/repositories/heatmap_repository.dart';

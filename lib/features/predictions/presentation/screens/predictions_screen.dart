@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../../core/widgets/app_bottom_nav.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/config/app_router.dart';
 // Import essencial para tipagem forte
 import '../../domain/entities/prediction_response.dart';
 import '../../domain/entities/week_prediction.dart';
@@ -9,15 +11,10 @@ import '../providers/predictions_provider.dart';
 import '../widgets/predictions_chart.dart';
 import '../widgets/trend_indicator.dart';
 
-// --- Constantes de Design ---
-class _AppStyles {
-  static const primary = Color(0xFF2E8B8B);
-  static const primaryDark = Color(0xFF1E7B7B);
-  static const textDark = Color(0xFF2E5C6E);
-  static const textGrey = Color(0xFF6B7280);
-}
-
-/// Tela de predições de casos de dengue.
+/// Tela de predições de casos de dengue (Modo Pro/Desenvolvedor).
+/// 
+/// Esta tela é acessada exclusivamente via Modo Pro na tela Trends.
+/// Exibe informações técnicas detalhadas do modelo de Machine Learning.
 class PredictionsScreen extends ConsumerStatefulWidget {
   /// Código geográfico da cidade (IBGE).
   final String geocode;
@@ -61,28 +58,34 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.secondary,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: _AppStyles.textDark),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.go(AppRoutes.trends),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Previsões - ${widget.cityName}',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: _AppStyles.textDark,
-              ),
+            Row(
+              children: [
+                const Icon(Icons.developer_mode, color: Colors.white, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  'Modo Pro - ${widget.cityName}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
             const Text(
-              'Powered by Machine Learning',
+              'Análise Técnica de Machine Learning',
               style: TextStyle(
-                fontSize: 12,
-                color: _AppStyles.textGrey,
+                fontSize: 11,
+                color: Colors.white70,
               ),
             ),
           ],
@@ -90,14 +93,14 @@ class _PredictionsScreenState extends ConsumerState<PredictionsScreen> {
         actions: const [_IAIndicator()],
       ),
       body: _buildBody(state),
-      bottomNavigationBar: const AppBottomNav(currentIndex: 1),
+      // Sem bottomNavigationBar - acesso exclusivo via Modo Pro
     );
   }
 
   Widget _buildBody(PredictionsState state) {
     if (state.isLoading) {
       return const Center(
-          child: CircularProgressIndicator(color: _AppStyles.primary));
+          child: CircularProgressIndicator(color: AppColors.primary));
     }
 
     if (state.errorMessage != null) {
@@ -135,7 +138,7 @@ class _IAIndicator extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: _AppStyles.primary.withValues(alpha: 0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: const Row(
@@ -143,7 +146,7 @@ class _IAIndicator extends StatelessWidget {
           Icon(
             Icons.auto_awesome,
             size: 16,
-            color: _AppStyles.primary,
+            color: AppColors.primary,
           ),
           SizedBox(width: 4),
           Text(
@@ -151,7 +154,7 @@ class _IAIndicator extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: _AppStyles.primary,
+              color: AppColors.primary,
             ),
           ),
         ],
@@ -266,7 +269,7 @@ class _PeriodButton extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: isSelected
                 ? const LinearGradient(
-                    colors: [_AppStyles.primary, _AppStyles.primaryDark],
+                    colors: [AppColors.primary, AppColors.primaryDark],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   )
@@ -274,7 +277,7 @@ class _PeriodButton extends StatelessWidget {
             color: isSelected ? null : Colors.grey[100],
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? _AppStyles.primary : Colors.grey[300]!,
+              color: isSelected ? AppColors.primary : Colors.grey[300]!,
               width: 1.5,
             ),
           ),

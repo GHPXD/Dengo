@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../config/app_router.dart';
 import '../theme/app_colors.dart';
-import '../../features/onboarding/presentation/providers/city_search_provider.dart';
 
 /// Bottom Navigation Bar compartilhado entre todas as telas principais.
 ///
-/// Usa [context.go()] para navegação lateral eficiente.
-class AppBottomNav extends ConsumerWidget {
+/// Estrutura de navegação otimizada para 4 itens principais:
+/// - Home: Situação atual
+/// - Mapa: Visão espacial dos focos
+/// - Trends: Análise temporal + Modo Pro
+/// - Cidade: Perfil demográfico
+///
+/// A tela de Predições (modo desenvolvedor) é acessada via Modo Pro na tela Trends.
+class AppBottomNav extends StatelessWidget {
   /// Indica o índice do item atualmente ativo na navegação.
   final int currentIndex;
 
@@ -20,7 +24,7 @@ class AppBottomNav extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Container(
       height: 72,
       decoration: BoxDecoration(
@@ -36,7 +40,7 @@ class AppBottomNav extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          // 1. Dashboard (Home)
+          // 1. Dashboard (Home) - índice 0
           _NavItem(
             icon: Icons.home_rounded,
             label: 'Home',
@@ -44,47 +48,27 @@ class AppBottomNav extends ConsumerWidget {
             onTap: () => context.go(AppRoutes.dashboard),
           ),
 
-          // 2. Predições IA
-          _NavItem(
-            icon: Icons.analytics_rounded,
-            label: 'Predições',
-            isActive: currentIndex == 1,
-            onTap: () {
-              // Tenta pegar a cidade selecionada do estado global
-              final selectedCity = ref.read(selectedCityProvider);
-              
-              context.go(
-                AppRoutes.predictions,
-                extra: {
-                  // CORREÇÃO: Usar 'ibgeCode' conforme definido na entidade City
-                  'geocode': selectedCity?.ibgeCode ?? '4106902', // Fallback Curitiba
-                  'cityName': selectedCity?.name ?? 'Curitiba',
-                },
-              );
-            },
-          ),
-
-          // 3. Mapa de Calor
+          // 2. Mapa de Calor - índice 1
           _NavItem(
             icon: Icons.map_rounded,
             label: 'Mapa',
-            isActive: currentIndex == 2,
+            isActive: currentIndex == 1,
             onTap: () => context.go(AppRoutes.heatmap),
           ),
 
-          // 4. Tendências
+          // 3. Tendências + Modo Pro - índice 2
           _NavItem(
             icon: Icons.bar_chart_rounded,
             label: 'Trends',
-            isActive: currentIndex == 3,
+            isActive: currentIndex == 2,
             onTap: () => context.go(AppRoutes.trends),
           ),
 
-          // 5. Detalhes
+          // 4. Detalhes da Cidade - índice 3
           _NavItem(
             icon: Icons.location_city,
             label: 'Cidade',
-            isActive: currentIndex == 4,
+            isActive: currentIndex == 3,
             onTap: () => context.go(AppRoutes.cityDetail),
           ),
         ],

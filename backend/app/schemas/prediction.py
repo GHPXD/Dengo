@@ -48,7 +48,7 @@ class PredictionRequest(BaseModel):
     
     Attributes:
         geocode: Código IBGE do município (7 dígitos)
-        weeks_ahead: Número de semanas a prever (1-4)
+        weeks_ahead: Número de semanas a prever (1-12)
     
     Example:
         {
@@ -78,9 +78,9 @@ class PredictionRequest(BaseModel):
     weeks_ahead: int = Field(
         default=1,
         ge=1,
-        le=4,
-        description="Número de semanas a prever (1 a 4)",
-        examples=[1, 4]
+        le=12,  # AUMENTADO PARA 12 PARA SUPORTAR 90 DIAS
+        description="Número de semanas a prever (1 a 12)",
+        examples=[1, 12]
     )
     
     @field_validator("geocode")
@@ -337,7 +337,7 @@ class PredictionResponse(BaseModel):
     predictions: List[WeekPrediction] = Field(
         ...,
         min_length=1,
-        max_length=4,
+        max_length=12,  # Ajustado também para permitir retornar até 12 predições
         description="Lista de predições semanais"
     )
     

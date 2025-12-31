@@ -1,0 +1,8 @@
+# Ignora modelos ML grandes, mas mantém dados necessários
+*.keras
+*.pkl
+*.joblib
+*.h5
+
+# MANTÉM o CSV de dados (necessário para heatmap)
+!DATASET_PARA_IA.csv

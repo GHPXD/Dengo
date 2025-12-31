@@ -43,7 +43,7 @@ class PredictionService:
     """
     Serviço de predição usando modelo de Machine Learning.
     
-    Carrega modelo treinado e faz predições de casos de dengue.
+    Carrega modelo Keras LSTM treinado e faz predições de casos de dengue.
     """
 
     def __init__(self):
@@ -52,53 +52,77 @@ class PredictionService:
         self.scaler = None
         self.feature_names = None
         self.is_loaded = False
-        self.model_path = Path(__file__).parent.parent.parent / "models" / "dengo_model.joblib"
+        # Usa modelo Keras treinado
+        self.model_path = Path(__file__).parent.parent.parent / "models" / "dengo_ai.keras"
+        self.scaler_path = Path(__file__).parent.parent.parent / "models" / "scaler_treinado.pkl"
 
     def load_model(self) -> bool:
         """
-        Carrega modelo ML do disco.
+        Carrega modelo Keras LSTM do disco.
 
         Returns:
             bool: True se carregou com sucesso, False caso contrário
 
-        Arquivo esperado:
-            backend/models/dengo_model.joblib
+        Arquivos esperados:
+            backend/models/dengo_ai.keras
+            backend/models/scaler_treinado.pkl
         """
         try:
-            logger.info("🤖 Carregando modelo de Machine Learning...")
-            logger.debug(f"   Path: {self.model_path}")
-
-            if not self.model_path.exists():
-                logger.error(f"❌ Modelo não encontrado: {self.model_path}")
-                logger.warning("⚠️  Continuando sem predições ML (fallback mode)")
+            logger.info("🤖 Verificando modelo de Machine Learning...")
+            
+            # Verifica se TensorFlow está instalado
+            try:
+                import tensorflow
+                logger.debug(f"   TensorFlow version: {tensorflow.__version__}")
+            except ImportError:
+                logger.warning("⚠️  TensorFlow não instalado - usando fallback inteligente")
+                logger.info("📊 Sistema operando com predições baseadas em histórico + clima")
                 return False
 
-            # Carrega artefato do modelo
-            artifact = joblib.load(self.model_path)
+            logger.debug(f"   Model Path: {self.model_path}")
+            logger.debug(f"   Scaler Path: {self.scaler_path}")
 
-            self.model = artifact["model"]
-            self.scaler = artifact["scaler"]
-            self.feature_names = artifact["feature_names"]
+            if not self.model_path.exists():
+                logger.warning(f"⚠️  Modelo não encontrado: {self.model_path}")
+                logger.info("📊 Sistema operando com fallback inteligente")
+                return False
 
-            # Metadados
-            version = artifact.get("version", "unknown")
-            trained_at = artifact.get("trained_at", "unknown")
-            metrics = artifact.get("metrics", {})
+            if not self.scaler_path.exists():
+                logger.warning(f"⚠️  Scaler não encontrado: {self.scaler_path}")
+                logger.info("📊 Sistema operando com fallback inteligente")
+                return False
 
-            logger.success("✓ Modelo carregado com sucesso!")
-            logger.info(f"   Versão: {version}")
-            logger.info(f"   Treinado em: {trained_at}")
-            logger.info(f"   MAE: {metrics.get('mae', 'N/A'):.2f} casos")
-            logger.info(f"   R²: {metrics.get('r2', 'N/A'):.4f}")
+            # Carrega modelo Keras
+            try:
+                from tensorflow import keras
+                self.model = keras.models.load_model(
+                    str(self.model_path),
+                    compile=False  # Não precisa compilar para inferência
+                )
+                logger.success(f"✓ Modelo Keras carregado: {self.model_path.name}")
+            except ImportError:
+                logger.warning("⚠️  Keras não disponível - usando fallback inteligente")
+                return False
+            except Exception as e:
+                logger.warning(f"⚠️  Erro ao carregar modelo Keras: {e}")
+                logger.info("📊 Sistema operando com fallback inteligente")
+                return False
+
+            # Carrega scaler
+            self.scaler = joblib.load(str(self.scaler_path))
+            logger.success(f"✓ Scaler carregado: {self.scaler_path.name}")
 
             self.is_loaded = True
+            logger.info("🎯 Prediction Service pronto com ML!")
             return True
 
         except FileNotFoundError:
-            logger.error(f"❌ Arquivo do modelo não encontrado: {self.model_path}")
+            logger.warning(f"⚠️  Arquivo do modelo não encontrado")
+            logger.info("📊 Sistema operando com fallback inteligente")
             return False
         except Exception as e:
-            logger.error(f"❌ Erro ao carregar modelo: {e}")
+            logger.warning(f"⚠️  Erro ao carregar modelo: {e}")
+            logger.info("📊 Sistema operando com fallback inteligente")
             return False
 
     def predict(
@@ -136,13 +160,29 @@ class PredictionService:
 
         Níveis de Risco:
             - baixo: < 50 casos
-            - medio: 50-150 casos
+            - moderado: 50-150 casos
             - alto: 150-300 casos
             - muito_alto: > 300 casos
         """
-        if not self.is_loaded:
-            logger.warning("⚠️  Modelo não carregado - usando fallback")
-            return self._get_fallback_prediction(temperatura_media)
+        # ════════════════════════════════════════════════════════════════════
+        # DECISÃO: Usar Fallback Inteligente como principal método
+        # ════════════════════════════════════════════════════════════════════
+        # O modelo Keras atual tem R² = -0.25 (pior que média)
+        # O fallback baseado em histórico + clima é mais preciso
+        # Quando tivermos um modelo com R² > 0.5, podemos reverter
+        
+        USE_ML_MODEL = False  # Flag para ativar/desativar ML
+        
+        if not USE_ML_MODEL or not self.is_loaded:
+            if not self.is_loaded:
+                logger.warning("⚠️  Modelo não carregado - usando fallback inteligente")
+            else:
+                logger.info("📊 Usando fallback inteligente (ML desabilitado por baixa acurácia)")
+            return self._get_fallback_prediction(
+                temperatura_media=temperatura_media,
+                casos_semana_anterior=casos_semana_anterior,
+                casos_2sem_anterior=casos_2sem_anterior,
+            )
 
         try:
             # Features para o modelo (baseado no treinamento do ETL pipeline)
@@ -260,18 +300,18 @@ class PredictionService:
             casos: Número estimado de casos
 
         Returns:
-            str: "baixo" | "medio" | "alto" | "muito_alto"
+            str: "baixo" | "moderado" | "alto" | "muito_alto"
 
         Critérios:
             - Baixo: < 50 casos
-            - Médio: 50-150 casos
+            - Moderado: 50-150 casos
             - Alto: 150-300 casos
             - Muito Alto: > 300 casos
         """
         if casos < 50:
             return "baixo"
         elif casos < 150:
-            return "medio"
+            return "moderado"  # CORRIGIDO: de "medio" para "moderado"
         elif casos < 300:
             return "alto"
         else:
@@ -300,43 +340,100 @@ class PredictionService:
         else:
             return "estavel"
 
-    def _get_fallback_prediction(self, temperatura_media: float) -> dict:
+    def _get_fallback_prediction(
+        self,
+        temperatura_media: float,
+        casos_semana_anterior: int = 0,
+        casos_2sem_anterior: int = 0,
+    ) -> dict:
         """
-        Predição de fallback (quando modelo não está disponível).
+        Predição de fallback inteligente (quando modelo ML não está disponível).
 
-        Usa regra simples baseada em temperatura:
-            - Temp > 25°C → Maior risco
-            - Temp 20-25°C → Risco médio
-            - Temp < 20°C → Risco baixo
+        Usa combinação de:
+            1. Dados históricos reais da cidade (casos anteriores)
+            2. Fator climático (temperatura)
+            3. Tendência recente (comparação semanas anteriores)
+
+        NÃO usa valores hardcoded fixos - adapta-se a cada cidade!
 
         Args:
-            temperatura_media: Temperatura média
+            temperatura_media: Temperatura média atual (°C)
+            casos_semana_anterior: Casos reais da última semana completa
+            casos_2sem_anterior: Casos reais de 2 semanas atrás
 
         Returns:
-            dict: Predição simplificada
+            dict: Predição baseada em heurísticas
         """
         logger.warning("⚠️  Usando predição de fallback (sem ML)")
 
-        # Regra simples baseada em temperatura
-        if temperatura_media > 28:
-            casos_estimados = 250
-            nivel_risco = "alto"
-        elif temperatura_media > 25:
-            casos_estimados = 120
-            nivel_risco = "medio"
-        elif temperatura_media > 20:
-            casos_estimados = 60
-            nivel_risco = "medio"
+        # ════════════════════════════════════════════════════════════════════
+        # 1. BASE: Média das últimas semanas (dados REAIS da cidade)
+        # ════════════════════════════════════════════════════════════════════
+        if casos_semana_anterior > 0 and casos_2sem_anterior > 0:
+            # Usa média móvel das últimas 2 semanas como base
+            media_recente = (casos_semana_anterior + casos_2sem_anterior) / 2
+        elif casos_semana_anterior > 0:
+            media_recente = casos_semana_anterior
+        elif casos_2sem_anterior > 0:
+            media_recente = casos_2sem_anterior
         else:
-            casos_estimados = 30
-            nivel_risco = "baixo"
+            # Sem dados históricos - usa estimativa conservadora
+            media_recente = 10  # Valor baixo default
+
+        # ════════════════════════════════════════════════════════════════════
+        # 2. FATOR CLIMÁTICO: Temperatura afeta reprodução do Aedes
+        # ════════════════════════════════════════════════════════════════════
+        # Temperatura ideal para Aedes aegypti: 25-30°C
+        # Abaixo de 20°C: reprodução reduzida
+        # Acima de 35°C: mortalidade aumenta
+        if temperatura_media >= 25 and temperatura_media <= 30:
+            fator_temperatura = 1.3  # Condições ideais: +30%
+        elif temperatura_media > 30:
+            fator_temperatura = 1.1  # Calor intenso: +10%
+        elif temperatura_media >= 20:
+            fator_temperatura = 1.0  # Normal
+        else:
+            fator_temperatura = 0.7  # Frio: -30%
+
+        # ════════════════════════════════════════════════════════════════════
+        # 3. TENDÊNCIA: Comparação entre semanas anteriores
+        # ════════════════════════════════════════════════════════════════════
+        if casos_2sem_anterior > 0:
+            variacao_recente = (casos_semana_anterior - casos_2sem_anterior) / casos_2sem_anterior
+            if variacao_recente > 0.2:  # Crescimento > 20%
+                tendencia = "subindo"
+                fator_tendencia = 1.2  # Projeta continuação
+            elif variacao_recente < -0.2:  # Queda > 20%
+                tendencia = "caindo"
+                fator_tendencia = 0.8  # Projeta continuação
+            else:
+                tendencia = "estavel"
+                fator_tendencia = 1.0
+        else:
+            tendencia = "estavel"
+            fator_tendencia = 1.0
+
+        # ════════════════════════════════════════════════════════════════════
+        # 4. CÁLCULO FINAL
+        # ════════════════════════════════════════════════════════════════════
+        casos_estimados = int(media_recente * fator_temperatura * fator_tendencia)
+        casos_estimados = max(0, casos_estimados)  # Não pode ser negativo
+
+        # Classifica nível de risco
+        nivel_risco = self._classify_risk_level(casos_estimados)
+
+        logger.info(
+            f"📊 Fallback: base={media_recente:.0f}, "
+            f"temp_factor={fator_temperatura}, "
+            f"trend_factor={fator_tendencia} → {casos_estimados} casos"
+        )
 
         return {
             "casos_estimados": casos_estimados,
             "nivel_risco": nivel_risco,
-            "confianca": 0.5,  # Baixa confiança (sem ML)
-            "tendencia": "estavel",
-            "fonte": "Fallback (regra baseada em temperatura)",
+            "confianca": 0.40,  # Confiança baixa (sem ML)
+            "tendencia": tendencia,
+            "fonte": "Fallback (heurística baseada em histórico + clima)",
         }
 
     def get_model_info(self) -> Optional[dict]:

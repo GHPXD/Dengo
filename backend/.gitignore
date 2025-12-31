@@ -37,14 +37,15 @@ ENV/
 .env.*
 
 # ════════════════════════════════════════════════════════════════════════════
-# MACHINE LEARNING
+# MACHINE LEARNING (modelos grandes, mas não dados necessários)
 # ════════════════════════════════════════════════════════════════════════════
 *.pkl
 *.joblib
 *.h5
 *.hdf5
-models/
-data/
+*.keras
+# models/ - NÃO ignorar pasta toda, tem .gitignore interno
+# data/ - NÃO ignorar, tem cidades_parana.json necessário
 notebooks/
 
 # ════════════════════════════════════════════════════════════════════════════

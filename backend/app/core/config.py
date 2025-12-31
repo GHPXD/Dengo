@@ -7,6 +7,7 @@ Todas as configurações sensíveis vêm do arquivo .env
 """
 
 from functools import lru_cache
+from pathlib import Path
 from typing import List, Optional
 
 from pydantic import Field, validator
@@ -32,6 +33,16 @@ class Settings(BaseSettings):
     port: int = Field(default=8080, alias="PORT")
 
     # ════════════════════════════════════════════════════════════════════════
+    # DATASET & ARQUIVOS
+    # ════════════════════════════════════════════════════════════════════════
+    # Define o caminho absoluto para o CSV baseado na localização deste arquivo
+    csv_path: str = Field(
+        default=str(Path(__file__).parent.parent.parent / "models" / "DATASET_PARA_IA.csv"),
+        alias="CSV_PATH",
+        description="Caminho para o arquivo CSV de dados históricos"
+    )
+
+    # ════════════════════════════════════════════════════════════════════════
     # SUPABASE (PostgreSQL) - Opcional para MVP
     # ════════════════════════════════════════════════════════════════════════
     supabase_url: str = Field(default="https://mock.supabase.co", alias="SUPABASE_URL")
@@ -45,8 +56,6 @@ class Settings(BaseSettings):
     redis_url: str = Field(default="redis://localhost:6379", alias="REDIS_URL")
     redis_ttl: int = Field(default=86400, alias="REDIS_TTL")  # 24h
 
-    # ════════════════════════════════════════════════════════════════════════
-    # APIS EXTERNAS
     # ════════════════════════════════════════════════════════════════════════
     # APIS EXTERNAS - Opcional para MVP
     # ════════════════════════════════════════════════════════════════════════

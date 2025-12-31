@@ -31,9 +31,9 @@ class CityHeatmapSchema(BaseModel):
     )
     nivel_risco: str = Field(
         ...,
-        description="Nível de risco (baixo/medio/alto)",
+        description="Nível de risco (baixo/moderado/alto)",
         example="baixo",
-        pattern="^(baixo|medio|alto)$",
+        pattern="^(baixo|moderado|alto)$",
     )
 
     class Config:

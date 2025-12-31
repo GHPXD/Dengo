@@ -1,261 +1,177 @@
 """
-════════════════════════════════════════════════════════════════════════════
-ENDPOINT /api/v1/dashboard - DASHBOARD COMPLETO (PRODUCTION)
-════════════════════════════════════════════════════════════════════════════
+API de Dashboard - Visão Geral por Cidade
+=========================================
 
-Endpoint de produção para o Dashboard do Flutter.
-
-Features:
-    - Smart Caching (Redis) - 1 hora de TTL
-    - Clima atual (OpenWeatherMap)
-    - Predição ML (GradientBoostingRegressor)
-    - Dados históricos (InfoDengue - futuro)
-    - Zero mocks, tudo dinâmico
-
-Flow:
-    1. Verifica cache (Redis)
-    2. [CACHE MISS] Busca clima (OpenWeather)
-    3. Executa predição ML
-    4. Salva no cache
-    5. Retorna JSON
+Agrega dados de múltiplas fontes para apresentar o painel principal:
+- Dados climáticos (WeatherService)
+- Predições de IA (PredictionService)
+- Dados históricos reais (InfoDengueService)
+- Informações demográficas (CitiesService)
 """
 
-from datetime import datetime, timedelta
-from typing import List
+import logging
+from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from app.core.logger import logger
-from app.schemas.dashboard import DashboardResponseSchema
-from app.services import cache_service, infodengue_service, prediction_service, weather_service, cities_service
-from app.services.weather_service import CITY_COORDINATES
+# Garante que o schema foi atualizado conforme correção anterior
+from app.schemas.dashboard import DashboardResponse
+from app.services.cities_service import cities_service
+# CORREÇÃO AQUI: Importa infodengue_service (sem underscore extra)
+from app.services.infodengue_service import infodengue_service
+from app.services.prediction_service import prediction_service
+from app.services.weather_service import weather_service
+from app.core.config import settings
 
-router = APIRouter()
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Rate limiter
 limiter = Limiter(key_func=get_remote_address)
 
+# Router
+router = APIRouter()
 
-@router.get("/dashboard", response_model=DashboardResponseSchema)
+
+@router.get("", response_model=DashboardResponse)
 @limiter.limit("20/minute")
 async def get_dashboard(
     request: Request,
-    city_id: str = Query(..., description="Código IBGE da cidade (ex: 3550308)"),
+    city_id: str = Query(..., description="Código IBGE da cidade (7 dígitos)", min_length=7, max_length=7)
 ):
     """
-    Retorna dados completos do dashboard para uma cidade.
-
-    Args:
-        city_id: Código IBGE da cidade
-
-    Returns:
-        DashboardResponseSchema: Dados do dashboard
-            - cidade: Informações da cidade
-            - dados_historicos: Últimos 5 dias
-            - predicao: Casos estimados + nível de risco
-
-    Raises:
-        HTTPException 404: Cidade não encontrada
-        HTTPException 503: Serviço externo indisponível
-        HTTPException 429: Rate limit excedido (>20 req/min)
-
-    Cache Strategy:
-        - TTL: 3600s (1 hora)
-        - Key: dashboard:{city_id}
-        - Economia: ~99% de API calls
+    Retorna dados completos para o dashboard da cidade.
     
-    Rate Limiting:
-        - Limite: 20 requests/minuto por IP
-        - Proteção contra DDoS e abuse
+    Agrega:
+    1. Clima atual (OpenWeather)
+    2. Predição de risco (IA)
+    3. Dados históricos (InfoDengue)
+    4. Dados demográficos (IBGE)
     """
     logger.info(f"📊 Dashboard request: city_id={city_id}")
 
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 1: VERIFICA CACHE
-    # ════════════════════════════════════════════════════════════════════════
+    # 1. Busca dados da cidade no serviço local (JSON)
+    # Isso garante nome e população corretos (ex: Nova Tebas = ~6k hab)
+    city_info = cities_service.get_city_by_ibge(city_id)
+    
+    if not city_info:
+        # Se não achou no JSON, tenta buscar na API do IBGE ou retorna erro
+        # Por enquanto, retorna 404 se não estiver na base local
+        logger.warning(f"❌ Cidade {city_id} não encontrada na base local.")
+        raise HTTPException(status_code=404, detail=f"Cidade {city_id} não encontrada.")
 
-    cached_data = await cache_service.get_dashboard_data(city_id)
-    if cached_data:
-        logger.info(f"✓ Cache HIT - Retornando dados em cache")
-        return cached_data
+    city_name = city_info.get("nome", "Desconhecida")
+    # Usa a população real do JSON, com fallback para 10k
+    population = city_info.get("populacao", 10000) 
+    state = city_info.get("uf", "PR")
+    lat = city_info.get("latitude", -25.25)
+    lon = city_info.get("longitude", -52.02)
 
-    logger.info(f"⚠ Cache MISS - Buscando dados externos...")
+    logger.info(f"📍 Cidade: {city_name} ({population} hab)")
 
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 2: BUSCA COORDENADAS DA CIDADE
-    # ════════════════════════════════════════════════════════════════════════
+    # 2. Busca Clima Atual
+    try:
+        weather = await weather_service.get_current_weather(lat, lon)
+    except Exception as e:
+        logger.error(f"Erro ao buscar clima: {e}")
+        # Fallback de clima
+        weather = {
+            "temperatura_atual": 25.0,
+            "temperatura_min": 20.0,
+            "temperatura_max": 30.0,
+            "umidade": 60,
+            "descricao": "Dados indisponíveis",
+            "icon": "01d",
+            "fonte": "Offline"
+        }
 
-    # Tenta buscar das capitais hardcoded primeiro (fallback)
-    if city_id in CITY_COORDINATES:
-        city_data = CITY_COORDINATES[city_id]
-        city_name = city_data["name"]
-        lat = city_data["lat"]
-        lon = city_data["lon"]
-    else:
-        # Busca no CitiesService (399 cidades do Paraná + outras)
-        city = cities_service.get_city_by_ibge(city_id)
-        if not city:
-            logger.error(f"❌ Cidade não encontrada: {city_id}")
-            raise HTTPException(
-                status_code=404,
-                detail=f"Cidade com código IBGE {city_id} não encontrada.",
-            )
+    # 3. Busca Dados Históricos (InfoDengue)
+    try:
+        # Busca últimas 16 semanas para suportar filtro de 12 semanas no frontend
+        # CORREÇÃO: Aumentado de 8 para 16 semanas
+        historical_df = await infodengue_service.get_historical_data(city_id, weeks=16)
         
-        city_name = city["nome"]
-        lat = city["latitude"]
-        lon = city["longitude"]
-
-    logger.info(f"📍 Cidade: {city_name} (lat={lat}, lon={lon})")
-
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 3: BUSCA CLIMA ATUAL (OpenWeatherMap)
-    # ════════════════════════════════════════════════════════════════════════
-
-    try:
-        weather_data = await weather_service.get_current_weather(lat, lon)
+        # Converte lista de dicts para lista de objetos compatíveis com schema
+        # O Service já retorna lista de dicts, não DataFrame, então iteramos direto
+        historical_data = []
+        if historical_df:
+            for row in historical_df:
+                historical_data.append({
+                    "week_number": int(row.get('semana_epidemiologica', 0)),
+                    "date": row.get('data', '2024-01-01'),
+                    "cases": int(row.get('casos', 0))
+                })
     except Exception as e:
-        logger.error(f"❌ Erro ao buscar clima: {e}")
-        raise HTTPException(
-            status_code=503,
-            detail="Serviço de clima temporariamente indisponível. Tente novamente em alguns minutos.",
+        logger.error(f"Erro ao buscar histórico: {e}")
+        historical_data = []
+
+    # 4. Gera Predição (IA)
+    try:
+        # Prepara dados para o modelo
+        # IMPORTANTE: Usar semanas COMPLETAS para predição
+        # historical_data[0] = semana atual (pode ser parcial!)
+        # historical_data[1] = última semana completa
+        # historical_data[2] = semana anterior à última
+        
+        # Filtra apenas semanas válidas (week_number > 0)
+        valid_weeks = [h for h in historical_data if h.get('week_number', 0) > 0]
+        
+        # Usa índice 1 e 2 para pegar semanas COMPLETAS
+        casos_semana_anterior = valid_weeks[1]['cases'] if len(valid_weeks) > 1 else 0
+        casos_2sem_anterior = valid_weeks[2]['cases'] if len(valid_weeks) > 2 else 0
+        
+        logger.info(
+            f"📊 Dados para predição: "
+            f"sem_anterior={casos_semana_anterior}, "
+            f"2sem_anterior={casos_2sem_anterior}"
         )
 
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 4: PREDIÇÃO ML
-    # ════════════════════════════════════════════════════════════════════════
+        prediction = prediction_service.predict(
+            temperatura_media=weather.get("temperatura_atual", 25.0),
+            temperatura_min=weather.get("temperatura_min", 20.0),
+            temperatura_max=weather.get("temperatura_max", 30.0),
+            umidade=weather.get("umidade", 60.0),
+            precipitacao=50.0, # Valor médio estimado se não tiver realtime
+            populacao_densidade=int(population / 100) if population else 100,
+            casos_semana_anterior=casos_semana_anterior,
+            casos_2sem_anterior=casos_2sem_anterior
+        )
+    except Exception as e:
+        logger.error(f"Erro na predição: {e}")
+        # Fallback
+        prediction = {
+            "casos_estimados": 0,
+            "nivel_risco": "baixo",
+            "confianca": 0.0,
+            "tendencia": "estavel",
+            "fonte": "Erro"
+        }
 
-    prediction = prediction_service.predict(
-        temperatura_media=weather_data["temperatura_atual"],
-        temperatura_min=weather_data["temperatura_min"],
-        temperatura_max=weather_data["temperatura_max"],
-        umidade=weather_data["umidade"],
+    # 5. Monta Resposta Final
+    return DashboardResponse(
+        city=city_name,
+        geocode=city_id,
+        state=state,
+        population=population,
+        
+        # Clima
+        current_temp=weather.get("temperatura_atual"),
+        min_temp=weather.get("temperatura_min"),
+        max_temp=weather.get("temperatura_max"),
+        weather_desc=weather.get("descricao"),
+        weather_icon=weather.get("icon"),
+        
+        # Predição
+        risk_level=prediction["nivel_risco"],
+        predicted_cases=prediction["casos_estimados"],
+        trend=prediction["tendencia"],
+        
+        # Histórico
+        historical_data=historical_data,
+        
+        # Metadados
+        last_updated=None 
     )
-
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 5: BUSCA DADOS HISTÓRICOS REAIS (InfoDengue API)
-    # ════════════════════════════════════════════════════════════════════════
-
-    try:
-        # Busca últimas 5 semanas de dados reais do Ministério da Saúde
-        dados_historicos = await infodengue_service.get_historical_data(
-            ibge_code=city_id, weeks=5
-        )
-        logger.success(
-            f"✓ InfoDengue: {len(dados_historicos)} semanas de dados reais"
-        )
-    except Exception as e:
-        logger.error(f"❌ Erro ao buscar InfoDengue: {e}")
-        # Fallback: gera dados estimados
-        logger.warning("⚠️ Usando dados de fallback")
-        dados_historicos = _generate_historical_data_fallback(
-            prediction["casos_estimados"], weather_data
-        )
-
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 6: MONTA RESPOSTA FINAL
-    # ════════════════════════════════════════════════════════════════════════
-
-    response = {
-        "cidade": {
-            "ibge_codigo": city_id,
-            "nome": city_name,
-            "populacao": _get_city_population(city_id),
-        },
-        "dados_historicos": dados_historicos,
-        "predicao": {
-            "casos_estimados": prediction["casos_estimados"],
-            "nivel_risco": prediction["nivel_risco"],
-            "tendencia": prediction["tendencia"],
-            "confianca": prediction["confianca"],
-        },
-    }
-
-    # ════════════════════════════════════════════════════════════════════════
-    # STEP 7: SALVA NO CACHE
-    # ════════════════════════════════════════════════════════════════════════
-
-    await cache_service.set_dashboard_data(city_id, response, ttl=3600)
-
-    logger.success(f"✓ Dashboard gerado com sucesso para {city_name}")
-
-    return response
-
-
-# ════════════════════════════════════════════════════════════════════════════
-# HELPER FUNCTIONS
-# ════════════════════════════════════════════════════════════════════════════
-
-
-def _generate_historical_data_fallback(casos_base: int, weather_data: dict) -> List[dict]:
-    """
-    Gera dados históricos de fallback quando InfoDengue falha.
-
-    Usado apenas como backup quando API oficial está indisponível.
-
-    Args:
-        casos_base: Número de casos estimados (base para variação)
-        weather_data: Dados climáticos atuais
-
-    Returns:
-        list[dict]: Lista com 5 dias de dados estimados
-    """
-    import random
-
-    historico = []
-    hoje = datetime.now()
-
-    for i in range(5, 0, -1):
-        data = hoje - timedelta(days=i)
-
-        # Varia casos baseado no dia (+-20%)
-        variacao = random.uniform(0.8, 1.2)
-        casos = int(casos_base * variacao * 0.8)  # 80% da estimativa futura
-
-        # Varia temperatura (+-3°C)
-        temp_var = random.uniform(-3, 3)
-        temp_media = weather_data["temperatura_atual"] + temp_var
-
-        # Varia umidade (+-10%)
-        umid_var = random.uniform(-10, 10)
-        umidade = max(0, min(100, weather_data["umidade"] + umid_var))
-
-        historico.append(
-            {
-                "data": data.strftime("%Y-%m-%d"),
-                "casos": casos,
-                "temperatura_media": round(temp_media, 1),
-                "umidade_media": round(umidade, 1),
-            }
-        )
-
-    return historico
-
-
-def _get_city_population(city_id: str) -> int:
-    """
-    Retorna população estimada da cidade.
-
-    TODO: Buscar do IBGE API ou Supabase
-    Por enquanto, usa dados estáticos.
-
-    Args:
-        city_id: Código IBGE
-
-    Returns:
-        int: População estimada
-    """
-    POPULATIONS = {
-        "3550308": 12252023,  # São Paulo
-        "3304557": 6747815,  # Rio de Janeiro
-        "3106200": 2521564,  # Belo Horizonte
-        "4106902": 1963726,  # Curitiba
-        "4314902": 1492530,  # Porto Alegre
-        "5300108": 3055149,  # Brasília
-        "2927408": 2900319,  # Salvador
-        "2611606": 1653461,  # Recife
-        "2304400": 2703391,  # Fortaleza
-        "1302603": 2219580,  # Manaus
-    }
-
-    return POPULATIONS.get(city_id, 1000000)  # Default: 1M
-

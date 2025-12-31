@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:latlong2/latlong.dart';
-import 'risk_level.dart';
+import '../../../../core/utils/enums/risk_level.dart';
 
 /// Dados de uma cidade para exibição no heatmap.
 class HeatmapCity extends Equatable {

@@ -2,6 +2,11 @@
 ///
 /// Centraliza thresholds epidemiológicos (casos por 100k habitantes).
 /// Cada nível possui cor semântica associada para visualização.
+/// 
+/// Baseado nos critérios da OMS:
+/// - Baixo: < 100 casos/100mil hab
+/// - Médio: 100-300 casos/100mil hab
+/// - Alto: > 300 casos/100mil hab
 enum RiskLevel {
   /// Risco baixo (< 100 casos/100k hab) - situação controlada
   low,
@@ -25,12 +30,33 @@ enum RiskLevel {
   /// Threshold de risco alto (vermelho) - casos por 100k habitantes
   /// Valores acima deste são considerados situação crítica/surto
   static const double highThreshold = 300.0;
-}
 
-/// Extensões para facilitar uso do enum RiskLevel.
-extension RiskLevelExtensions on RiskLevel {
-  /// Retorna label descritivo em português.
+  /// Retorna a cor correspondente ao nível de risco (valor ARGB int)
+  int get color {
+    switch (this) {
+      case RiskLevel.low:
+        return 0xFF10B981; // Verde
+      case RiskLevel.medium:
+        return 0xFFFFA726; // Laranja
+      case RiskLevel.high:
+        return 0xFFEF4444; // Vermelho
+    }
+  }
+
+  /// Retorna o rótulo do nível de risco
   String get label {
+    switch (this) {
+      case RiskLevel.low:
+        return 'Baixo';
+      case RiskLevel.medium:
+        return 'Médio';
+      case RiskLevel.high:
+        return 'Alto';
+    }
+  }
+
+  /// Retorna label descritivo completo em português.
+  String get fullLabel {
     switch (this) {
       case RiskLevel.low:
         return 'Risco Baixo';
@@ -53,19 +79,6 @@ extension RiskLevelExtensions on RiskLevel {
     }
   }
 
-  /// Retorna cor semântica do nível de risco.
-  /// Verde (seguro) | Amarelo (atenção) | Vermelho (perigo)
-  AppColorsClass get color {
-    switch (this) {
-      case RiskLevel.low:
-        return const AppColorsClass.success();
-      case RiskLevel.medium:
-        return const AppColorsClass.warning();
-      case RiskLevel.high:
-        return const AppColorsClass.danger();
-    }
-  }
-
   /// Retorna descrição detalhada do nível.
   String get description {
     switch (this) {
@@ -75,6 +88,38 @@ extension RiskLevelExtensions on RiskLevel {
         return 'Atenção necessária. Reforce medidas de combate ao mosquito.';
       case RiskLevel.high:
         return 'Situação crítica! Procure orientação médica ao menor sintoma.';
+    }
+  }
+
+  /// Cria RiskLevel a partir de uma string ("baixo", "medio", "alto")
+  static RiskLevel fromString(String value) {
+    switch (value.toLowerCase()) {
+      case 'baixo':
+      case 'low':
+        return RiskLevel.low;
+      case 'medio':
+      case 'médio':
+      case 'medium':
+        return RiskLevel.medium;
+      case 'alto':
+      case 'high':
+      case 'muito_alto':
+      case 'very_high':
+        return RiskLevel.high;
+      default:
+        return RiskLevel.low;
+    }
+  }
+
+  /// Converte para string ("baixo", "medio", "alto")
+  String toApiString() {
+    switch (this) {
+      case RiskLevel.low:
+        return 'baixo';
+      case RiskLevel.medium:
+        return 'medio';
+      case RiskLevel.high:
+        return 'alto';
     }
   }
 
@@ -90,28 +135,4 @@ extension RiskLevelExtensions on RiskLevel {
       return RiskLevel.high;
     }
   }
-}
-
-/// Helper class para acessar cores (workaround para constantes)
-class AppColorsClass {
-  /// Nome semântico da cor
-  final String name;
-
-  /// Valor hexadecimal ARGB da cor
-  final int value;
-
-  /// Cria cor de sucesso (verde)
-  const AppColorsClass.success()
-      : name = 'success',
-        value = 0xFF10B981;
-
-  /// Cria cor de alerta (amarelo/laranja)
-  const AppColorsClass.warning()
-      : name = 'warning',
-        value = 0xFFF59E0B;
-
-  /// Cria cor de perigo (vermelho)
-  const AppColorsClass.danger()
-      : name = 'danger',
-        value = 0xFFEF4444;
 }

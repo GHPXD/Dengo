@@ -28,6 +28,7 @@ from app.api.heatmap import router as heatmap_router
 from app.core.config import settings
 from app.core.logger import logger
 from app.services import cache_service
+from app.services.prediction_service import prediction_service
 
 
 @asynccontextmanager
@@ -52,6 +53,14 @@ async def lifespan(app: FastAPI):
 
     # Conecta ao Redis
     await cache_service.connect()
+
+    # Carrega modelo de Machine Learning
+    logger.info("🤖 Carregando modelo de Machine Learning...")
+    ml_loaded = prediction_service.load_model()
+    if ml_loaded:
+        logger.success("✓ Modelo ML carregado com sucesso!")
+    else:
+        logger.warning("⚠️  Modelo ML não carregado - usando fallback (regras baseadas em temperatura)")
 
     logger.success("✓ API Ready!")
     logger.info("─" * 80)
@@ -136,7 +145,7 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 # ════════════════════════════════════════════════════════════════════════════
 
 app.include_router(
-    dashboard_router, prefix=settings.api_prefix, tags=["Dashboard"]
+    dashboard_router, prefix=f"{settings.api_prefix}/dashboard", tags=["Dashboard"]
 )
 
 app.include_router(
@@ -217,9 +226,21 @@ async def health_check():
     
     health_status["services"]["redis"] = redis_status
 
+    # Verifica Modelo ML
+    ml_loaded = prediction_service.is_loaded
+    # Nota: ML está desabilitado por baixa acurácia (R² < 0)
+    # Usando fallback inteligente baseado em histórico + clima
+    health_status["services"]["ml_model"] = {
+        "status": "loaded" if ml_loaded else "not_loaded",
+        "active": False,  # ML desabilitado temporariamente
+        "using": "Fallback inteligente (histórico + clima)",
+        "reason": "Modelo Keras com R² negativo - fallback é mais preciso",
+        "model_path": str(prediction_service.model_path) if ml_loaded else None,
+    }
+
     # Define status geral
     # Redis offline não é crítico (graceful degradation)
-    # ML fallback também não é crítico
+    # ML usando fallback não é erro, é decisão consciente
     if redis_status == "error":
         health_status["status"] = "degraded"
     

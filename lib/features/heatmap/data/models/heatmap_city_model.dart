@@ -1,6 +1,6 @@
 import 'package:latlong2/latlong.dart';
+import '../../../../core/utils/enums/risk_level.dart';
 import '../../domain/entities/heatmap_city.dart';
-import '../../domain/entities/risk_level.dart';
 
 /// Model para dados de cidade no heatmap (API response).
 class HeatmapCityModel {

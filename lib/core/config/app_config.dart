@@ -27,17 +27,31 @@ class AppConfig {
   // CONFIGURAÇÕES DE API
   // ══════════════════════════════════════════════════════════════════════════
 
-  /// URL base da API Python do Dengo (dinâmica por plataforma).
+  /// Define se está em modo produção (conecta ao Render)
+  /// Mude para `true` quando quiser usar o backend online
+  static const bool isProduction = false;
+
+  /// URL do backend em produção (Render)
+  /// Será algo como: https://dengo-api.onrender.com/api/v1
+  static const String productionApiUrl = 'https://dengo-api.onrender.com/api/v1';
+
+  /// URL base da API Python do Dengo (dinâmica por plataforma/ambiente).
   ///
   /// A API Python orquestra:
   /// - Busca de dados climáticos no OpenWeather
-  /// - Processamento de predição com IA (scikit-learn)
+  /// - Processamento de predição com IA
   ///
   /// LÓGICA DE URL:
-  /// - Web/iOS: http://127.0.0.1:8000/api/v1 (localhost)
-  /// - Android: http://10.0.2.2:8000/api/v1 (IP especial do emulador Android)
-  /// - Produção: https://api.dengo.app/api/v1 (quando fazer deploy)
+  /// - Produção: https://dengo-api.onrender.com/api/v1 (Render)
+  /// - Dev Web/iOS: http://127.0.0.1:8000/api/v1 (localhost)
+  /// - Dev Android: http://10.0.2.2:8000/api/v1 (IP especial do emulador)
   static String get apiBaseUrl {
+    // Se produção, sempre usar Render
+    if (isProduction) {
+      return productionApiUrl;
+    }
+    
+    // Desenvolvimento local
     if (kIsWeb) {
       // Flutter Web
       return 'http://127.0.0.1:8000/api/v1';

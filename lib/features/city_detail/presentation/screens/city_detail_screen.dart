@@ -1,7 +1,12 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:dengue_predict/core/theme/app_colors.dart';
 import 'package:dengue_predict/core/widgets/app_bottom_nav.dart';
+import 'package:dengue_predict/core/widgets/app_loading_indicator.dart';
+import 'package:dengue_predict/core/widgets/app_error_widget.dart';
+import 'package:dengue_predict/core/widgets/app_empty_state_widget.dart';
+import 'package:dengue_predict/core/utils/formatters.dart';
 import '../../../dashboard/presentation/providers/dashboard_data_provider.dart';
 import '../../../onboarding/presentation/providers/city_search_provider.dart';
 
@@ -9,28 +14,6 @@ import '../../../onboarding/presentation/providers/city_search_provider.dart';
 import '../../../onboarding/domain/entities/city.dart';
 import '../../../dashboard/domain/entities/dashboard_data.dart';
 import '../../../dashboard/domain/entities/historical_data.dart';
-
-// --- Constantes de Design ---
-class _AppStyles {
-  static const primary = Color(0xFF2E8B8B);
-  static const primaryDark = Color(0xFF1E7B7B);
-  static const textDark = Color(0xFF2E5C6E);
-  static const textGrey = Color(0xFF4A5568);
-  static const textLightGrey = Color(0xFF9CA3AF);
-  static const bgGrey = Color(0xFFFAFAFA);
-
-  static const alertHigh = Color(0xFFFF6B6B);
-  static const alertMedium = Color(0xFFFF8A80);
-  static const warning = Color(0xFFFBBF24);
-  static const success = Color(0xFF10B981);
-  static const infoBg = Color(0xFFFFF4EC);
-
-  static const cardShadow = BoxShadow(
-    color: Color.fromRGBO(0, 0, 0, 0.05),
-    blurRadius: 10,
-    offset: Offset(0, 4),
-  );
-}
 
 /// Perfil da Cidade - City Detail
 class CityDetailScreen extends ConsumerWidget {
@@ -45,22 +28,26 @@ class CityDetailScreen extends ConsumerWidget {
         ref.watch(dashboardDataStateProvider);
 
     if (selectedCity == null) {
-      return const _EmptyStateWidget();
+      return Scaffold(
+        backgroundColor: AppColors.bgGrey,
+        body: AppEmptyStateWidget.noCity(),
+        bottomNavigationBar: const AppBottomNav(currentIndex: 3),
+      );
     }
 
     return Scaffold(
-      backgroundColor: _AppStyles.bgGrey,
+      backgroundColor: AppColors.bgGrey,
       body: SafeArea(
         child: Column(
           children: [
             _CityHeader(city: selectedCity),
             Expanded(
               child: dashboardDataAsync.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: _AppStyles.primary),
+                loading: () => const AppLoadingIndicator(),
+                error: (error, stack) => AppErrorWidget(
+                  message: 'Erro ao carregar dados',
+                  details: error.toString(),
                 ),
-                error: (error, stack) =>
-                    _ErrorStateWidget(error: error.toString()),
                 data: (dashboardData) => ListView(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   children: [
@@ -96,7 +83,7 @@ class CityDetailScreen extends ConsumerWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNav(currentIndex: 4),
+      bottomNavigationBar: const AppBottomNav(currentIndex: 3),
     );
   }
 }
@@ -118,7 +105,7 @@ class _CityHeader extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [_AppStyles.primary, _AppStyles.primaryDark],
+          colors: [AppColors.primary, AppColors.primaryDark],
         ),
       ),
       child: Column(
@@ -126,12 +113,6 @@ class _CityHeader extends StatelessWidget {
         children: [
           Row(
             children: [
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child:
-                    const Icon(Icons.arrow_back, color: Colors.white, size: 24),
-              ),
-              const SizedBox(width: 16),
               const Icon(Icons.location_city, color: Colors.white, size: 28),
               const SizedBox(width: 12),
               Expanded(
@@ -165,14 +146,27 @@ class _MainStatsCard extends StatelessWidget {
 
   const _MainStatsCard({required this.data});
 
+  /// Calcula casos ativos estimados (últimas 2 semanas epidemiológicas)
+  /// Dengue tem duração média de 7-14 dias, então somamos as 2 últimas semanas
+  int _calculateActiveCases() {
+    final history = data.historicalData;
+    if (history.isEmpty) return data.currentWeek.cases;
+    
+    // Soma das últimas 2 semanas (período ativo da doença)
+    final weeksToSum = history.length >= 2 ? 2 : history.length;
+    return history
+        .take(weeksToSum)
+        .fold<int>(0, (sum, week) => sum + week.cases);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final cases = data.currentWeek.cases;
+    final activeCases = _calculateActiveCases();
     final population = data.cityPopulation;
 
-    // Evita divisão por zero
+    // Evita divisão por zero - usa casos ativos para incidência
     final incidence = population > 0
-        ? (cases / population * 100000).toStringAsFixed(1)
+        ? (activeCases / population * 100000).toStringAsFixed(1)
         : '0.0';
 
     return Container(
@@ -181,7 +175,7 @@ class _MainStatsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [_AppStyles.cardShadow],
+        boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(
         children: [
@@ -190,9 +184,9 @@ class _MainStatsCard extends StatelessWidget {
               Expanded(
                 child: _buildStatItem(
                   'Casos Ativos',
-                  cases.toString(),
+                  activeCases.toString(),
                   Icons.coronavirus_outlined,
-                  _AppStyles.alertMedium,
+                  AppColors.alertMedium,
                 ),
               ),
               Container(
@@ -203,9 +197,9 @@ class _MainStatsCard extends StatelessWidget {
               Expanded(
                 child: _buildStatItem(
                   'População',
-                  _formatPopulation(population),
+                  formatPopulation(population),
                   Icons.people_outline,
-                  _AppStyles.primary,
+                  AppColors.primary,
                 ),
               ),
             ],
@@ -214,13 +208,13 @@ class _MainStatsCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: _AppStyles.infoBg,
+              color: AppColors.infoBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
                 const Icon(Icons.trending_up,
-                    color: _AppStyles.alertMedium, size: 20),
+                    color: AppColors.alertMedium, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -228,7 +222,7 @@ class _MainStatsCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: _AppStyles.textGrey,
+                      color: AppColors.textTertiary,
                     ),
                   ),
                 ),
@@ -238,15 +232,6 @@ class _MainStatsCard extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _formatPopulation(int population) {
-    if (population >= 1000000) {
-      return '${(population / 1000000).toStringAsFixed(1)}M';
-    } else if (population >= 1000) {
-      return '${(population / 1000).toStringAsFixed(0)}k';
-    }
-    return population.toString();
   }
 
   Widget _buildStatItem(
@@ -260,14 +245,14 @@ class _MainStatsCard extends StatelessWidget {
           style: const TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: _AppStyles.textDark,
+            color: AppColors.textDark,
           ),
         ),
         Text(
           label,
           style: const TextStyle(
             fontSize: 12,
-            color: _AppStyles.textLightGrey,
+            color: AppColors.textGrey,
           ),
         ),
       ],
@@ -289,9 +274,10 @@ class _PopulationVsCasesCard extends StatelessWidget {
         ? (cases / population * 100).toStringAsFixed(2)
         : '0.00';
 
-    final recovering = (cases * 0.77).round(); // Estimativa 77%
-    final recoveringPercentage =
-        cases > 0 ? ((recovering / cases) * 100).round() : 0;
+    // Taxa de incidência por 100.000 habitantes (métrica epidemiológica padrão)
+    final incidenceRate = population > 0
+        ? (cases / population * 100000).toStringAsFixed(1)
+        : '0.0';
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
@@ -299,7 +285,7 @@ class _PopulationVsCasesCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [_AppStyles.cardShadow],
+        boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,7 +295,7 @@ class _PopulationVsCasesCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: _AppStyles.textDark,
+              color: AppColors.textDark,
             ),
           ),
           const SizedBox(height: 16),
@@ -319,7 +305,7 @@ class _PopulationVsCasesCard extends StatelessWidget {
                 label: 'População Total',
                 value: population,
                 total: population,
-                color: _AppStyles.primary,
+                color: AppColors.primary,
                 displayText: '${_formatNumber(population)} habitantes',
               ),
               const SizedBox(height: 16),
@@ -327,16 +313,49 @@ class _PopulationVsCasesCard extends StatelessWidget {
                 label: 'Casos Confirmados',
                 value: cases,
                 total: population,
-                color: _AppStyles.alertMedium,
+                color: AppColors.alertMedium,
                 displayText: '$cases casos ($casesPercentage%)',
               ),
               const SizedBox(height: 16),
-              _ProgressBar(
-                label: 'Casos em Recuperação',
-                value: recovering,
-                total: population,
-                color: _AppStyles.warning,
-                displayText: '$recovering casos ($recoveringPercentage%)',
+              // Taxa de incidência - métrica epidemiológica real
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.infoBg,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.analytics_outlined,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Taxa de Incidência',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textTertiary,
+                            ),
+                          ),
+                          Text(
+                            '$incidenceRate casos / 100 mil hab.',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textDark,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -389,7 +408,7 @@ class _ProgressBar extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: _AppStyles.textGrey,
+                color: AppColors.textTertiary,
               ),
             ),
             Text(
@@ -465,7 +484,7 @@ class _StateComparisonCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [_AppStyles.cardShadow],
+        boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -473,14 +492,14 @@ class _StateComparisonCard extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.compare_arrows,
-                  color: _AppStyles.primary, size: 20),
+                  color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
               Text(
                 'Comparação com ${city.state}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: _AppStyles.textDark,
+                  color: AppColors.textDark,
                 ),
               ),
             ],
@@ -552,7 +571,7 @@ class _ComparisonItem extends StatelessWidget {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: _AppStyles.textGrey,
+              color: AppColors.textTertiary,
             ),
           ),
           const SizedBox(height: 12),
@@ -566,7 +585,7 @@ class _ComparisonItem extends StatelessWidget {
                       cityName,
                       style: const TextStyle(
                         fontSize: 11,
-                        color: _AppStyles.textLightGrey,
+                        color: AppColors.textGrey,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -575,7 +594,7 @@ class _ComparisonItem extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: _AppStyles.primary,
+                        color: AppColors.primary,
                       ),
                     ),
                   ],
@@ -586,8 +605,8 @@ class _ComparisonItem extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: isNegative
-                      ? const Color(0xFFFFEBEE)
-                      : const Color(0xFFE8F5E9),
+                      ? AppColors.dangerBgLight
+                      : AppColors.successBg,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -596,7 +615,7 @@ class _ComparisonItem extends StatelessWidget {
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color:
-                        isNegative ? _AppStyles.alertHigh : _AppStyles.success,
+                        isNegative ? AppColors.alertHigh : AppColors.success,
                   ),
                 ),
               ),
@@ -609,7 +628,7 @@ class _ComparisonItem extends StatelessWidget {
                       'Média PR',
                       style: TextStyle(
                         fontSize: 11,
-                        color: _AppStyles.textLightGrey,
+                        color: AppColors.textGrey,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -618,7 +637,7 @@ class _ComparisonItem extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: _AppStyles.textLightGrey,
+                        color: AppColors.textGrey,
                       ),
                     ),
                   ],
@@ -661,12 +680,12 @@ class _CityForecastCard extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [_AppStyles.alertMedium, _AppStyles.alertHigh],
+          colors: [AppColors.alertMedium, AppColors.alertHigh],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: _AppStyles.alertMedium.withValues(alpha: 0.3),
+            color: AppColors.alertMedium.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 6),
           ),
@@ -718,14 +737,14 @@ class _CityForecastCard extends StatelessWidget {
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.memory, size: 14, color: _AppStyles.alertMedium),
+                    Icon(Icons.memory, size: 14, color: AppColors.alertMedium),
                     SizedBox(width: 4),
                     Text(
                       'IA',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: _AppStyles.alertMedium,
+                        color: AppColors.alertMedium,
                       ),
                     ),
                   ],
@@ -858,7 +877,7 @@ class _RecentHistoryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [_AppStyles.cardShadow],
+        boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -868,7 +887,7 @@ class _RecentHistoryCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: _AppStyles.textDark,
+              color: AppColors.textDark,
             ),
           ),
           const SizedBox(height: 16),
@@ -930,7 +949,7 @@ class _HistoryItem extends StatelessWidget {
               date,
               style: const TextStyle(
                 fontSize: 13,
-                color: _AppStyles.textGrey,
+                color: AppColors.textTertiary,
               ),
             ),
           ),
@@ -940,7 +959,7 @@ class _HistoryItem extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: _AppStyles.textDark,
+                color: AppColors.textDark,
               ),
             ),
           ),
@@ -949,8 +968,8 @@ class _HistoryItem extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: isIncrease
-                    ? const Color(0xFFFFEBEE)
-                    : const Color(0xFFE8F5E9),
+                    ? AppColors.dangerBgLight
+                    : AppColors.successBg,
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
@@ -958,7 +977,7 @@ class _HistoryItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: isIncrease ? _AppStyles.alertHigh : _AppStyles.success,
+                  color: isIncrease ? AppColors.alertHigh : AppColors.success,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -976,69 +995,11 @@ class _HistoryItem extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: _AppStyles.textLightGrey,
+                color: AppColors.textGrey,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// --- ESTADOS DE CARREGAMENTO E ERRO ---
-
-class _EmptyStateWidget extends StatelessWidget {
-  const _EmptyStateWidget();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.location_off, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'Nenhuma cidade selecionada',
-              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ErrorStateWidget extends StatelessWidget {
-  final String error;
-
-  const _ErrorStateWidget({required this.error});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text(
-              'Erro ao carregar dados',
-              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              error,
-              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
       ),
     );
   }

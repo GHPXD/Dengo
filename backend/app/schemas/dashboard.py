@@ -1,161 +1,74 @@
 """
-════════════════════════════════════════════════════════════════════════════
-SCHEMAS - DASHBOARD ENDPOINT (PRODUCTION)
-════════════════════════════════════════════════════════════════════════════
+SCHEMAS - DASHBOARD ENDPOINT
+=========================================
 
-Pydantic schemas para validação e serialização do endpoint /api/v1/dashboard.
-
-Estrutura de Dados:
-    DashboardResponseSchema
-    ├── CidadeSchema (cidade)
-    ├── DadosHistoricosSchema[] (dados_historicos)
-    └── PredicaoSchema (predicao)
+Define a estrutura de dados retornada pelo endpoint /dashboard.
+Alinhado com o modelo do Frontend (Flutter).
 """
 
-from typing import List
-
+from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
-# ════════════════════════════════════════════════════════════════════════════
-# NESTED SCHEMAS
-# ════════════════════════════════════════════════════════════════════════════
+class HistoricalDataPoint(BaseModel):
+    """Um ponto de dados no gráfico histórico (uma semana)."""
+    
+    week_number: int = Field(..., description="Número da semana do ano")
+    date: str = Field(..., description="Data de referência (YYYY-MM-DD)")
+    cases: int = Field(..., description="Número de casos confirmados/estimados")
 
 
-class CidadeSchema(BaseModel):
-    """Informações básicas da cidade"""
-
-    ibge_codigo: str = Field(
-        ..., description="Código IBGE da cidade (7 dígitos)", example="3550308"
-    )
-    nome: str = Field(..., description="Nome da cidade", example="São Paulo")
-    populacao: int = Field(
-        ..., description="População estimada", example=12252023, ge=0
-    )
-
-
-class DadosHistoricosSchema(BaseModel):
-    """Dados históricos de dengue para um dia específico"""
-
-    data: str = Field(
-        ...,
-        description="Data no formato YYYY-MM-DD",
-        example="2024-01-15",
-        pattern=r"^\d{4}-\d{2}-\d{2}$",
-    )
-    casos: int = Field(..., description="Casos confirmados no dia", example=42, ge=0)
-    temperatura_media: float = Field(
-        ..., description="Temperatura média (°C)", example=28.5, ge=-50, le=60
-    )
-    umidade_media: float = Field(
-        ..., description="Umidade média (%)", example=75.0, ge=0, le=100
-    )
-
-
-class PredicaoSchema(BaseModel):
-    """Predição de casos para a próxima semana"""
-
-    casos_estimados: int = Field(
-        ..., description="Casos estimados para próxima semana", example=120, ge=0
-    )
-    nivel_risco: str = Field(
-        ...,
-        description="Nível de risco: baixo, moderado, alto, muito_alto",
-        example="moderado",
-        pattern=r"^(baixo|moderado|alto|muito_alto)$",
-    )
-    tendencia: str = Field(
-        ...,
-        description="Tendência: estavel, subindo, caindo",
-        example="subindo",
-        pattern=r"^(estavel|subindo|caindo)$",
-    )
-    confianca: float = Field(
-        ...,
-        description="Confiança da predição (0-1)",
-        example=0.75,
-        ge=0.0,
-        le=1.0,
-    )
-
-
-# ════════════════════════════════════════════════════════════════════════════
-# MAIN RESPONSE SCHEMA
-# ════════════════════════════════════════════════════════════════════════════
-
-
-class DashboardResponseSchema(BaseModel):
+class DashboardResponse(BaseModel):
     """
-    Response completo do endpoint /api/v1/dashboard
-
-    Exemplo de uso:
-        >>> response = DashboardResponseSchema(
-        ...     cidade={
-        ...         "ibge_codigo": "3550308",
-        ...         "nome": "São Paulo",
-        ...         "populacao": 12252023
-        ...     },
-        ...     dados_historicos=[...],
-        ...     predicao={...}
-        ... )
+    Modelo de resposta plana para o Dashboard.
+    Compatível com o DashboardDataModel do Flutter.
     """
 
-    cidade: CidadeSchema = Field(..., description="Informações da cidade")
-    dados_historicos: List[DadosHistoricosSchema] = Field(
-        ...,
-        description="Histórico dos últimos 5 dias",
-        min_length=5,
-        max_length=5,
+    # --- Informações Demográficas ---
+    city: str = Field(..., description="Nome da cidade")
+    geocode: str = Field(..., description="Código IBGE")
+    state: str = Field(..., description="UF")
+    population: int = Field(..., description="População estimada")
+
+    # --- Dados Climáticos ---
+    current_temp: Optional[float] = Field(None, description="Temperatura atual (°C)")
+    min_temp: Optional[float] = Field(None, description="Temperatura mínima (°C)")
+    max_temp: Optional[float] = Field(None, description="Temperatura máxima (°C)")
+    weather_desc: Optional[str] = Field(None, description="Descrição do clima (ex: nublado)")
+    weather_icon: Optional[str] = Field(None, description="Ícone do OpenWeather")
+
+    # --- Predição de Risco ---
+    risk_level: str = Field(..., description="Nível de risco (baixo, moderado, alto, muito_alto)")
+    predicted_cases: int = Field(..., description="Casos previstos para próxima semana")
+    trend: str = Field(..., description="Tendência (subindo, estavel, caindo)")
+
+    # --- Histórico ---
+    historical_data: List[HistoricalDataPoint] = Field(
+        default=[], 
+        description="Lista de dados históricos para o gráfico"
     )
-    predicao: PredicaoSchema = Field(..., description="Predição para próxima semana")
+
+    # --- Metadados ---
+    last_updated: Optional[str] = Field(None, description="Timestamp da última atualização")
 
     class Config:
-        """Configurações do Pydantic"""
-
         json_schema_extra = {
             "example": {
-                "cidade": {
-                    "ibge_codigo": "3550308",
-                    "nome": "São Paulo",
-                    "populacao": 12252023,
-                },
-                "dados_historicos": [
-                    {
-                        "data": "2024-01-10",
-                        "casos": 35,
-                        "temperatura_media": 27.8,
-                        "umidade_media": 72.5,
-                    },
-                    {
-                        "data": "2024-01-11",
-                        "casos": 42,
-                        "temperatura_media": 28.2,
-                        "umidade_media": 75.0,
-                    },
-                    {
-                        "data": "2024-01-12",
-                        "casos": 38,
-                        "temperatura_media": 27.5,
-                        "umidade_media": 70.0,
-                    },
-                    {
-                        "data": "2024-01-13",
-                        "casos": 45,
-                        "temperatura_media": 29.0,
-                        "umidade_media": 78.0,
-                    },
-                    {
-                        "data": "2024-01-14",
-                        "casos": 50,
-                        "temperatura_media": 29.5,
-                        "umidade_media": 80.0,
-                    },
-                ],
-                "predicao": {
-                    "casos_estimados": 120,
-                    "nivel_risco": "moderado",
-                    "tendencia": "subindo",
-                    "confianca": 0.75,
-                },
+                "city": "Curitiba",
+                "geocode": "4106902",
+                "state": "PR",
+                "population": 1963726,
+                "current_temp": 24.5,
+                "min_temp": 18.0,
+                "max_temp": 28.0,
+                "weather_desc": "céu limpo",
+                "weather_icon": "01d",
+                "risk_level": "alto",
+                "predicted_cases": 150,
+                "trend": "subindo",
+                "historical_data": [
+                    {"week_number": 42, "date": "2024-10-15", "cases": 45},
+                    {"week_number": 43, "date": "2024-10-22", "cases": 60}
+                ]
             }
         }

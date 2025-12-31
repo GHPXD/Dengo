@@ -1,14 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/network/api_client.dart';
+import '../../../../core/config/app_providers.dart';
 import '../../data/datasources/heatmap_remote_datasource.dart';
 import '../../data/repositories/heatmap_repository_impl.dart';
 import '../../domain/entities/heatmap_data.dart';
 import '../../domain/repositories/heatmap_repository.dart';
-
-/// Provider para o ApiClient.
-final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient();
-});
 
 /// Provider para o DataSource.
 final heatmapRemoteDataSourceProvider =

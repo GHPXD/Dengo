@@ -1,32 +1,21 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_bottom_nav.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../../core/widgets/app_error_widget.dart';
+import '../../../../core/widgets/info_row.dart';
+import '../../../../core/utils/formatters.dart';
 import '../providers/heatmap_provider.dart';
+import '../../../onboarding/presentation/providers/city_search_provider.dart';
+import '../../../onboarding/domain/entities/city.dart';
 
 // --- IMPORTS DAS ENTIDADES (Essenciais para Tipagem Forte) ---
 import '../../domain/entities/heatmap_data.dart';
 import '../../domain/entities/heatmap_city.dart';
-
-// --- Constantes de Design ---
-class _AppStyles {
-  static const primary = Color(0xFF2E8B8B);
-  static const primaryDark = Color(0xFF1E7B7B);
-  static const textDark = Color(0xFF2E5C6E);
-  static const textGrey = Color(0xFF6B7280);
-
-  static const fireColor = Color(0xFFFF6B6B);
-
-  // Gradiente da legenda
-  static const gradientColors = [
-    Color(0xFF10B981), // Verde
-    Color(0xFFFBBF24), // Amarelo
-    Color(0xFFFF8A80), // Laranja
-    Color(0xFFFF6B6B), // Vermelho
-  ];
-}
 
 /// Tela de Mapa de Calor Interativo
 class HeatmapScreen extends ConsumerStatefulWidget {
@@ -37,8 +26,12 @@ class HeatmapScreen extends ConsumerStatefulWidget {
   ConsumerState<HeatmapScreen> createState() => _HeatmapScreenState();
 }
 
-class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
+class _HeatmapScreenState extends ConsumerState<HeatmapScreen>
+    with TickerProviderStateMixin {
   final MapController _mapController = MapController();
+  
+  // Controller para animação de zoom
+  AnimationController? _animationController;
 
   @override
   void initState() {
@@ -51,8 +44,46 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
 
   @override
   void dispose() {
+    _animationController?.dispose();
     _mapController.dispose();
     super.dispose();
+  }
+
+  /// Anima o mapa para a cidade selecionada (estilo Google Earth)
+  void _animateToCity(City city) {
+    final destLocation = LatLng(city.latitude, city.longitude);
+    const destZoom = 11.0;
+
+    // Cancela animação anterior se existir
+    _animationController?.dispose();
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+
+    // Captura posição atual
+    final startLocation = _mapController.camera.center;
+    final startZoom = _mapController.camera.zoom;
+
+    // Animação com curva suave (easeInOutCubic para efeito Google Earth)
+    final animation = CurvedAnimation(
+      parent: _animationController!,
+      curve: Curves.easeInOutCubic,
+    );
+
+    // Listener para atualizar o mapa durante a animação
+    animation.addListener(() {
+      final lat = startLocation.latitude +
+          (destLocation.latitude - startLocation.latitude) * animation.value;
+      final lng = startLocation.longitude +
+          (destLocation.longitude - startLocation.longitude) * animation.value;
+      final zoom = startZoom + (destZoom - startZoom) * animation.value;
+
+      _mapController.move(LatLng(lat, lng), zoom);
+    });
+
+    _animationController!.forward();
   }
 
   @override
@@ -65,6 +96,8 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
         child: Column(
           children: [
             const _HeatmapHeader(),
+            // Nova barra de pesquisa
+            _CitySearchBar(onCitySelected: _animateToCity),
             _HeatmapFilters(
               selectedPeriod: heatmapState.selectedPeriod,
               onPeriodChanged: (period) {
@@ -78,18 +111,19 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNav(currentIndex: 2),
+      bottomNavigationBar: const AppBottomNav(currentIndex: 1),
     );
   }
 
   Widget _buildContent(HeatmapState state) {
     if (state.isLoading) {
-      return const _LoadingMapState();
+      return const AppLoadingIndicator(message: 'Carregando mapa...');
     }
 
     if (state.error != null) {
-      return _ErrorMapState(
-        error: state.error!,
+      return AppErrorWidget(
+        message: 'Erro ao carregar mapa',
+        details: state.error!,
         onRetry: () => ref.read(heatmapProvider.notifier).loadHeatmap(),
       );
     }
@@ -102,6 +136,328 @@ class _HeatmapScreenState extends ConsumerState<HeatmapScreen> {
     }
 
     return const SizedBox.shrink();
+  }
+}
+
+// ==========================================
+// BARRA DE PESQUISA DE CIDADES
+// ==========================================
+
+/// Barra de pesquisa de cidades com autocomplete.
+/// 
+/// Permite buscar cidades e, ao selecionar, faz zoom animado no mapa.
+class _CitySearchBar extends ConsumerStatefulWidget {
+  final ValueChanged<City> onCitySelected;
+
+  const _CitySearchBar({required this.onCitySelected});
+
+  @override
+  ConsumerState<_CitySearchBar> createState() => _CitySearchBarState();
+}
+
+class _CitySearchBarState extends ConsumerState<_CitySearchBar> {
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  final LayerLink _layerLink = LayerLink();
+  
+  OverlayEntry? _overlayEntry;
+  bool _isOverlayVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+    _controller.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    _removeOverlay();
+    _controller.removeListener(_onTextChanged);
+    _controller.dispose();
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    // Força rebuild para atualizar o suffixIcon
+    setState(() {});
+  }
+
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus) {
+      // Delay para permitir que o tap no item seja processado
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (!_focusNode.hasFocus) {
+          _removeOverlay();
+        }
+      });
+    }
+  }
+
+  void _showOverlay() {
+    if (_isOverlayVisible) return;
+    
+    _overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(_overlayEntry!);
+    _isOverlayVisible = true;
+  }
+
+  void _updateOverlay() {
+    _overlayEntry?.markNeedsBuild();
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    _isOverlayVisible = false;
+  }
+
+  void _onSearchChanged(String query) {
+    if (query.length >= 2) {
+      ref.read(citySearchProvider.notifier).searchCities(query);
+      _showOverlay();
+      // Atualiza o overlay quando a busca muda
+      Future.delayed(const Duration(milliseconds: 50), _updateOverlay);
+    } else {
+      ref.read(citySearchProvider.notifier).clear();
+      _removeOverlay();
+    }
+  }
+
+  void _onCitySelected(City city) {
+    _controller.text = city.fullName;
+    _removeOverlay();
+    _focusNode.unfocus();
+    ref.read(citySearchProvider.notifier).clear();
+    
+    // Chama o callback para fazer zoom
+    widget.onCitySelected(city);
+  }
+
+  void _clearSearch() {
+    _controller.clear();
+    ref.read(citySearchProvider.notifier).clear();
+    _removeOverlay();
+    setState(() {});
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    final renderBox = context.findRenderObject() as RenderBox;
+    final size = renderBox.size;
+
+    return OverlayEntry(
+      builder: (context) => Positioned(
+        width: size.width,
+        child: CompositedTransformFollower(
+          link: _layerLink,
+          showWhenUnlinked: false,
+          offset: Offset(0, size.height + 4),
+          child: Material(
+            elevation: 8,
+            borderRadius: BorderRadius.circular(12),
+            shadowColor: Colors.black26,
+            child: Consumer(
+              // Consumer garante que o widget seja reconstruído quando o provider muda
+              builder: (context, ref, _) {
+                final searchState = ref.watch(citySearchProvider);
+                return _SearchResultsContent(
+                  searchState: searchState,
+                  onCitySelected: _onCitySelected,
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Listen para mudanças no provider e atualizar overlay
+    ref.listen(citySearchProvider, (_, __) {
+      _updateOverlay();
+    });
+
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[300]!),
+        ),
+        child: TextField(
+          controller: _controller,
+          focusNode: _focusNode,
+          onChanged: _onSearchChanged,
+          style: const TextStyle(fontSize: 14),
+          decoration: InputDecoration(
+            hintText: 'Buscar cidade no mapa...',
+            hintStyle: TextStyle(color: Colors.grey[500], fontSize: 14),
+            prefixIcon: Icon(
+              Icons.search_rounded,
+              color: Colors.grey[500],
+              size: 22,
+            ),
+            suffixIcon: _controller.text.isNotEmpty
+                ? IconButton(
+                    icon: Icon(Icons.clear, color: Colors.grey[500], size: 20),
+                    onPressed: _clearSearch,
+                  )
+                : null,
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Conteúdo da lista de resultados (separado para rebuild eficiente).
+class _SearchResultsContent extends StatelessWidget {
+  final CitySearchState searchState;
+  final ValueChanged<City> onCitySelected;
+
+  const _SearchResultsContent({
+    required this.searchState,
+    required this.onCitySelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 250),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: searchState.when(
+        initial: () => const SizedBox.shrink(),
+        loading: () => const Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+        ),
+        loaded: (cities) {
+          if (cities.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(
+                child: Text(
+                  'Nenhuma cidade encontrada',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            );
+          }
+          return ListView.separated(
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: cities.length,
+            separatorBuilder: (_, __) => Divider(
+              height: 1,
+              indent: 16,
+              endIndent: 16,
+              color: Colors.grey[200],
+            ),
+            itemBuilder: (context, index) {
+              final city = cities[index];
+              return _CityResultTile(
+                city: city,
+                onTap: () => onCitySelected(city),
+              );
+            },
+          );
+        },
+        error: (message) => Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(
+            message,
+            style: const TextStyle(color: Colors.red, fontSize: 12),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Tile individual de resultado de busca.
+class _CityResultTile extends StatelessWidget {
+  final City city;
+  final VoidCallback onTap;
+
+  const _CityResultTile({
+    required this.city,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.location_on_rounded,
+                color: AppColors.primary,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    city.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: AppColors.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${city.state} • ${formatPopulation(city.population)} hab.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: Colors.grey[400],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -120,7 +476,7 @@ class _HeatmapHeader extends StatelessWidget {
         children: [
           Icon(
             Icons.local_fire_department_rounded,
-            color: _AppStyles.fireColor,
+            color: AppColors.fireColor,
             size: 28,
           ),
           SizedBox(width: 12),
@@ -129,7 +485,7 @@ class _HeatmapHeader extends StatelessWidget {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: _AppStyles.primary,
+              color: AppColors.primary,
             ),
           ),
         ],
@@ -195,7 +551,7 @@ class _FilterChip extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: isSelected
               ? const LinearGradient(
-                  colors: [_AppStyles.primary, _AppStyles.primaryDark],
+                  colors: [AppColors.primary, AppColors.primaryDark],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 )
@@ -203,7 +559,7 @@ class _FilterChip extends StatelessWidget {
           color: isSelected ? null : Colors.grey[100],
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? _AppStyles.primary : Colors.grey[300]!,
+            color: isSelected ? AppColors.primary : Colors.grey[300]!,
             width: 1.5,
           ),
         ),
@@ -343,54 +699,20 @@ class _CityDetailsModal extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: _AppStyles.textDark,
+                    color: AppColors.textDark,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          _InfoRow(label: 'Casos', value: '${city.cases}'),
-          _InfoRow(label: 'População', value: '${city.population}'),
-          _InfoRow(
+          InfoRow(label: 'Casos', value: '${city.cases}'),
+          InfoRow(label: 'População', value: formatPopulation(city.population)),
+          InfoRow(
             label: 'Incidência',
             value: '${city.incidence.toStringAsFixed(1)}/100k',
           ),
-          _InfoRow(label: 'Nível de Risco', value: city.riskLevel.label),
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _InfoRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              color: _AppStyles.textGrey,
-            ),
-          ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: _AppStyles.textDark,
-            ),
-          ),
+          InfoRow(label: 'Nível de Risco', value: city.riskLevel.label),
         ],
       ),
     );
@@ -415,14 +737,14 @@ class _HeatmapLegend extends StatelessWidget {
         children: [
           const Row(
             children: [
-              Icon(Icons.palette, size: 18, color: _AppStyles.primary),
+              Icon(Icons.palette, size: 18, color: AppColors.primary),
               SizedBox(width: 8),
               Text(
                 'Legenda de Intensidade',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: _AppStyles.textDark,
+                  color: AppColors.textDark,
                 ),
               ),
             ],
@@ -436,7 +758,7 @@ class _HeatmapLegend extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
                     gradient: const LinearGradient(
-                      colors: _AppStyles.gradientColors,
+                      colors: AppColors.heatmapGradient,
                     ),
                   ),
                 ),
@@ -468,92 +790,7 @@ class _LegendLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(fontSize: 11, color: _AppStyles.textGrey),
-    );
-  }
-}
-
-// --- ESTADOS DE LOADING E ERRO ---
-
-class _LoadingMapState extends StatelessWidget {
-  const _LoadingMapState();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(_AppStyles.primary),
-        ),
-      ),
-    );
-  }
-}
-
-class _ErrorMapState extends StatelessWidget {
-  final String error;
-  final VoidCallback onRetry;
-
-  const _ErrorMapState({required this.error, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.red),
-            const SizedBox(height: 16),
-            Text(
-              'Erro ao carregar mapa',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Text(
-                error,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: onRetry,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _AppStyles.primary,
-                foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text('Tentar Novamente'),
-            ),
-          ],
-        ),
-      ),
+      style: const TextStyle(fontSize: 11, color: AppColors.textTertiary),
     );
   }
 }

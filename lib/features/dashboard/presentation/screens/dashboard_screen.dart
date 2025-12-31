@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/enums/risk_level.dart';
 import '../../../../core/utils/widgets/common_widgets.dart';
@@ -79,7 +82,7 @@ class _DashboardHeader extends StatelessWidget {
         style: TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF2E8B8B),
+          color: AppColors.primary,
         ),
       ),
     );
@@ -226,8 +229,8 @@ class _DashboardContentState extends State<_DashboardContent> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: page == index
-                      ? const Color(0xFFFF8A80)
-                      : const Color(0xFFBDBDBD),
+                      ? AppColors.alertMedium
+                      : AppColors.disabledGrey,
                 ),
               ),
             ),
@@ -322,7 +325,7 @@ class _RiskCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF2E8B8B), Color(0xFF1E7B7B)],
+          colors: [AppColors.primary, AppColors.primaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -346,7 +349,7 @@ class _RiskCard extends StatelessWidget {
               height: 120,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFFF8A80).withValues(alpha: 0.3),
+                color: AppColors.alertMedium.withValues(alpha: 0.3),
               ),
             ),
           ),
@@ -358,7 +361,7 @@ class _RiskCard extends StatelessWidget {
               height: 100,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFFF8A80).withValues(alpha: 0.2),
+                color: AppColors.alertMedium.withValues(alpha: 0.2),
               ),
             ),
           ),
@@ -412,7 +415,7 @@ class _RiskCard extends StatelessWidget {
                             riskLevelText.replaceAll('Risco ', ''),
                             style: TextStyle(
                               color: riskColor == AppColors.warning
-                                  ? const Color(0xFFFF8A80)
+                                  ? AppColors.alertMedium
                                   : Colors.white,
                               fontSize: 36,
                               fontWeight: FontWeight.bold,
@@ -452,7 +455,7 @@ class _SmallCasesCard extends StatelessWidget {
       height: 160,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFFFDAD6), Color(0xFFFFF5F3)],
+          colors: [AppColors.alertWarningBg, AppColors.alertWarningBgLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -475,7 +478,7 @@ class _SmallCasesCard extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFFF8A80).withValues(alpha: 0.2),
+                color: AppColors.alertMedium.withValues(alpha: 0.2),
               ),
             ),
           ),
@@ -489,7 +492,7 @@ class _SmallCasesCard extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.arrow_upward_rounded,
-                      color: Color(0xFFFF6B6B),
+                      color: AppColors.alertHigh,
                       size: 20,
                     ),
                   ],
@@ -500,7 +503,7 @@ class _SmallCasesCard extends StatelessWidget {
                     const Text(
                       'Novos Casos (24h)',
                       style: TextStyle(
-                        color: Color(0xFF2E5C6E),
+                        color: AppColors.textDark,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -509,7 +512,7 @@ class _SmallCasesCard extends StatelessWidget {
                     Text(
                       '+$cases',
                       style: const TextStyle(
-                        color: Color(0xFFFF6B6B),
+                        color: AppColors.alertHigh,
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                       ),
@@ -536,7 +539,7 @@ class _SmallPredictionCard extends StatelessWidget {
       height: 160,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFD1F4F4), Color(0xFFEFFAFA)],
+          colors: [AppColors.chipTurquoise, AppColors.chipTurquoiseLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -558,7 +561,7 @@ class _SmallPredictionCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF2E8B8B),
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -573,7 +576,7 @@ class _SmallPredictionCard extends StatelessWidget {
                 const Text(
                   'Previsão de IA',
                   style: TextStyle(
-                    color: Color(0xFF2E5C6E),
+                    color: AppColors.textDark,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -582,7 +585,7 @@ class _SmallPredictionCard extends StatelessWidget {
                 Text(
                   prediction,
                   style: const TextStyle(
-                    color: Color(0xFF2E8B8B),
+                    color: AppColors.primary,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -599,11 +602,23 @@ class _SmallPredictionCard extends StatelessWidget {
 class _TipCard extends StatelessWidget {
   const _TipCard();
 
+  /// Retorna uma dica aleatória baseada no dia do ano
+  String _getDailyTip() {
+    // Usa o dia do ano como seed para consistência durante o dia
+    final dayOfYear = DateTime.now().difference(
+      DateTime(DateTime.now().year, 1, 1),
+    ).inDays;
+    final random = Random(dayOfYear);
+    return AppConstants.dailyTips[random.nextInt(AppConstants.dailyTips.length)];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final tip = _getDailyTip();
+    
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF4EC),
+        color: AppColors.infoBg,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -619,7 +634,7 @@ class _TipCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFF2E8B8B),
+              color: AppColors.primary,
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
@@ -629,23 +644,23 @@ class _TipCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 16),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Dica do Dia',
                   style: TextStyle(
-                    color: Color(0xFF2E5C6E),
+                    color: AppColors.textDark,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'Verifique vasos de plantas após a chuva.',
-                  style: TextStyle(
-                    color: Color(0xFF4A5568),
+                  tip,
+                  style: const TextStyle(
+                    color: AppColors.textGrey,
                     fontSize: 13,
                   ),
                 ),

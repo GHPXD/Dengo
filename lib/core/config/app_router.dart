@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../constants/app_constants.dart';
 import '../../features/onboarding/presentation/screens/splash_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
@@ -80,8 +81,8 @@ GoRouter appRouter(Ref ref) {
         builder: (context, state) {
           final extra = state.extra as Map<String, String>?;
           return PredictionsScreen(
-            geocode: extra?['geocode'] ?? '4106902', // Curitiba por padrão
-            cityName: extra?['cityName'] ?? 'Curitiba',
+            geocode: extra?['geocode'] ?? AppConstants.defaultCityGeocode,
+            cityName: extra?['cityName'] ?? AppConstants.defaultCityName,
           );
         },
       ),

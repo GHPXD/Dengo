@@ -116,4 +116,35 @@ class AppConstants {
 
   /// Mensagem quando não há dados disponíveis
   static const String noDataMessage = 'Nenhum dado disponível no momento.';
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // CIDADE PADRÃO (Fallback)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// Código geocode IBGE da cidade padrão (Curitiba-PR)
+  static const String defaultCityGeocode = '4106902';
+
+  /// Nome da cidade padrão
+  static const String defaultCityName = 'Curitiba';
+
+  /// UF da cidade padrão
+  static const String defaultCityUf = 'PR';
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // DICAS DO DIA (Sistema de Prevenção)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /// Lista de dicas de prevenção contra dengue
+  static const List<String> dailyTips = [
+    'Elimine água parada em vasos de plantas, pneus e recipientes.',
+    'Mantenha calhas e lajes sempre limpas e sem acúmulo de água.',
+    'Use repelente com DEET, especialmente nas horas de maior risco.',
+    'Instale telas em janelas e portas para evitar a entrada do mosquito.',
+    'Tampe caixas d\'água e cisternas para evitar criadouros.',
+    'Lave semanalmente os potes de água dos animais de estimação.',
+    'Descarte corretamente garrafas e latas em locais fechados.',
+    'Verifique e limpe ralos e calhas após períodos de chuva.',
+    'Cubra piscinas fora de uso ou mantenha a água tratada.',
+    'Denuncie terrenos baldios com lixo acumulado à prefeitura.',
+  ];
 }

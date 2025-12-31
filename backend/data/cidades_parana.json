@@ -1,0 +1,3992 @@
+[
+  {
+    "ibge_codigo": "4100103",
+    "nome": "Abatiá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8212,
+    "latitude": -23.3052967,
+    "longitude": -50.3102532,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4100202",
+    "nome": "Adrianópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5063,
+    "latitude": -24.6557863,
+    "longitude": -48.9912769,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4100301",
+    "nome": "Agudos do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 29787,
+    "latitude": -25.9890808,
+    "longitude": -49.3328175,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4100400",
+    "nome": "Almirante Tamandaré",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 2899,
+    "latitude": -25.3133048,
+    "longitude": -49.2997838,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4100459",
+    "nome": "Altamira do Paraná",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6215,
+    "latitude": -24.798939,
+    "longitude": -52.7132201,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128625",
+    "nome": "Alto Paraíso",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 146590,
+    "latitude": -24.7135,
+    "longitude": -53.7431,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4100608",
+    "nome": "Alto Paraná",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 23348,
+    "latitude": -23.131247,
+    "longitude": -52.318893,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4100707",
+    "nome": "Alto Piquiri",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6686,
+    "latitude": -24.0239021,
+    "longitude": -53.4417448,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4100509",
+    "nome": "Altônia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17896,
+    "latitude": -23.8722004,
+    "longitude": -53.894037,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4100806",
+    "nome": "Alvorada do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12126,
+    "latitude": -22.7807269,
+    "longitude": -51.2307721,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4100905",
+    "nome": "Amaporã",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13042,
+    "latitude": -23.094272,
+    "longitude": -52.786597,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101002",
+    "nome": "Ampére",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7064,
+    "latitude": -25.9168712,
+    "longitude": -53.4742414,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101051",
+    "nome": "Anahy",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5056,
+    "latitude": -24.6450861,
+    "longitude": -53.1337957,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101101",
+    "nome": "Andirá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 3966,
+    "latitude": -23.0494761,
+    "longitude": -50.2310027,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101150",
+    "nome": "Ângulo",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6215,
+    "latitude": -23.1958345,
+    "longitude": -51.9094976,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101200",
+    "nome": "Antonina",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5256,
+    "latitude": -25.4298854,
+    "longitude": -48.7125431,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101309",
+    "nome": "Antônio Olinto",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11506,
+    "latitude": -25.9849006,
+    "longitude": -50.1974516,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101408",
+    "nome": "Apucarana",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5577,
+    "latitude": -23.5525327,
+    "longitude": -51.4610764,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101507",
+    "nome": "Arapongas",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12014,
+    "latitude": -23.4152862,
+    "longitude": -51.4293961,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101606",
+    "nome": "Arapoti",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5863,
+    "latitude": -24.1457957,
+    "longitude": -49.8224605,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101655",
+    "nome": "Arapuã",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5088,
+    "latitude": -24.3079525,
+    "longitude": -51.7901941,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101705",
+    "nome": "Araruna",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11208,
+    "latitude": -23.9320308,
+    "longitude": -52.4976047,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101804",
+    "nome": "Araucária",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 134234,
+    "latitude": -23.5508,
+    "longitude": -51.4611,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101853",
+    "nome": "Ariranha do Ivaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10854,
+    "latitude": -24.3834527,
+    "longitude": -51.5876772,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4101903",
+    "nome": "Assaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 71530,
+    "latitude": -23.4372,
+    "longitude": -51.9258,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102000",
+    "nome": "Assis Chateaubriand",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19074,
+    "latitude": -24.4054826,
+    "longitude": -53.5120468,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102109",
+    "nome": "Astorga",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 20354,
+    "latitude": -23.2350184,
+    "longitude": -51.6647074,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102208",
+    "nome": "Atalaia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 21759,
+    "latitude": -23.1513833,
+    "longitude": -52.0529697,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102307",
+    "nome": "Balsa Nova",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 142179,
+    "latitude": -25.5931,
+    "longitude": -49.4085,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102406",
+    "nome": "Bandeirantes",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 3618,
+    "latitude": -23.107788,
+    "longitude": -50.370407,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102505",
+    "nome": "Barbosa Ferraz",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10548,
+    "latitude": -24.0287182,
+    "longitude": -52.00811,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102703",
+    "nome": "Barra do Jacaré",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8856,
+    "latitude": -23.1151788,
+    "longitude": -50.1813945,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102604",
+    "nome": "Barracão",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 29754,
+    "latitude": -26.2524094,
+    "longitude": -53.6349764,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102752",
+    "nome": "Bela Vista da Caroba",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 120125,
+    "latitude": -25.3144,
+    "longitude": -49.3089,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102802",
+    "nome": "Bela Vista do Paraíso",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6912,
+    "latitude": -22.9948493,
+    "longitude": -51.1907996,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4102901",
+    "nome": "Bituruna",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17538,
+    "latitude": -26.161281,
+    "longitude": -51.5533319,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103008",
+    "nome": "Boa Esperança",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16833,
+    "latitude": -24.2411024,
+    "longitude": -52.7860277,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103024",
+    "nome": "Boa Esperança do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8538,
+    "latitude": -25.6362851,
+    "longitude": -53.2139114,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103040",
+    "nome": "Boa Ventura de São Roque",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5415,
+    "latitude": -24.88177,
+    "longitude": -51.5441292,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103057",
+    "nome": "Boa Vista da Aparecida",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10290,
+    "latitude": -25.4357216,
+    "longitude": -53.4067721,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103107",
+    "nome": "Bocaiúva do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 139716,
+    "latitude": -25.4593,
+    "longitude": -49.5276,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103156",
+    "nome": "Bom Jesus do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5607,
+    "latitude": -26.192388,
+    "longitude": -53.6000736,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103206",
+    "nome": "Bom Sucesso",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 108309,
+    "latitude": -23.7101968,
+    "longitude": -51.7661597,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103222",
+    "nome": "Bom Sucesso do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10548,
+    "latitude": -26.0749256,
+    "longitude": -52.8348629,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103305",
+    "nome": "Borrazópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18039,
+    "latitude": -23.9399295,
+    "longitude": -51.5842203,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103354",
+    "nome": "Braganey",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15768,
+    "latitude": -24.8179919,
+    "longitude": -53.118506,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103370",
+    "nome": "Brasilândia do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8328,
+    "latitude": -24.1975793,
+    "longitude": -53.527551,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103404",
+    "nome": "Cafeara",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 21855,
+    "latitude": -22.78905,
+    "longitude": -51.714195,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103453",
+    "nome": "Cafelândia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9015,
+    "latitude": -24.6176963,
+    "longitude": -53.3218057,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103479",
+    "nome": "Cafezal do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6975,
+    "latitude": -23.900508,
+    "longitude": -53.512418,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103503",
+    "nome": "Califórnia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 93978,
+    "latitude": -25.5298,
+    "longitude": -49.5897,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103602",
+    "nome": "Cambará",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7968,
+    "latitude": -23.042273,
+    "longitude": -50.075281,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103701",
+    "nome": "Cambé",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 89766,
+    "latitude": -25.095,
+    "longitude": -50.1619,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103800",
+    "nome": "Cambira",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18300,
+    "latitude": -23.6002773,
+    "longitude": -51.5809914,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103909",
+    "nome": "Campina da Lagoa",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 20295,
+    "latitude": -24.5937926,
+    "longitude": -52.8038965,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4103958",
+    "nome": "Campina do Simão",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10000,
+    "latitude": -25.1086375,
+    "longitude": -51.8076658,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104006",
+    "nome": "Campina Grande do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 25260,
+    "latitude": -25.3046032,
+    "longitude": -49.0545355,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104055",
+    "nome": "Campo Bonito",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6924,
+    "latitude": -25.0328004,
+    "longitude": -52.992976,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104105",
+    "nome": "Campo do Tenente",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 42900,
+    "latitude": -24.685,
+    "longitude": -50.6056,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104204",
+    "nome": "Campo Largo",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 108309,
+    "latitude": -23.2761,
+    "longitude": -51.2783,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104253",
+    "nome": "Campo Magro",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11241,
+    "latitude": -25.3691533,
+    "longitude": -49.4496921,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104303",
+    "nome": "Campo Mourão",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 247863,
+    "latitude": -25.2917,
+    "longitude": -49.2236,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104402",
+    "nome": "Cândido de Abreu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 75621,
+    "latitude": -24.5747463,
+    "longitude": -51.3432207,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104428",
+    "nome": "Candói",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7533,
+    "latitude": -25.5711951,
+    "longitude": -52.051107,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104451",
+    "nome": "Cantagalo",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4638,
+    "latitude": -25.3735238,
+    "longitude": -52.1238114,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104501",
+    "nome": "Capanema",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17427,
+    "latitude": -25.6704878,
+    "longitude": -53.8083036,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104600",
+    "nome": "Capitão Leônidas Marques",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8262,
+    "latitude": -25.481645,
+    "longitude": -53.611238,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104659",
+    "nome": "Carambeí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16101,
+    "latitude": -24.9513298,
+    "longitude": -50.1171293,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104709",
+    "nome": "Carlópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 82767,
+    "latitude": -23.4285011,
+    "longitude": -49.7208814,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104808",
+    "nome": "Cascavel",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 247863,
+    "latitude": -25.2917,
+    "longitude": -49.2231,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4104907",
+    "nome": "Castro",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17319,
+    "latitude": -24.794072,
+    "longitude": -49.9972914,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4105003",
+    "nome": "Catanduvas",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 51834,
+    "latitude": -23.42,
+    "longitude": -52.0119,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4105102",
+    "nome": "Centenário do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19137,
+    "latitude": -22.821497,
+    "longitude": -51.5951456,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4105201",
+    "nome": "Cerro Azul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 27882,
+    "latitude": -24.8245108,
+    "longitude": -49.2615181,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4105300",
+    "nome": "Céu Azul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26463,
+    "latitude": -25.1484973,
+    "longitude": -53.8494214,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4105409",
+    "nome": "Chopinzinho",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12225,
+    "latitude": -25.8566167,
+    "longitude": -52.5294107,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4105508",
+    "nome": "Cianorte",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 36615,
+    "latitude": -23.662036,
+    "longitude": -52.6103989,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4105607",
+    "nome": "Cidade Gaúcha",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18585,
+    "latitude": -23.3816558,
+    "longitude": -52.9444098,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4105706",
+    "nome": "Clevelândia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 30993,
+    "latitude": -26.404065,
+    "longitude": -52.3513972,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4105805",
+    "nome": "Colombo",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 68757,
+    "latitude": -23.1819,
+    "longitude": -50.6583,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4105904",
+    "nome": "Colorado",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15855,
+    "latitude": -22.8385097,
+    "longitude": -51.9730135,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106001",
+    "nome": "Congonhinhas",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 106657,
+    "latitude": -25.6617,
+    "longitude": -49.31,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106100",
+    "nome": "Conselheiro Mairinck",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18234,
+    "latitude": -23.6229983,
+    "longitude": -50.1706779,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106209",
+    "nome": "Contenda",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 101767,
+    "latitude": -26.0808,
+    "longitude": -53.0556,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106308",
+    "nome": "Corbélia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5658,
+    "latitude": -24.7951117,
+    "longitude": -53.2961804,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106407",
+    "nome": "Cornélio Procópio",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 49944,
+    "latitude": -23.1825218,
+    "longitude": -50.6499263,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106456",
+    "nome": "Coronel Domingos Soares",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 3861,
+    "latitude": -26.22394,
+    "longitude": -52.0314509,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106506",
+    "nome": "Coronel Vivida",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12381,
+    "latitude": -25.9803771,
+    "longitude": -52.5654277,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106555",
+    "nome": "Corumbataí do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 101767,
+    "latitude": -24.100956,
+    "longitude": -52.11766,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106803",
+    "nome": "Cruz Machado",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 101767,
+    "latitude": -26.0808,
+    "longitude": -53.0556,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106571",
+    "nome": "Cruzeiro do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16788,
+    "latitude": -25.6142278,
+    "longitude": -53.1299075,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106605",
+    "nome": "Cruzeiro do Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 25695,
+    "latitude": -23.7839582,
+    "longitude": -53.0709425,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106704",
+    "nome": "Cruzeiro do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 257971,
+    "latitude": -25.5478,
+    "longitude": -54.5882,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106852",
+    "nome": "Cruzmaltina",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5385,
+    "latitude": -23.9930826,
+    "longitude": -51.4435583,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4106902",
+    "nome": "Curitiba",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 1773733,
+    "latitude": -25.4284,
+    "longitude": -49.2733,
+    "capital": true
+  },
+  {
+    "ibge_codigo": "4107009",
+    "nome": "Curiúva",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15063,
+    "latitude": -24.0383013,
+    "longitude": -50.455484,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107108",
+    "nome": "Diamante do Norte",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 23742,
+    "latitude": -22.6565442,
+    "longitude": -52.8589113,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107124",
+    "nome": "Diamante do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4542,
+    "latitude": -25.0436147,
+    "longitude": -52.6800923,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107157",
+    "nome": "Diamante D'Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7116,
+    "latitude": -24.9446989,
+    "longitude": -54.1028594,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107207",
+    "nome": "Dois Vizinhos",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16956,
+    "latitude": -25.7464681,
+    "longitude": -53.0554369,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107256",
+    "nome": "Douradina",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10227,
+    "latitude": -23.3847331,
+    "longitude": -53.2932989,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107306",
+    "nome": "Doutor Camargo",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16599,
+    "latitude": -23.5575611,
+    "longitude": -52.2185546,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128633",
+    "nome": "Doutor Ulysses",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10000,
+    "latitude": -24.5661713,
+    "longitude": -49.4203013,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107405",
+    "nome": "Enéas Marques",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 91950,
+    "latitude": -25.9435584,
+    "longitude": -53.1637539,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107504",
+    "nome": "Engenheiro Beltrão",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18108,
+    "latitude": -23.7996003,
+    "longitude": -52.2592684,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107538",
+    "nome": "Entre Rios do Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5145,
+    "latitude": -24.7002098,
+    "longitude": -54.2448233,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107520",
+    "nome": "Esperança Nova",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11061,
+    "latitude": -23.7246134,
+    "longitude": -53.8105174,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107546",
+    "nome": "Espigão Alto do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15177,
+    "latitude": -25.4223729,
+    "longitude": -52.8376411,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107553",
+    "nome": "Farol",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 25566,
+    "latitude": -24.0935055,
+    "longitude": -52.6232183,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107603",
+    "nome": "Faxinal",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 185502,
+    "latitude": -25.3905,
+    "longitude": -51.4626,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107652",
+    "nome": "Fazenda Rio Grande",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7413,
+    "latitude": -25.645841,
+    "longitude": -49.3126653,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107702",
+    "nome": "Fênix",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 14751,
+    "latitude": -23.9169495,
+    "longitude": -51.9801443,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107736",
+    "nome": "Fernandes Pinheiro",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9639,
+    "latitude": -25.4148066,
+    "longitude": -50.5489837,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107751",
+    "nome": "Figueira",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12660,
+    "latitude": -23.8481018,
+    "longitude": -50.4059875,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107850",
+    "nome": "Flor da Serra do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 14826,
+    "latitude": -26.2589553,
+    "longitude": -53.308432,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107801",
+    "nome": "Floraí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10000,
+    "latitude": -23.3206134,
+    "longitude": -52.3009856,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4107900",
+    "nome": "Floresta",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 42289,
+    "latitude": -23.6144046,
+    "longitude": -52.0819003,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108007",
+    "nome": "Florestópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6924,
+    "latitude": -22.8663942,
+    "longitude": -51.3905121,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108106",
+    "nome": "Flórida",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 43635,
+    "latitude": -23.0861312,
+    "longitude": -51.9540843,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108205",
+    "nome": "Formosa do Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10215,
+    "latitude": -24.2966562,
+    "longitude": -53.312801,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108304",
+    "nome": "Foz do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 185502,
+    "latitude": -25.5163,
+    "longitude": -49.0931,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108452",
+    "nome": "Foz do Jordão",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11454,
+    "latitude": -25.7377144,
+    "longitude": -52.1209188,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108320",
+    "nome": "Francisco Alves",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10000,
+    "latitude": -24.0694395,
+    "longitude": -53.844348,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108403",
+    "nome": "Francisco Beltrão",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10107,
+    "latitude": -26.0790979,
+    "longitude": -53.0533527,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108502",
+    "nome": "General Carneiro",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18117,
+    "latitude": -26.422982,
+    "longitude": -51.3146691,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108551",
+    "nome": "Godoy Moreira",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6210,
+    "latitude": -24.1925289,
+    "longitude": -51.9232662,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108601",
+    "nome": "Goioerê",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 28623,
+    "latitude": -24.1851885,
+    "longitude": -53.0250623,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108650",
+    "nome": "Goioxim",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 42289,
+    "latitude": -25.4683,
+    "longitude": -50.6514,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108700",
+    "nome": "Grandes Rios",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13569,
+    "latitude": -24.1454626,
+    "longitude": -51.5063628,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108809",
+    "nome": "Guaíra",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 43395,
+    "latitude": -24.0851924,
+    "longitude": -54.2567519,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108908",
+    "nome": "Guairaçá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17268,
+    "latitude": -22.9352304,
+    "longitude": -52.6865101,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4108957",
+    "nome": "Guamiranga",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 34023,
+    "latitude": -25.1909033,
+    "longitude": -50.8116961,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109005",
+    "nome": "Guapirama",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 74312,
+    "latitude": -23.91,
+    "longitude": -51.4339,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109104",
+    "nome": "Guaporema",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 3735,
+    "latitude": -23.340218,
+    "longitude": -52.778605,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109203",
+    "nome": "Guaraci",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26538,
+    "latitude": -22.970394,
+    "longitude": -51.6479769,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109302",
+    "nome": "Guaraniaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9669,
+    "latitude": -25.10035,
+    "longitude": -52.867811,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109401",
+    "nome": "Guarapuava",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4953,
+    "latitude": -25.3950986,
+    "longitude": -51.4622016,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109500",
+    "nome": "Guaraqueçaba",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15162,
+    "latitude": -25.2983566,
+    "longitude": -48.3290185,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109609",
+    "nome": "Guaratuba",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18702,
+    "latitude": -25.8806192,
+    "longitude": -48.5750905,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109658",
+    "nome": "Honório Serpa",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7455,
+    "latitude": -26.143149,
+    "longitude": -52.383794,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109708",
+    "nome": "Ibaiti",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17352,
+    "latitude": -23.8452962,
+    "longitude": -50.1905666,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109757",
+    "nome": "Ibema",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 3987,
+    "latitude": -25.1192916,
+    "longitude": -53.0071928,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109807",
+    "nome": "Ibiporã",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 29772,
+    "latitude": -23.2684137,
+    "longitude": -51.0475907,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4109906",
+    "nome": "Icaraíma",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 25206,
+    "latitude": -23.3948345,
+    "longitude": -53.6162036,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110003",
+    "nome": "Iguaraçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 20169,
+    "latitude": -23.1972911,
+    "longitude": -51.8244524,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110052",
+    "nome": "Iguatu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5367,
+    "latitude": -24.7170385,
+    "longitude": -53.0865561,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110078",
+    "nome": "Imbaú",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4902,
+    "latitude": -24.447597,
+    "longitude": -50.7557188,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110102",
+    "nome": "Imbituva",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13782,
+    "latitude": -25.2293338,
+    "longitude": -50.6051002,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110201",
+    "nome": "Inácio Martins",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18543,
+    "latitude": -25.5725435,
+    "longitude": -51.0764637,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110300",
+    "nome": "Inajá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10590,
+    "latitude": -22.7530214,
+    "longitude": -52.1976067,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110409",
+    "nome": "Indianópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13692,
+    "latitude": -23.4807249,
+    "longitude": -52.6987037,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110508",
+    "nome": "Ipiranga",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11358,
+    "latitude": -25.0239759,
+    "longitude": -50.5854615,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110607",
+    "nome": "Iporã",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18294,
+    "latitude": -24.0039474,
+    "longitude": -53.7100595,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110656",
+    "nome": "Iracema do Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7332,
+    "latitude": -24.427888,
+    "longitude": -53.3539137,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110706",
+    "nome": "Irati",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11358,
+    "latitude": -25.469663,
+    "longitude": -50.649287,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110805",
+    "nome": "Iretama",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 20472,
+    "latitude": -24.4205941,
+    "longitude": -52.1013532,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110904",
+    "nome": "Itaguajé",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7644,
+    "latitude": -22.618282,
+    "longitude": -51.967351,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4110953",
+    "nome": "Itaipulândia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10000,
+    "latitude": -25.1417007,
+    "longitude": -54.2980691,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111001",
+    "nome": "Itambaracá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15645,
+    "latitude": -23.0176678,
+    "longitude": -50.406887,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111100",
+    "nome": "Itambé",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8445,
+    "latitude": -23.659424,
+    "longitude": -51.9903555,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111209",
+    "nome": "Itapejara d'Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 62893,
+    "latitude": -25.9651274,
+    "longitude": -52.8149217,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111258",
+    "nome": "Itaperuçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 62893,
+    "latitude": -23.2678,
+    "longitude": -51.0567,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111308",
+    "nome": "Itaúna do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9474,
+    "latitude": -22.7302304,
+    "longitude": -52.8854393,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111407",
+    "nome": "Ivaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16269,
+    "latitude": -25.0069795,
+    "longitude": -50.8568896,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111506",
+    "nome": "Ivaiporã",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6975,
+    "latitude": -24.2433517,
+    "longitude": -51.6719268,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111555",
+    "nome": "Ivaté",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4767,
+    "latitude": -23.4084656,
+    "longitude": -53.3698352,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111605",
+    "nome": "Ivatuba",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10350,
+    "latitude": -23.618722,
+    "longitude": -52.2174491,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111704",
+    "nome": "Jaboti",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13095,
+    "latitude": -23.7419073,
+    "longitude": -50.0752639,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111803",
+    "nome": "Jacarezinho",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 33582,
+    "latitude": -23.3539,
+    "longitude": -51.0175,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4111902",
+    "nome": "Jaguapitã",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13065,
+    "latitude": -23.1102516,
+    "longitude": -51.5327741,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112009",
+    "nome": "Jaguariaíva",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18330,
+    "latitude": -24.2589699,
+    "longitude": -49.7201518,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112108",
+    "nome": "Jandaia do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26937,
+    "latitude": -23.6003907,
+    "longitude": -51.645674,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112207",
+    "nome": "Janiópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8352,
+    "latitude": -24.140124,
+    "longitude": -52.77836,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112306",
+    "nome": "Japira",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9753,
+    "latitude": -23.8119773,
+    "longitude": -50.1397133,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112405",
+    "nome": "Japurá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 27921,
+    "latitude": -23.469273,
+    "longitude": -52.55572,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112504",
+    "nome": "Jardim Alegre",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17889,
+    "latitude": -24.1795192,
+    "longitude": -51.6927177,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112603",
+    "nome": "Jardim Olinda",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17691,
+    "latitude": -22.5520625,
+    "longitude": -52.036373,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112702",
+    "nome": "Jataizinho",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12903,
+    "latitude": -23.257815,
+    "longitude": -50.977748,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112751",
+    "nome": "Jesuítas",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15849,
+    "latitude": -24.3807263,
+    "longitude": -53.3855699,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112801",
+    "nome": "Joaquim Távora",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12594,
+    "latitude": -23.4999724,
+    "longitude": -49.9232545,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112900",
+    "nome": "Jundiaí do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 24903,
+    "latitude": -23.4369861,
+    "longitude": -50.2478173,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4112959",
+    "nome": "Juranda",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4356,
+    "latitude": -24.420866,
+    "longitude": -52.841344,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113007",
+    "nome": "Jussara",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 575377,
+    "latitude": -23.621931,
+    "longitude": -52.46931,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113106",
+    "nome": "Kaloré",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10266,
+    "latitude": -23.8242643,
+    "longitude": -51.6683666,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113205",
+    "nome": "Lapa",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26058,
+    "latitude": -25.76709,
+    "longitude": -49.716777,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113254",
+    "nome": "Laranjal",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26490,
+    "latitude": -24.8909736,
+    "longitude": -52.4726747,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113304",
+    "nome": "Laranjeiras do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12309,
+    "latitude": -25.4073197,
+    "longitude": -52.4150132,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113403",
+    "nome": "Leópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7281,
+    "latitude": -23.0789091,
+    "longitude": -50.7501808,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113429",
+    "nome": "Lidianópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 3666,
+    "latitude": -24.1073464,
+    "longitude": -51.6525676,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113452",
+    "nome": "Lindoeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 3726,
+    "latitude": -25.2608275,
+    "longitude": -53.5758136,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113502",
+    "nome": "Loanda",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26838,
+    "latitude": -22.9320944,
+    "longitude": -53.1352452,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113601",
+    "nome": "Lobato",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4923,
+    "latitude": -23.0077055,
+    "longitude": -51.9524309,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113700",
+    "nome": "Londrina",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 575377,
+    "latitude": -25.5428,
+    "longitude": -54.5882,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113734",
+    "nome": "Luiziana",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8358,
+    "latitude": -24.2838237,
+    "longitude": -52.2767531,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113759",
+    "nome": "Lunardelli",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6813,
+    "latitude": -24.0793542,
+    "longitude": -51.7421822,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113809",
+    "nome": "Lupionópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8952,
+    "latitude": -22.7558205,
+    "longitude": -51.6575301,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4113908",
+    "nome": "Mallet",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7008,
+    "latitude": -25.8829457,
+    "longitude": -50.8289338,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114005",
+    "nome": "Mamborê",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15114,
+    "latitude": -24.3084433,
+    "longitude": -52.5298446,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114104",
+    "nome": "Mandaguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 41997,
+    "latitude": -23.3485076,
+    "longitude": -52.0966215,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114203",
+    "nome": "Mandaguari",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 50313,
+    "latitude": -23.5224849,
+    "longitude": -51.6787511,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114302",
+    "nome": "Mandirituba",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16107,
+    "latitude": -25.7772457,
+    "longitude": -49.3279107,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114351",
+    "nome": "Manfrinópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8601,
+    "latitude": -26.1440729,
+    "longitude": -53.3113372,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114401",
+    "nome": "Mangueirinha",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16782,
+    "latitude": -25.9412009,
+    "longitude": -52.1740852,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114500",
+    "nome": "Manoel Ribas",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18885,
+    "latitude": -24.5177239,
+    "longitude": -51.6685729,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114609",
+    "nome": "Marechal Cândido Rondon",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19737,
+    "latitude": -24.5582532,
+    "longitude": -54.0587821,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114708",
+    "nome": "Maria Helena",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 21957,
+    "latitude": -23.6139395,
+    "longitude": -53.206135,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114807",
+    "nome": "Marialva",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19227,
+    "latitude": -23.4820987,
+    "longitude": -51.795788,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4114906",
+    "nome": "Marilândia do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 29787,
+    "latitude": -23.7462425,
+    "longitude": -51.3021452,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115002",
+    "nome": "Marilena",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10194,
+    "latitude": -22.7358333,
+    "longitude": -53.04,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115101",
+    "nome": "Mariluz",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26997,
+    "latitude": -24.0031216,
+    "longitude": -53.148113,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115200",
+    "nome": "Maringá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 430157,
+    "latitude": -23.4205,
+    "longitude": -51.933,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115309",
+    "nome": "Mariópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16692,
+    "latitude": -26.3518327,
+    "longitude": -52.5491563,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115358",
+    "nome": "Maripá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5181,
+    "latitude": -24.419978,
+    "longitude": -53.828641,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115408",
+    "nome": "Marmeleiro",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 21945,
+    "latitude": -26.1472,
+    "longitude": -53.026741,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115457",
+    "nome": "Marquinho",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 14742,
+    "latitude": -25.1133759,
+    "longitude": -52.2581854,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115507",
+    "nome": "Marumbi",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19458,
+    "latitude": -23.7070343,
+    "longitude": -51.6408276,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115606",
+    "nome": "Matelândia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 21759,
+    "latitude": -25.2404183,
+    "longitude": -53.9835004,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115705",
+    "nome": "Matinhos",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 66160,
+    "latitude": -25.8183,
+    "longitude": -48.5425,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115739",
+    "nome": "Mato Rico",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10665,
+    "latitude": -24.7045571,
+    "longitude": -52.1493001,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115754",
+    "nome": "Mauá da Serra",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19149,
+    "latitude": -23.9045517,
+    "longitude": -51.2261166,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115804",
+    "nome": "Medianeira",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 71808,
+    "latitude": -25.1311,
+    "longitude": -50.0106,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115853",
+    "nome": "Mercedes",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 22734,
+    "latitude": -24.4504957,
+    "longitude": -54.1647255,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4115903",
+    "nome": "Mirador",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13974,
+    "latitude": -23.257015,
+    "longitude": -52.7756432,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116000",
+    "nome": "Miraselva",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13191,
+    "latitude": -22.9675823,
+    "longitude": -51.4847793,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116059",
+    "nome": "Missal",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6723,
+    "latitude": -25.0913359,
+    "longitude": -54.2476738,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116109",
+    "nome": "Moreira Sales",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12123,
+    "latitude": -24.0509413,
+    "longitude": -53.0101722,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116208",
+    "nome": "Morretes",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9594,
+    "latitude": -25.4768503,
+    "longitude": -48.8322501,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116307",
+    "nome": "Munhoz de Melo",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 23949,
+    "latitude": -23.1305703,
+    "longitude": -51.7276729,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116406",
+    "nome": "Nossa Senhora das Graças",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 22128,
+    "latitude": -22.9138823,
+    "longitude": -51.7962681,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116505",
+    "nome": "Nova Aliança do Ivaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13194,
+    "latitude": -23.176271,
+    "longitude": -52.603244,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116604",
+    "nome": "Nova América da Colina",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16116,
+    "latitude": -23.3315888,
+    "longitude": -50.7182735,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116703",
+    "nome": "Nova Aurora",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7002,
+    "latitude": -24.5282336,
+    "longitude": -53.2576703,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116802",
+    "nome": "Nova Cantu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6015,
+    "latitude": -24.6739252,
+    "longitude": -52.5731265,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116901",
+    "nome": "Nova Esperança",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16914,
+    "latitude": -23.1818437,
+    "longitude": -52.1999852,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4116950",
+    "nome": "Nova Esperança do Sudoeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10000,
+    "latitude": -25.9004038,
+    "longitude": -53.2617627,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117008",
+    "nome": "Nova Fátima",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15873,
+    "latitude": -23.433056,
+    "longitude": -50.5618055,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117057",
+    "nome": "Nova Laranjeiras",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10998,
+    "latitude": -25.305376,
+    "longitude": -52.544682,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117107",
+    "nome": "Nova Londrina",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18882,
+    "latitude": -22.7633621,
+    "longitude": -52.9875908,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117206",
+    "nome": "Nova Olímpia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13713,
+    "latitude": -23.4699403,
+    "longitude": -53.090112,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117255",
+    "nome": "Nova Prata do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4935,
+    "latitude": -25.6325323,
+    "longitude": -53.3463611,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117214",
+    "nome": "Nova Santa Bárbara",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13854,
+    "latitude": -23.5860638,
+    "longitude": -50.7638011,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117222",
+    "nome": "Nova Santa Rosa",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5463,
+    "latitude": -24.468132,
+    "longitude": -53.9547649,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117271",
+    "nome": "Nova Tebas",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4455,
+    "latitude": -24.437958,
+    "longitude": -51.945357,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117297",
+    "nome": "Novo Itacolomi",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4005,
+    "latitude": -23.7635774,
+    "longitude": -51.5076578,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117305",
+    "nome": "Ortigueira",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9123,
+    "latitude": -24.2088891,
+    "longitude": -50.925043,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117404",
+    "nome": "Ourizona",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12951,
+    "latitude": -23.4047001,
+    "longitude": -52.1954085,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117453",
+    "nome": "Ouro Verde do Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15024,
+    "latitude": -24.7741302,
+    "longitude": -53.906938,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117503",
+    "nome": "Paiçandu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 23442,
+    "latitude": -23.4575884,
+    "longitude": -52.048988,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117602",
+    "nome": "Palmas",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10722,
+    "latitude": -26.483868,
+    "longitude": -51.988812,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117701",
+    "nome": "Palmeira",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18477,
+    "latitude": -25.4269718,
+    "longitude": -49.9987787,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117800",
+    "nome": "Palmital",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 20937,
+    "latitude": -24.8842985,
+    "longitude": -52.2113941,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4117909",
+    "nome": "Palotina",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17643,
+    "latitude": -24.2839929,
+    "longitude": -53.8405463,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118006",
+    "nome": "Paraíso do Norte",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15723,
+    "latitude": -23.2841185,
+    "longitude": -52.6024125,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118105",
+    "nome": "Paranacity",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17145,
+    "latitude": -22.9304971,
+    "longitude": -52.1523164,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118204",
+    "nome": "Paranaguá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 21618,
+    "latitude": -25.3909,
+    "longitude": -51.4625,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118303",
+    "nome": "Paranapoema",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16245,
+    "latitude": -22.6561084,
+    "longitude": -52.0865163,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118402",
+    "nome": "Paranavaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16413,
+    "latitude": -23.08165,
+    "longitude": -52.461724,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118451",
+    "nome": "Pato Bragado",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8424,
+    "latitude": -24.6270545,
+    "longitude": -54.2264587,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118501",
+    "nome": "Pato Branco",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13086,
+    "latitude": -26.2295984,
+    "longitude": -52.6712474,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118600",
+    "nome": "Paula Freitas",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 87813,
+    "latitude": -23.0733,
+    "longitude": -52.465,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118709",
+    "nome": "Paulo Frontin",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8898,
+    "latitude": -26.0399524,
+    "longitude": -50.8337759,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118808",
+    "nome": "Peabiru",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 20214,
+    "latitude": -23.9142123,
+    "longitude": -52.3455598,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118857",
+    "nome": "Perobal",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 156174,
+    "latitude": -25.5163,
+    "longitude": -48.5082,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4118907",
+    "nome": "Pérola",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 156174,
+    "latitude": -23.8031666,
+    "longitude": -53.6824972,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119004",
+    "nome": "Pérola d'Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 22971,
+    "latitude": -25.827794,
+    "longitude": -53.743333,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119103",
+    "nome": "Piên",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13338,
+    "latitude": -26.0988916,
+    "longitude": -49.4297904,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119152",
+    "nome": "Pinhais",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 348051,
+    "latitude": -24.9555,
+    "longitude": -53.4552,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119251",
+    "nome": "Pinhal de São Bento",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12870,
+    "latitude": -26.0326418,
+    "longitude": -53.4837511,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119202",
+    "nome": "Pinhalão",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19155,
+    "latitude": -23.7889966,
+    "longitude": -50.0577318,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119301",
+    "nome": "Pinhão",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 99430,
+    "latitude": -25.6960895,
+    "longitude": -51.6566366,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119400",
+    "nome": "Piraí do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 28947,
+    "latitude": -24.5346602,
+    "longitude": -49.9399216,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119509",
+    "nome": "Piraquara",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17601,
+    "latitude": -25.4423273,
+    "longitude": -49.0604473,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119608",
+    "nome": "Pitanga",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 91188,
+    "latitude": -24.5131,
+    "longitude": -53.8258,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119657",
+    "nome": "Pitangueiras",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 156174,
+    "latitude": -25.5163,
+    "longitude": -48.5082,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119707",
+    "nome": "Planaltina do Paraná",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 14418,
+    "latitude": -23.0228724,
+    "longitude": -52.9160307,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119806",
+    "nome": "Planalto",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 47916,
+    "latitude": -25.7184492,
+    "longitude": -53.767216,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119905",
+    "nome": "Ponta Grossa",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 358838,
+    "latitude": -25.0916,
+    "longitude": -50.1668,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4119954",
+    "nome": "Pontal do Paraná",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 25143,
+    "latitude": -25.574765,
+    "longitude": -48.3614806,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120002",
+    "nome": "Porecatu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6918,
+    "latitude": -22.753724,
+    "longitude": -51.37949,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120101",
+    "nome": "Porto Amazonas",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13284,
+    "latitude": -25.5494226,
+    "longitude": -49.8973805,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120150",
+    "nome": "Porto Barreiro",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4362,
+    "latitude": -25.5466703,
+    "longitude": -52.409026,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120200",
+    "nome": "Porto Rico",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5358,
+    "latitude": -22.774742,
+    "longitude": -53.267731,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120309",
+    "nome": "Porto Vitória",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 3441,
+    "latitude": -26.1605673,
+    "longitude": -51.2239397,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120333",
+    "nome": "Prado Ferreira",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5211,
+    "latitude": -23.039784,
+    "longitude": -51.4431235,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120358",
+    "nome": "Pranchita",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6936,
+    "latitude": -26.0209403,
+    "longitude": -53.7396825,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120408",
+    "nome": "Presidente Castelo Branco",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19464,
+    "latitude": -23.2790844,
+    "longitude": -52.1528771,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120507",
+    "nome": "Primeiro de Maio",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16836,
+    "latitude": -22.851714,
+    "longitude": -51.029251,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120606",
+    "nome": "Prudentópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 40233,
+    "latitude": -25.203358,
+    "longitude": -50.9895774,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120655",
+    "nome": "Quarto Centenário",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11334,
+    "latitude": -24.27904,
+    "longitude": -53.075881,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120705",
+    "nome": "Quatiguá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 88053,
+    "latitude": -23.7256,
+    "longitude": -53.2578,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120804",
+    "nome": "Quatro Barras",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 99430,
+    "latitude": -25.4419,
+    "longitude": -49.0064,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120853",
+    "nome": "Quatro Pontes",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 35928,
+    "latitude": -24.5741062,
+    "longitude": -53.9780237,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4120903",
+    "nome": "Quedas do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 41565,
+    "latitude": -25.5163,
+    "longitude": -48.5109,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121000",
+    "nome": "Querência do Norte",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8748,
+    "latitude": -23.083758,
+    "longitude": -53.483022,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121109",
+    "nome": "Quinta do Sol",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10545,
+    "latitude": -23.8494169,
+    "longitude": -52.1334452,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121208",
+    "nome": "Quitandinha",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12609,
+    "latitude": -25.8737269,
+    "longitude": -49.4977717,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121257",
+    "nome": "Ramilândia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19602,
+    "latitude": -25.1190203,
+    "longitude": -54.0301175,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121307",
+    "nome": "Rancho Alegre",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 22302,
+    "latitude": -23.070922,
+    "longitude": -50.9142676,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121356",
+    "nome": "Rancho Alegre D'Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18651,
+    "latitude": -24.3065214,
+    "longitude": -52.9551791,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121406",
+    "nome": "Realeza",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 87813,
+    "latitude": -23.0733,
+    "longitude": -52.465,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121505",
+    "nome": "Rebouças",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6702,
+    "latitude": -25.6259339,
+    "longitude": -50.6946598,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121604",
+    "nome": "Renascença",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 29979,
+    "latitude": -26.158837,
+    "longitude": -52.970349,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121703",
+    "nome": "Reserva",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 30858,
+    "latitude": -24.6545336,
+    "longitude": -50.8484432,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121752",
+    "nome": "Reserva do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8403,
+    "latitude": -25.8365103,
+    "longitude": -52.028256,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121802",
+    "nome": "Ribeirão Claro",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 24873,
+    "latitude": -23.1960492,
+    "longitude": -49.7568326,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4121901",
+    "nome": "Ribeirão do Pinhal",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12756,
+    "latitude": -23.4063092,
+    "longitude": -50.3581945,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122008",
+    "nome": "Rio Azul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19305,
+    "latitude": -25.726644,
+    "longitude": -50.790534,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122107",
+    "nome": "Rio Bom",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13755,
+    "latitude": -23.7618456,
+    "longitude": -51.4127871,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122156",
+    "nome": "Rio Bonito do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 30306,
+    "latitude": -25.4903906,
+    "longitude": -52.5262069,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122172",
+    "nome": "Rio Branco do Ivaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 129445,
+    "latitude": -25.445,
+    "longitude": -49.1925,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122206",
+    "nome": "Rio Branco do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11403,
+    "latitude": -25.1885374,
+    "longitude": -49.3119082,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122305",
+    "nome": "Rio Negro",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 27957,
+    "latitude": -26.1047668,
+    "longitude": -49.7982766,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122404",
+    "nome": "Rolândia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 129445,
+    "latitude": -23.3119901,
+    "longitude": -51.3674145,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122503",
+    "nome": "Roncador",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 62112,
+    "latitude": -24.5960555,
+    "longitude": -52.2744834,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122602",
+    "nome": "Rondon",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 17976,
+    "latitude": -23.4171839,
+    "longitude": -52.7722221,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122651",
+    "nome": "Rosário do Ivaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16119,
+    "latitude": -24.2545374,
+    "longitude": -51.2505025,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122701",
+    "nome": "Sabáudia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13491,
+    "latitude": -23.319019,
+    "longitude": -51.5544109,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122800",
+    "nome": "Salgado Filho",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 64596,
+    "latitude": -23.4244,
+    "longitude": -52.9906,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4122909",
+    "nome": "Salto do Itararé",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26979,
+    "latitude": -23.6038767,
+    "longitude": -49.626581,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123006",
+    "nome": "Salto do Lontra",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 21210,
+    "latitude": -25.7815642,
+    "longitude": -53.3085197,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123105",
+    "nome": "Santa Amélia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6909,
+    "latitude": -23.2661996,
+    "longitude": -50.4278622,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123204",
+    "nome": "Santa Cecília do Pavão",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13497,
+    "latitude": -23.5176577,
+    "longitude": -50.7837199,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123303",
+    "nome": "Santa Cruz de Monte Castelo",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8667,
+    "latitude": -22.9582028,
+    "longitude": -53.294859,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123402",
+    "nome": "Santa Fé",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 43254,
+    "latitude": -23.039993,
+    "longitude": -51.808014,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123501",
+    "nome": "Santa Helena",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8199,
+    "latitude": -24.8591735,
+    "longitude": -54.3328813,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123600",
+    "nome": "Santa Inês",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4620,
+    "latitude": -22.640225,
+    "longitude": -51.9031333,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123709",
+    "nome": "Santa Isabel do Ivaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6846,
+    "latitude": -23.0013818,
+    "longitude": -53.1940876,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123808",
+    "nome": "Santa Izabel do Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6765,
+    "latitude": -25.821652,
+    "longitude": -53.480146,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123824",
+    "nome": "Santa Lúcia",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 29358,
+    "latitude": -25.4079427,
+    "longitude": -53.5677252,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123857",
+    "nome": "Santa Maria do Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18123,
+    "latitude": -24.9392355,
+    "longitude": -51.8712242,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123907",
+    "nome": "Santa Mariana",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8553,
+    "latitude": -23.1499367,
+    "longitude": -50.5199587,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4123956",
+    "nome": "Santa Mônica",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9558,
+    "latitude": -23.1085921,
+    "longitude": -53.1103971,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124020",
+    "nome": "Santa Tereza do Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16095,
+    "latitude": -25.0511956,
+    "longitude": -53.6161834,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124053",
+    "nome": "Santa Terezinha de Itaipu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10000,
+    "latitude": -25.4390809,
+    "longitude": -54.4019902,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124004",
+    "nome": "Santana do Itararé",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 44658,
+    "latitude": -23.7566225,
+    "longitude": -49.6292826,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124103",
+    "nome": "Santo Antônio da Platina",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18366,
+    "latitude": -23.2957157,
+    "longitude": -50.0778957,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124202",
+    "nome": "Santo Antônio do Caiuá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11292,
+    "latitude": -22.7365132,
+    "longitude": -52.3446998,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124301",
+    "nome": "Santo Antônio do Paraíso",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13536,
+    "latitude": -23.4949247,
+    "longitude": -50.6468656,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124400",
+    "nome": "Santo Antônio do Sudoeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 14169,
+    "latitude": -26.0727118,
+    "longitude": -53.725556,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124509",
+    "nome": "Santo Inácio",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12975,
+    "latitude": -22.6973239,
+    "longitude": -51.792679,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124608",
+    "nome": "São Carlos do Ivaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13713,
+    "latitude": -23.315828,
+    "longitude": -52.476143,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124707",
+    "nome": "São Jerônimo da Serra",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9699,
+    "latitude": -23.7221275,
+    "longitude": -50.7389164,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124806",
+    "nome": "São João",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8166,
+    "latitude": -25.8273206,
+    "longitude": -52.7256633,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4124905",
+    "nome": "São João do Caiuá",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 14322,
+    "latitude": -22.8544849,
+    "longitude": -52.3371114,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125001",
+    "nome": "São João do Ivaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8049,
+    "latitude": -23.9914063,
+    "longitude": -51.8232148,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125100",
+    "nome": "São João do Triunfo",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7683,
+    "latitude": -25.682971,
+    "longitude": -50.29492,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125308",
+    "nome": "São Jorge do Ivaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 23340,
+    "latitude": -23.4327325,
+    "longitude": -52.2924553,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125357",
+    "nome": "São Jorge do Patrocínio",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10329,
+    "latitude": -23.7612908,
+    "longitude": -53.8806252,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125209",
+    "nome": "São Jorge d'Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7008,
+    "latitude": -25.7086966,
+    "longitude": -52.9189882,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125407",
+    "nome": "São José da Boa Vista",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 75750,
+    "latitude": -26.25,
+    "longitude": -52.6689,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125456",
+    "nome": "São José das Palmeiras",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 21684,
+    "latitude": -24.8350864,
+    "longitude": -54.0621488,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125506",
+    "nome": "São José dos Pinhais",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 323340,
+    "latitude": -23.3045,
+    "longitude": -51.1696,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125555",
+    "nome": "São Manoel do Paraná",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12108,
+    "latitude": -23.394137,
+    "longitude": -52.645376,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125605",
+    "nome": "São Mateus do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 19875,
+    "latitude": -25.866823,
+    "longitude": -50.382796,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125704",
+    "nome": "São Miguel do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18279,
+    "latitude": -25.349171,
+    "longitude": -54.240498,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125753",
+    "nome": "São Pedro do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 146590,
+    "latitude": -24.9341766,
+    "longitude": -53.8579529,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125803",
+    "nome": "São Pedro do Ivaí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 116419,
+    "latitude": -23.8660384,
+    "longitude": -51.8563711,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4125902",
+    "nome": "São Pedro do Paraná",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 62022,
+    "latitude": -22.8240967,
+    "longitude": -53.222755,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126009",
+    "nome": "São Sebastião da Amoreira",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12441,
+    "latitude": -23.4647501,
+    "longitude": -50.7605173,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126108",
+    "nome": "São Tomé",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9030,
+    "latitude": -23.534946,
+    "longitude": -52.590125,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126207",
+    "nome": "Sapopema",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11931,
+    "latitude": -23.9105099,
+    "longitude": -50.5791315,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126256",
+    "nome": "Sarandi",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4863,
+    "latitude": -23.444117,
+    "longitude": -51.876016,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126272",
+    "nome": "Saudade do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16089,
+    "latitude": -25.6915533,
+    "longitude": -52.6184857,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126306",
+    "nome": "Sengés",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8124,
+    "latitude": -24.1141771,
+    "longitude": -49.4644197,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126355",
+    "nome": "Serranópolis do Iguaçu",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6429,
+    "latitude": -25.3798835,
+    "longitude": -54.0538801,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126405",
+    "nome": "Sertaneja",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5823,
+    "latitude": -23.0367627,
+    "longitude": -50.816802,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126504",
+    "nome": "Sertanópolis",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 7209,
+    "latitude": -23.0600434,
+    "longitude": -51.0373544,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126603",
+    "nome": "Siqueira Campos",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9174,
+    "latitude": -23.687481,
+    "longitude": -49.830416,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126652",
+    "nome": "Sulina",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26721,
+    "latitude": -25.7001327,
+    "longitude": -52.7207833,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126678",
+    "nome": "Tamarana",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 8922,
+    "latitude": -23.7223793,
+    "longitude": -51.0936013,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126702",
+    "nome": "Tamboara",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5865,
+    "latitude": -23.1995071,
+    "longitude": -52.5000131,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126801",
+    "nome": "Tapejara",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 85876,
+    "latitude": -26.2308,
+    "longitude": -51.0856,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4126900",
+    "nome": "Tapira",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13098,
+    "latitude": -23.323146,
+    "longitude": -53.0712033,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127007",
+    "nome": "Teixeira Soares",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13638,
+    "latitude": -25.3719287,
+    "longitude": -50.4586285,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127106",
+    "nome": "Telêmaco Borba",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4623,
+    "latitude": -24.3282939,
+    "longitude": -50.6318021,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127205",
+    "nome": "Terra Boa",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 27975,
+    "latitude": -23.768329,
+    "longitude": -52.447002,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127304",
+    "nome": "Terra Rica",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 15033,
+    "latitude": -22.7264874,
+    "longitude": -52.6202541,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127403",
+    "nome": "Terra Roxa",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16110,
+    "latitude": -24.1670468,
+    "longitude": -54.097432,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127502",
+    "nome": "Tibagi",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 28485,
+    "latitude": -24.5178,
+    "longitude": -51.46,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127601",
+    "nome": "Tijucas do Sul",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 43776,
+    "latitude": -25.9273376,
+    "longitude": -49.179265,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127700",
+    "nome": "Toledo",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 85876,
+    "latitude": -26.2308,
+    "longitude": -51.0856,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127809",
+    "nome": "Tomazina",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26937,
+    "latitude": -23.7777942,
+    "longitude": -49.9546482,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127858",
+    "nome": "Três Barras do Paraná",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 12333,
+    "latitude": -25.4212699,
+    "longitude": -53.1837577,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127882",
+    "nome": "Tunas do Paraná",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 116419,
+    "latitude": -23.7656,
+    "longitude": -53.325,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127908",
+    "nome": "Tuneiras do Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6372,
+    "latitude": -23.8672329,
+    "longitude": -52.8749376,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127957",
+    "nome": "Tupãssi",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 13692,
+    "latitude": -24.5857992,
+    "longitude": -53.5129537,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4127965",
+    "nome": "Turvo",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 4830,
+    "latitude": -25.043933,
+    "longitude": -51.5392172,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128005",
+    "nome": "Ubiratã",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 10263,
+    "latitude": -24.542725,
+    "longitude": -52.9899678,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128104",
+    "nome": "Umuarama",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 9597,
+    "latitude": -23.7621152,
+    "longitude": -53.3116192,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128203",
+    "nome": "União da Vitória",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18138,
+    "latitude": -26.228596,
+    "longitude": -51.0869796,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128302",
+    "nome": "Uniflor",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6210,
+    "latitude": -23.0853871,
+    "longitude": -52.1584403,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128401",
+    "nome": "Uraí",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 16362,
+    "latitude": -23.199997,
+    "longitude": -50.793873,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128534",
+    "nome": "Ventania",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 5652,
+    "latitude": -24.2470771,
+    "longitude": -50.245452,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128559",
+    "nome": "Vera Cruz do Oeste",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 26364,
+    "latitude": -25.058614,
+    "longitude": -53.8785648,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128609",
+    "nome": "Verê",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 43725,
+    "latitude": -25.8812309,
+    "longitude": -52.9081757,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128658",
+    "nome": "Virmond",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 100854,
+    "latitude": -24.3239,
+    "longitude": -50.6144,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128708",
+    "nome": "Vitorino",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 18429,
+    "latitude": -26.2647687,
+    "longitude": -52.7804392,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128500",
+    "nome": "Wenceslau Braz",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 11241,
+    "latitude": -23.8748841,
+    "longitude": -49.8035872,
+    "capital": false
+  },
+  {
+    "ibge_codigo": "4128807",
+    "nome": "Xambrê",
+    "uf": "PR",
+    "regiao": "Sul",
+    "populacao": 6024,
+    "latitude": -23.7361723,
+    "longitude": -53.4881707,
+    "capital": false
+  }
+]

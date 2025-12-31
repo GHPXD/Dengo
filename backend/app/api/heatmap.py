@@ -10,9 +10,12 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 import pandas as pd
+import numpy as np
+import unicodedata
 
 from app.core.config import settings
 from app.schemas.heatmap import HeatmapResponseSchema, CityHeatmapSchema
+from app.services.cities_service import cities_service
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -25,44 +28,26 @@ limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
 
 
+def normalize_text(text: str) -> str:
+    """Normaliza texto para comparação (remove acentos e caixa baixa)."""
+    if not isinstance(text, str):
+        return str(text)
+    nfkd = unicodedata.normalize('NFD', text)
+    text_without_accents = ''.join([c for c in nfkd if not unicodedata.combining(c)])
+    return text_without_accents.lower().strip()
+
+
 def _calculate_risk_level(incidencia: float) -> str:
     """
     Calcula nível de risco baseado em incidência.
-
-    Critérios (OMS):
-    - Baixo: < 100 casos/100mil hab
-    - Médio: 100 a 300 casos/100mil hab
-    - Alto: > 300 casos/100mil hab
-
-    Args:
-        incidencia: Taxa de incidência por 100mil habitantes
-
-    Returns:
-        Nível de risco: "baixo", "medio" ou "alto"
+    Critérios (OMS): Baixo < 100, Moderado 100-300, Alto > 300.
     """
     if incidencia < 100:
         return "baixo"
     elif incidencia < 300:
-        return "medio"
+        return "moderado"
     else:
         return "alto"
-
-
-def _get_period_weeks(period: str) -> int:
-    """
-    Retorna número de semanas para o período.
-
-    Args:
-        period: "week" ou "month"
-
-    Returns:
-        Número de semanas
-    """
-    if period == "week":
-        return 1
-    elif period == "month":
-        return 4
-    return 1
 
 
 @router.get("", response_model=HeatmapResponseSchema)
@@ -81,153 +66,122 @@ async def get_heatmap(
     ),
 ) -> HeatmapResponseSchema:
     """
-    Retorna dados geográficos de todas as cidades para o heatmap.
-
-    **Funcionamento:**
-    1. Lê dados do CSV do dataset de treinamento
-    2. Filtra por estado (apenas PR suportado)
-    3. Calcula casos por cidade no período especificado
-    4. Classifica nível de risco (baixo/médio/alto)
-    5. Retorna lista com coordenadas e estatísticas
-
-    **Níveis de Risco (OMS):**
-    - Baixo: < 100 casos/100mil hab
-    - Médio: 100-300 casos/100mil hab
-    - Alto: > 300 casos/100mil hab
-
-    **Rate Limit:** 30 requisições por minuto
-
-    Args:
-        state: Sigla do estado (padrão: PR)
-        period: Período - "week" (1 semana) ou "month" (4 semanas)
-
-    Returns:
-        HeatmapResponseSchema com lista de cidades e dados geográficos
-
-    Raises:
-        HTTPException 400: Estado não suportado
-        HTTPException 404: Dados não encontrados
-        HTTPException 500: Erro ao processar dados
+    Retorna dados geográficos para o heatmap.
+    Realiza o merge entre o CSV de Casos e o JSON de Cidades (Geo).
     """
     try:
         logger.info(f"Gerando heatmap para {state} - período: {period}")
 
-        # Valida estado
         if state != "PR":
             raise HTTPException(
                 status_code=400,
                 detail=f"Estado {state} não suportado. Apenas PR disponível.",
             )
 
-        # Carrega dataset
-        csv_path = settings.CSV_PATH
+        # 1. Carrega dados geográficos do CitiesService (JSON)
+        # Isso garante Lat/Lon corretos mesmo que o CSV não tenha
+        cities_data = cities_service.get_cities_by_uf("PR")
+        
+        # Cria mapa para busca rápida: { "nome_normalizado": dados_cidade }
+        geo_map = {
+            normalize_text(c['nome']): c 
+            for c in cities_data
+        }
+
+        # 2. Carrega CSV de dados históricos (Casos)
+        csv_path = settings.csv_path
         logger.info(f"Lendo CSV: {csv_path}")
 
-        df = pd.read_csv(csv_path, low_memory=False)
+        try:
+            df = pd.read_csv(csv_path, low_memory=False)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erro ao ler CSV: {str(e)}")
 
-        # Valida colunas necessárias
-        required_cols = [
-            "municipio_geocodigo",
-            "municipio_nome",
-            "municipio_latitude",
-            "municipio_longitude",
-            "casos_novos",
-            "populacao",
-        ]
-        missing_cols = [col for col in required_cols if col not in df.columns]
-        if missing_cols:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Colunas ausentes no dataset: {missing_cols}",
+        # Verifica se as colunas essenciais do SEU dataset existem
+        # Baseado no seu snippet: 'cidade', 'casos', 'data' ou 'SE'
+        if "cidade" not in df.columns or "casos" not in df.columns:
+             raise HTTPException(
+                status_code=500, 
+                detail=f"CSV inválido. Colunas esperadas: 'cidade', 'casos'. Encontradas: {list(df.columns)}"
             )
 
-        # Filtra Paraná (geocode inicia com "41")
-        df["municipio_geocodigo"] = df["municipio_geocodigo"].astype(str)
-        df_pr = df[df["municipio_geocodigo"].str.startswith("41")].copy()
+        # 3. Filtra pelo período solicitado
+        # Se tiver coluna de data ou semana, filtra os últimos registros
+        # Se não tiver data clara, assume que o arquivo está ordenado e pega o final
+        
+        weeks_to_fetch = 4 if period == "month" else 1
+        
+        # Agrupa por cidade e pega as últimas N linhas de cada cidade
+        # Isso funciona assumindo que o CSV está ordenado por tempo
+        df_filtered = df.groupby("cidade").tail(weeks_to_fetch)
 
-        if df_pr.empty:
-            raise HTTPException(
-                status_code=404, detail="Nenhum dado encontrado para o Paraná"
-            )
-
-        # Calcula semanas para o período
-        weeks = _get_period_weeks(period)
-
-        # Ordena por data e pega últimas N semanas
-        if "epidemiological_week" in df_pr.columns:
-            df_pr = df_pr.sort_values("epidemiological_week", ascending=False)
-            max_week = df_pr["epidemiological_week"].max()
-            min_week = max_week - weeks + 1
-            df_period = df_pr[
-                (df_pr["epidemiological_week"] >= min_week)
-                & (df_pr["epidemiological_week"] <= max_week)
-            ]
-        else:
-            # Se não tiver semana epidemiológica, usa últimas N linhas por cidade
-            df_period = df_pr.groupby("municipio_geocodigo").tail(weeks)
-
-        # Agrupa por cidade e soma casos
+        # 4. Agrupa e Soma os casos
         grouped = (
-            df_period.groupby(
-                [
-                    "municipio_geocodigo",
-                    "municipio_nome",
-                    "municipio_latitude",
-                    "municipio_longitude",
-                    "populacao",
-                ]
-            )
-            .agg({"casos_novos": "sum"})
+            df_filtered.groupby("cidade")
+            .agg({
+                "casos": "sum",
+                "pop": "max" # Tenta pegar população do CSV, se tiver
+            })
             .reset_index()
         )
 
-        # Remove linhas com coordenadas inválidas
-        grouped = grouped.dropna(subset=["municipio_latitude", "municipio_longitude"])
-        grouped = grouped[
-            (grouped["municipio_latitude"] >= -90)
-            & (grouped["municipio_latitude"] <= 90)
-            & (grouped["municipio_longitude"] >= -180)
-            & (grouped["municipio_longitude"] <= 180)
-        ]
-
-        # Calcula incidência e nível de risco
-        grouped["incidencia"] = (grouped["casos_novos"] / grouped["populacao"]) * 100000
-        grouped["nivel_risco"] = grouped["incidencia"].apply(_calculate_risk_level)
-
-        # Converte para lista de CityHeatmapSchema
-        cidades = []
+        # 5. Merge e Montagem da Resposta
+        final_cities = []
+        
         for _, row in grouped.iterrows():
-            try:
-                cidade = CityHeatmapSchema(
-                    geocode=str(row["municipio_geocodigo"]),
-                    nome=str(row["municipio_nome"]),
-                    latitude=float(row["municipio_latitude"]),
-                    longitude=float(row["municipio_longitude"]),
-                    casos=int(row["casos_novos"]),
-                    populacao=int(row["populacao"]),
-                    incidencia=round(float(row["incidencia"]), 2),
-                    nivel_risco=str(row["nivel_risco"]),
-                )
-                cidades.append(cidade)
-            except Exception as e:
-                logger.warning(
-                    f"Erro ao processar cidade {row.get('municipio_nome', 'desconhecida')}: {e}"
-                )
+            city_name_raw = row["cidade"]
+            city_norm = normalize_text(city_name_raw)
+            
+            # Busca dados geográficos no mapa do sistema
+            geo_info = geo_map.get(city_norm)
+            
+            if not geo_info:
+                # Tenta busca parcial se não achar exato
                 continue
 
-        if not cidades:
-            raise HTTPException(
-                status_code=404,
-                detail="Nenhuma cidade com dados válidos encontrada",
+            # Dados do CSV
+            casos = int(row["casos"])
+            
+            # Dados Geo (Prioridade: JSON do sistema)
+            populacao = int(geo_info["populacao"])
+            lat = float(geo_info["latitude"])
+            lon = float(geo_info["longitude"])
+            geocode = str(geo_info["ibge_codigo"])
+
+            # Cálculo de Risco
+            incidencia = 0.0
+            if populacao > 0:
+                incidencia = (casos / populacao) * 100000
+            
+            risk = _calculate_risk_level(incidencia)
+
+            final_cities.append(CityHeatmapSchema(
+                geocode=geocode,
+                nome=geo_info["nome"], # Nome bonito do JSON
+                latitude=lat,
+                longitude=lon,
+                casos=casos,
+                populacao=populacao,
+                incidencia=round(incidencia, 2),
+                nivel_risco=risk
+            ))
+
+        if not final_cities:
+            logger.warning("Nenhuma cidade correspondida entre CSV e Base Geo.")
+            return HeatmapResponseSchema(
+                estado=state,
+                total_cidades=0,
+                periodo=period,
+                cidades=[]
             )
 
-        logger.info(f"Heatmap gerado com sucesso: {len(cidades)} cidades")
+        logger.info(f"Heatmap gerado com sucesso: {len(final_cities)} cidades")
 
         return HeatmapResponseSchema(
             estado=state,
-            total_cidades=len(cidades),
+            total_cidades=len(final_cities),
             periodo=period,
-            cidades=cidades,
+            cidades=final_cities,
         )
 
     except HTTPException:
@@ -235,5 +189,5 @@ async def get_heatmap(
     except Exception as e:
         logger.error(f"Erro ao gerar heatmap: {str(e)}", exc_info=True)
         raise HTTPException(
-            status_code=500, detail=f"Erro ao processar dados do heatmap: {str(e)}"
+            status_code=500, detail=f"Erro interno heatmap: {str(e)}"
         )

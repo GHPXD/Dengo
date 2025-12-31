@@ -1,8 +1,15 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:go_router/go_router.dart';
 
-import 'package:dengue_predict/core/widgets/app_bottom_nav.dart';
+import '../../../../core/widgets/app_bottom_nav.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../../core/widgets/app_error_widget.dart';
+import '../../../../core/widgets/app_empty_state_widget.dart';
+import '../../../../core/widgets/period_selector.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/config/app_router.dart';
 import '../../../dashboard/presentation/providers/dashboard_data_provider.dart';
 import '../../../onboarding/presentation/providers/city_search_provider.dart';
 
@@ -10,27 +17,10 @@ import '../../../onboarding/presentation/providers/city_search_provider.dart';
 import '../../../dashboard/domain/entities/historical_data.dart';
 import '../../../dashboard/domain/entities/prediction_data.dart';
 
-// --- Constantes de Design ---
-class _AppStyles {
-  static const primary = Color(0xFF2E8B8B);
-  static const primaryDark = Color(0xFF1E7B7B);
-  static const textDark = Color(0xFF2E5C6E);
-  static const textGrey = Color(0xFF9CA3AF);
-  static const bgGrey = Color(0xFFFAFAFA); // Colors.grey[50]
-
-  static const alertHigh = Color(0xFFFF6B6B);
-  static const alertMedium = Color(0xFFFF8A80);
-  static const alertLow = Color(0xFFFBBF24);
-  static const success = Color(0xFF10B981);
-
-  static const cardShadow = BoxShadow(
-    color: Color.fromRGBO(0, 0, 0, 0.05),
-    blurRadius: 10,
-    offset: Offset(0, 4),
-  );
-}
-
 /// Hub de Previsões - Trends & Forecast
+/// 
+/// Esta tela apresenta a análise temporal de casos de dengue.
+/// O Modo Pro permite acesso à tela técnica de Predições de ML.
 class TrendsScreen extends ConsumerStatefulWidget {
   /// Construtor padrão da tela de tendências.
   const TrendsScreen({super.key});
@@ -40,7 +30,7 @@ class TrendsScreen extends ConsumerStatefulWidget {
 }
 
 class _TrendsScreenState extends ConsumerState<TrendsScreen> {
-  // Estado local para controle do filtro
+  // Estado local para controle do filtro de período
   String _selectedPeriod = '30days';
 
   @override
@@ -49,21 +39,29 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
     final dashboardDataAsync = ref.watch(dashboardDataStateProvider);
 
     if (selectedCity == null) {
-      return const _EmptyStateWidget();
+      return Scaffold(
+        backgroundColor: AppColors.bgGrey,
+        body: AppEmptyStateWidget.noCity(),
+        bottomNavigationBar: const AppBottomNav(currentIndex: 2),
+      );
     }
 
     return Scaffold(
-      backgroundColor: _AppStyles.bgGrey,
+      backgroundColor: AppColors.bgGrey,
       body: SafeArea(
         child: Column(
           children: [
-            _HeaderSection(cityName: selectedCity.name),
+            _HeaderSection(
+              cityName: selectedCity.name,
+              ibgeCode: selectedCity.ibgeCode,
+            ),
             Expanded(
               child: dashboardDataAsync.when(
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: _AppStyles.primary),
+                loading: () => const AppLoadingIndicator(),
+                error: (error, stack) => AppErrorWidget(
+                  message: 'Erro ao carregar dados',
+                  details: error.toString(),
                 ),
-                error: (error, stack) => const _ErrorStateWidget(),
                 data: (dashboardData) {
                   // LÓGICA DE FILTRAGEM APLICADA AQUI
                   final filteredHistory = _filterData(
@@ -72,7 +70,7 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
                   return ListView(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     children: [
-                      _PeriodSelector(
+                      PeriodSelector.standard(
                         selectedPeriod: _selectedPeriod,
                         onChanged: (value) =>
                             setState(() => _selectedPeriod = value),
@@ -105,31 +103,33 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNav(currentIndex: 3),
+      bottomNavigationBar: const AppBottomNav(currentIndex: 2),
     );
   }
 
-  /// Filtra os dados históricos mantendo a tipagem forte
+  /// Filtra os dados históricos por número de SEMANAS.
+  /// Nota: Dados do InfoDengue são semanais (1 ponto = 1 semana epidemiológica)
   List<HistoricalData> _filterData(
       List<HistoricalData> fullHistory, String period) {
     if (fullHistory.isEmpty) return [];
 
-    int days;
+    // Mapeamento: periodo -> número de semanas
+    int weeks;
     switch (period) {
-      case '7days':
-        days = 7;
+      case '7days':   // 4 semanas (~1 mês)
+        weeks = 4;
         break;
-      case '90days':
-        days = 90;
+      case '90days':  // 12 semanas (~3 meses)
+        weeks = 12;
         break;
-      case '30days':
+      case '30days':  // 8 semanas (~2 meses) - padrão
       default:
-        days = 30;
+        weeks = 8;
         break;
     }
 
-    if (fullHistory.length <= days) return fullHistory;
-    return fullHistory.sublist(fullHistory.length - days);
+    if (fullHistory.length <= weeks) return fullHistory;
+    return fullHistory.sublist(fullHistory.length - weeks);
   }
 }
 
@@ -137,8 +137,12 @@ class _TrendsScreenState extends ConsumerState<TrendsScreen> {
 
 class _HeaderSection extends StatelessWidget {
   final String cityName;
+  final String ibgeCode;
 
-  const _HeaderSection({required this.cityName});
+  const _HeaderSection({
+    required this.cityName,
+    required this.ibgeCode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +155,7 @@ class _HeaderSection extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [_AppStyles.primary, _AppStyles.primaryDark],
+                colors: [AppColors.primary, AppColors.primaryDark],
               ),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -162,25 +166,32 @@ class _HeaderSection extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Previsões - $cityName',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: _AppStyles.primary,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Previsões - $cityName',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
                 ),
-              ),
-              const Text(
-                'Powered by Machine Learning',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: _AppStyles.textGrey,
+                const Text(
+                  'Powered by Machine Learning',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textTertiary,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+          ),
+          // Botão discreto do Modo Pro - navega para Predições
+          _ProModeButton(
+            cityName: cityName,
+            ibgeCode: ibgeCode,
           ),
         ],
       ),
@@ -188,88 +199,53 @@ class _HeaderSection extends StatelessWidget {
   }
 }
 
-class _PeriodSelector extends StatelessWidget {
-  final String selectedPeriod;
-  final ValueChanged<String> onChanged;
+/// Botão discreto para acessar a tela de Predições IA (Modo Desenvolvedor).
+class _ProModeButton extends StatelessWidget {
+  final String cityName;
+  final String ibgeCode;
 
-  const _PeriodSelector({
-    required this.selectedPeriod,
-    required this.onChanged,
+  const _ProModeButton({
+    required this.cityName,
+    required this.ibgeCode,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        children: [
-          Expanded(
-              child: _PeriodChip(
-                  label: '7 Dias',
-                  value: '7days',
-                  groupValue: selectedPeriod,
-                  onTap: onChanged)),
-          const SizedBox(width: 12),
-          Expanded(
-              child: _PeriodChip(
-                  label: '30 Dias',
-                  value: '30days',
-                  groupValue: selectedPeriod,
-                  onTap: onChanged)),
-          const SizedBox(width: 12),
-          Expanded(
-              child: _PeriodChip(
-                  label: '90 Dias',
-                  value: '90days',
-                  groupValue: selectedPeriod,
-                  onTap: onChanged)),
-        ],
-      ),
-    );
-  }
-}
-
-class _PeriodChip extends StatelessWidget {
-  final String label;
-  final String value;
-  final String groupValue;
-  final ValueChanged<String> onTap;
-
-  const _PeriodChip({
-    required this.label,
-    required this.value,
-    required this.groupValue,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isSelected = groupValue == value;
     return GestureDetector(
-      onTap: () => onTap(value),
+      onTap: () {
+        context.go(
+          AppRoutes.predictions,
+          extra: {'geocode': ibgeCode, 'cityName': cityName},
+        );
+      },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          gradient: isSelected
-              ? const LinearGradient(
-                  // Correção: removido 'const' redundante dentro da lista
-                  colors: [_AppStyles.primary, _AppStyles.primaryDark])
-              : null,
-          color: isSelected ? null : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? _AppStyles.primary : Colors.grey[300]!,
-            width: 1.5,
+            color: Colors.grey[300]!,
+            width: 1,
           ),
         ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.white : const Color(0xFF4A5568),
-          ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.code,
+              size: 16,
+              color: AppColors.textTertiary,
+            ),
+            SizedBox(width: 4),
+            Text(
+              'Pro',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textTertiary,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -300,7 +276,7 @@ class _ChartSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [_AppStyles.cardShadow],
+        boxShadow: const [AppColors.cardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,8 +292,9 @@ class _ChartSection extends StatelessWidget {
   }
 
   Widget _buildChartHeader() {
-    final daysText =
-        period == '7days' ? '7' : period == '30days' ? '30' : '90';
+    // Mapeamento correto: periodo -> semanas
+    final weeksText =
+        period == '7days' ? '4' : period == '30days' ? '8' : '12';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -329,32 +306,32 @@ class _ChartSection extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: _AppStyles.textDark,
+                color: AppColors.textDark,
               ),
             ),
             const SizedBox(height: 4),
             Text(
-              'Histórico + Previsão ($daysText dias)',
-              style: const TextStyle(fontSize: 12, color: _AppStyles.textGrey),
+              'Histórico ($weeksText sem.) + Previsão (1 sem.)',
+              style: const TextStyle(fontSize: 12, color: AppColors.textTertiary),
             ),
           ],
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: const Color(0xFFD1F4F4),
+            color: AppColors.chipTurquoise,
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Row(
             children: [
-              Icon(Icons.memory, size: 14, color: _AppStyles.primary),
+              Icon(Icons.memory, size: 14, color: AppColors.primary),
               SizedBox(width: 6),
               Text(
                 'IA',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: _AppStyles.primary,
+                  color: AppColors.primary,
                 ),
               ),
             ],
@@ -369,7 +346,7 @@ class _ChartSection extends StatelessWidget {
       return Container(
         height: 200,
         decoration: BoxDecoration(
-          color: _AppStyles.bgGrey,
+          color: AppColors.bgGrey,
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Center(child: Text('Sem dados para este período')),
@@ -393,7 +370,7 @@ class _ChartSection extends StatelessWidget {
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: _AppStyles.bgGrey,
+        color: AppColors.bgGrey,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[200]!),
       ),
@@ -408,25 +385,25 @@ class _ChartSection extends StatelessWidget {
               LineChartBarData(
                 spots: spots,
                 isCurved: true,
-                color: _AppStyles.primary,
+                color: AppColors.primary,
                 barWidth: 3,
                 dotData: const FlDotData(show: false),
                 belowBarData: BarAreaData(
                   show: true,
-                  color: _AppStyles.primary.withValues(alpha: 0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                 ),
               ),
               // Linha de previsão
               LineChartBarData(
                 spots: [spots.last, predictionSpot],
                 isCurved: false,
-                color: _AppStyles.alertMedium,
+                color: AppColors.alertMedium,
                 barWidth: 3,
                 dashArray: [5, 5],
                 dotData: const FlDotData(show: true),
                 belowBarData: BarAreaData(
                   show: true,
-                  color: _AppStyles.alertMedium.withValues(alpha: 0.1),
+                  color: AppColors.alertMedium.withValues(alpha: 0.1),
                 ),
               ),
             ],
@@ -458,39 +435,68 @@ class _ChartSection extends StatelessWidget {
 
   Widget _buildAIInsight() {
     final predictedCases = prediction.estimatedCases;
-    final percentageChange = currentWeekCases > 0
+    // Calcula percentual com safeguard para valores extremos
+    var percentageChange = currentWeekCases > 0
         ? ((predictedCases - currentWeekCases) / currentWeekCases * 100).round()
         : 0;
+    // Limita a ±500% para evitar valores absurdos em semanas com poucos casos
+    percentageChange = percentageChange.clamp(-500, 500);
 
     final isIncrease = predictedCases > currentWeekCases;
 
+    // Texto mais claro: especifica semana atual vs próxima
     final insightText = isIncrease
-        ? 'A IA prevê aumento de $percentageChange% nos casos na próxima semana'
-        : 'A IA prevê redução de ${percentageChange.abs()}% nos casos na próxima semana';
+        ? 'Previsão próx. semana: $predictedCases casos (+$percentageChange% vs atual: $currentWeekCases)'
+        : 'Previsão próx. semana: $predictedCases casos ($percentageChange% vs atual: $currentWeekCases)';
 
     final bgColor =
-        isIncrease ? const Color(0xFFFFF4EC) : const Color(0xFFE8F5E9);
+        isIncrease ? AppColors.infoBg : AppColors.successBg;
     final iconColor =
-        isIncrease ? _AppStyles.alertMedium : _AppStyles.success;
+        isIncrease ? AppColors.alertMedium : AppColors.success;
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.lightbulb_outline, size: 18, color: iconColor),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              insightText,
-              style: const TextStyle(fontSize: 13, color: Color(0xFF4A5568)),
-            ),
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
-      ),
+          child: Row(
+            children: [
+              Icon(Icons.lightbulb_outline, size: 18, color: iconColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  insightText,
+                  style: const TextStyle(fontSize: 13, color: AppColors.textGrey),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Indicador de confiança do modelo
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.info_outline, size: 14, color: Colors.grey[600]),
+              const SizedBox(width: 6),
+              Text(
+                'Confiança: Moderada (50%) • Modelo em validação',
+                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -526,14 +532,14 @@ class _AlertSection extends StatelessWidget {
           child: Row(
             children: [
               Icon(Icons.warning_amber_rounded,
-                  color: _AppStyles.alertHigh, size: 20),
+                  color: AppColors.alertHigh, size: 20),
               SizedBox(width: 8),
               Text(
                 'Alerta de Surto',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: _AppStyles.textDark,
+                  color: AppColors.textDark,
                 ),
               ),
             ],
@@ -577,7 +583,7 @@ class _AlertSection extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: _AppStyles.textDark,
+                            color: AppColors.textDark,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -601,9 +607,9 @@ class _AlertSection extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Previsão: $predictedCases casos em 7 dias',
+                      'Previsão: $predictedCases casos na próxima semana',
                       style: const TextStyle(
-                          fontSize: 13, color: _AppStyles.textGrey),
+                          fontSize: 13, color: AppColors.textTertiary),
                     ),
                   ],
                 ),
@@ -619,11 +625,11 @@ class _AlertSection extends StatelessWidget {
   Color _getSeverityColor(String severity) {
     switch (severity) {
       case 'high':
-        return _AppStyles.alertHigh;
+        return AppColors.alertHigh;
       case 'medium':
-        return _AppStyles.alertMedium;
+        return AppColors.alertMedium;
       default:
-        return _AppStyles.alertLow;
+        return AppColors.warning;
     }
   }
 }
@@ -648,15 +654,15 @@ class _CityPredictionSection extends StatelessWidget {
 
     if (trend == 'crescente') {
       trendText = 'crescente';
-      trendColor = _AppStyles.alertMedium;
+      trendColor = AppColors.alertMedium;
       icon = Icons.trending_up;
     } else if (trend.contains('estavel') || trend.contains('estável')) {
       trendText = 'estável';
-      trendColor = _AppStyles.success;
+      trendColor = AppColors.success;
       icon = Icons.trending_flat;
     } else {
       trendText = 'decrescente';
-      trendColor = _AppStyles.primary;
+      trendColor = AppColors.primary;
       icon = Icons.trending_down;
     }
 
@@ -670,7 +676,7 @@ class _CityPredictionSection extends StatelessWidget {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: _AppStyles.textDark,
+              color: AppColors.textDark,
             ),
           ),
         ),
@@ -681,7 +687,7 @@ class _CityPredictionSection extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            boxShadow: const [_AppStyles.cardShadow],
+            boxShadow: const [AppColors.cardShadow],
           ),
           child: Row(
             children: [
@@ -694,14 +700,14 @@ class _CityPredictionSection extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: _AppStyles.textDark,
+                        color: AppColors.textDark,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '${prediction.estimatedCases} casos previstos',
                       style: const TextStyle(
-                          fontSize: 12, color: _AppStyles.textGrey),
+                          fontSize: 12, color: AppColors.textTertiary),
                     ),
                   ],
                 ),
@@ -732,53 +738,6 @@ class _CityPredictionSection extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// --- WIDGETS AUXILIARES DE ESTADO ---
-
-class _EmptyStateWidget extends StatelessWidget {
-  const _EmptyStateWidget();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _AppStyles.bgGrey,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.location_off, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'Nenhuma cidade selecionada',
-              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ErrorStateWidget extends StatelessWidget {
-  const _ErrorStateWidget();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-          const SizedBox(height: 16),
-          Text(
-            'Erro ao carregar dados',
-            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-          ),
-        ],
-      ),
     );
   }
 }
